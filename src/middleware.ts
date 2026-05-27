@@ -16,14 +16,8 @@ enum UserRole {
  * Decoded JWT token payload
  */
 interface DecodedJWT {
-  userId: string;
-  email: string;
-  displayName: string;
   role: UserRole;
-  departmentId?: string;
-  organizationId: string;
-  exp: number;
-  iat: number;
+  exp?: number;
 }
 
 /**
@@ -35,6 +29,7 @@ const routePermissions: Record<string, UserRole[]> = {
   "/settings": [UserRole.Owner],
   "/dashboard": [], // All authenticated users
   "/profile": [], // All authenticated users
+  "/customers": [], // All authenticated users
 };
 
 /**
@@ -44,7 +39,7 @@ function decodeJWT(token: string): DecodedJWT | null {
   try {
     // Decode without verification (verification happens on the backend)
     // In Edge Runtime, we can't verify signatures easily, so we just decode
-    const decoded = jwt.decode(token) as DecodedJWT | null;
+    const decoded = jwt.decode(token) as Record<string, unknown> | null;
     
     if (!decoded) {
       return null;
@@ -52,11 +47,25 @@ function decodeJWT(token: string): DecodedJWT | null {
 
     // Check if token is expired
     const now = Math.floor(Date.now() / 1000);
-    if (decoded.exp && decoded.exp < now) {
+    const exp = typeof decoded.exp === "number" ? decoded.exp : undefined;
+    if (exp && exp < now) {
       return null;
     }
 
-    return decoded;
+    // Backend emits role claim as string number ("1" | "2" | "3" | "4")
+    const rawRole = decoded.role;
+    const roleNum =
+      typeof rawRole === "number"
+        ? rawRole
+        : typeof rawRole === "string"
+          ? Number.parseInt(rawRole, 10)
+          : NaN;
+
+    if (!Number.isFinite(roleNum)) {
+      return null;
+    }
+
+    return { role: roleNum as UserRole, exp };
   } catch (error) {
     return null;
   }

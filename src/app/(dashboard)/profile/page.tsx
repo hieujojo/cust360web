@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { Loader2, User as UserIcon, Mail, Phone, Briefcase, Shield, Building2 } from "lucide-react";
+import { Loader2, User as UserIcon, Mail, Phone, Shield, Building2 } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -57,14 +57,6 @@ export default function ProfilePage() {
           </div>
 
           <div className="flex items-center gap-3">
-            <Briefcase className="h-4 w-4 text-muted-foreground shrink-0" />
-            <div>
-              <p className="text-xs text-muted-foreground">Chức danh</p>
-              <p className="text-sm font-medium">{profile?.jobTitle || "—"}</p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
             <Phone className="h-4 w-4 text-muted-foreground shrink-0" />
             <div>
               <p className="text-xs text-muted-foreground">Số điện thoại</p>
@@ -82,12 +74,24 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          {profile?.departmentId && (
+          {profile?.departmentName && (
             <div className="flex items-center gap-3">
               <Building2 className="h-4 w-4 text-muted-foreground shrink-0" />
               <div>
                 <p className="text-xs text-muted-foreground">Phòng ban</p>
-                <p className="text-sm font-medium">{profile.departmentId}</p>
+                <p className="text-sm font-medium">{profile.departmentName}</p>
+              </div>
+            </div>
+          )}
+
+          {profile?.teamName && (
+            <div className="flex items-center gap-3">
+              <Building2 className="h-4 w-4 text-muted-foreground shrink-0" />
+              <div>
+                <p className="text-xs text-muted-foreground">Team</p>
+                <p className="text-sm font-medium">
+                  {profile.teamName} {profile.isTeamLead && <span className="text-xs font-semibold text-primary">(Lead)</span>}
+                </p>
               </div>
             </div>
           )}

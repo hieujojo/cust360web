@@ -1,14 +1,15 @@
-import { AuthService } from "./authService";
 import { DepartmentService } from "./departmentService";
 import { TeamService } from "./teamService";
 import { UserService } from "./userService";
+import { CustomerService } from "./customerService";
+import { AuthService } from "./authService";
+import { DealService } from "./dealService";
 
-export { AuthService } from "./authService";
-export { DepartmentService } from "./departmentService";
-export { TeamService } from "./teamService";
-export { UserService } from "./userService";
+export { AuthService, DepartmentService, TeamService, UserService, CustomerService, DealService };
 
-
+export const authService = new AuthService();
 export const departmentService = new DepartmentService();
 export const teamService = new TeamService();
 export const userService = new UserService();
+export const customerService = new CustomerService();
+export const dealService = new DealService();

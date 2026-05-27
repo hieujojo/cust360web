@@ -17,7 +17,6 @@ export interface User {
   employeeCode: string;
   email: string;
   displayName: string;
-  jobTitle: string;
   role: UserRole;
   roleName: string;
   departmentId?: string;
@@ -65,7 +64,6 @@ export interface UsersListParams {
 export interface CreateUserRequest {
   email: string;
   displayName: string;
-  jobTitle: string;
   role: UserRole;
   departmentId?: string;
   teamId?: string;
@@ -76,7 +74,6 @@ export interface CreateUserRequest {
 /** PUT /api/admin/users/{id} */
 export interface UpdateUserRequest {
   displayName?: string;
-  jobTitle?: string;
   role?: UserRole;
   departmentId?: string;
   teamId?: string;

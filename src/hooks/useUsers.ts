@@ -3,9 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { UserService } from "@/services/userService";
 import { useAuth } from "@/hooks/useAuth";
-import { getDepartmentFilter } from "@/helper/authHelper";
 import type {
-  UsersListParams,
   CreateUserRequest,
   UpdateUserRequest,
   ToggleUserStatusRequest,
@@ -19,26 +17,26 @@ import type {
 const userService = new UserService();
 
 // Query: List users with automatic department scoping
-export function useUsers(params: UsersListParams = {}) {
+export function useUsers() {
   const { user } = useAuth();
 
-  // Apply department filter based on user role
-  const departmentFilter = user ? getDepartmentFilter(user) : {};
-  const scopedParams: UsersListParams = {
-    ...params,
-    // Only apply departmentId filter if not already specified and user is not admin
-    departmentId:
-      params.departmentId ??
-      (departmentFilter.includeAllDepartments ? undefined : departmentFilter.departmentId),
-  };
-
   const result = useQuery({
-    queryKey: ["users", scopedParams],
-    queryFn: () => userService.getUsers(scopedParams as Record<string, unknown>),
+    queryKey: ["users", "all"],
+    queryFn: () => userService.getAllUsers(),
     enabled: !!user,
   });
 
-  return result;
+  // Note: The new API returns User[] instead of UsersListResponse
+  // To keep compatibility with existing components expecting items and total:
+  return {
+    ...result,
+    data: result.data ? {
+      items: result.data,
+      total: result.data.length,
+      page: 1,
+      pageSize: result.data.length
+    } : undefined
+  };
 }
 
 // Query: Get user by ID

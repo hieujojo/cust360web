@@ -10,7 +10,6 @@ type UserDto = {
   employeeCode?: string;
   email?: string;
   displayName?: string;
-  jobTitle?: string;
   role?: UserRole;
   roleName?: string;
   departmentId?: string;
@@ -51,7 +50,6 @@ function mapUser(dto?: UserDto | null): User {
     employeeCode:   dto?.employeeCode ?? "",
     email:          dto?.email ?? "",
     displayName:    dto?.displayName ?? "",
-    jobTitle:       dto?.jobTitle ?? "",
     role:           dto?.role ?? UserRole.User,
     roleName:       dto?.roleName ?? "",
     departmentId:   dto?.departmentId,
@@ -75,7 +73,6 @@ export class UserService {
   async createUser(data: {
     email: string;
     displayName: string;
-    jobTitle: string;
     role: UserRole;
     departmentId?: string;
     teamId?: string;
@@ -91,7 +88,6 @@ export class UserService {
 
   async updateUser(id: string, data: {
     displayName?: string;
-    jobTitle?: string;
     role?: UserRole;
     departmentId?: string;
     teamId?: string;
@@ -127,6 +123,11 @@ export class UserService {
       page:     response.data.page ?? 1,
       pageSize: response.data.pageSize ?? 20,
     };
+  }
+
+  async getAllUsers(): Promise<User[]> {
+    const response = await apiClient.get<UserDto[]>(ADMIN_USER_ENDPOINTS.ALL);
+    return response.data.map(mapUser);
   }
 
   async getCurrentUser(): Promise<User> {

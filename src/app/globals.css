@@ -4,26 +4,44 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* ─── CRM Brand Palette ──────────────────────────── */
+    --crm-primary: #185FA5;
+    --crm-primary-light: #E6F1FB;
+    --crm-success: #3B6D11;
+    --crm-success-light: #EAF3DE;
+    --crm-danger: #A32D2D;
+    --crm-danger-light: #FCEBEB;
+    --crm-neutral: #5F5E5A;
+    --crm-neutral-light: #F1EFE8;
+    --crm-surface: #F8F9FA;
+    --crm-border: #E5E7EB;
+    --crm-owner-bg: #F3EEFA;
+    --crm-owner-text: #6B21A8;
+    --crm-admin-bg: #FFF4E6;
+    --crm-admin-text: #C2410C;
+
+    /* ─── shadcn/ui token overrides ──────────────────── */
+    --background: 0 0% 98.4%;       /* #FAFAFA — slightly warm */
+    --foreground: 220 14% 16%;      /* #24292F */
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 220 14% 16%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --popover-foreground: 220 14% 16%;
+    --primary: 211 73% 37%;         /* #185FA5 */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 20% 96%;
+    --secondary-foreground: 220 14% 16%;
+    --muted: 210 20% 96%;
+    --muted-foreground: 215 14% 46%;
+    --accent: 210 20% 96%;
+    --accent-foreground: 220 14% 16%;
+    --destructive: 0 58% 41%;       /* #A32D2D */
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 13% 91%;          /* #E5E7EB */
+    --input: 220 13% 91%;
+    --ring: 211 73% 37%;
     --radius: 0.5rem;
+
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
     --chart-3: 197 37% 24%;
@@ -65,5 +83,93 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
+    font-size: 14px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* ─── CRM Utility Classes ────────────────────────────── */
+
+@layer components {
+  /* Stat card */
+  .crm-stat-card {
+    @apply bg-white rounded-xl border p-5 transition-shadow;
+    border-color: var(--crm-border);
+  }
+  .crm-stat-card:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .crm-stat-card .stat-label {
+    @apply text-sm font-medium;
+    color: #6B7280;
+  }
+  .crm-stat-card .stat-value {
+    @apply mt-1;
+    font-size: 22px;
+    font-weight: 500;
+    color: #111827;
+  }
+  .crm-stat-card .stat-delta {
+    @apply text-xs mt-1 flex items-center gap-1;
+  }
+  .crm-stat-card .stat-delta.positive { color: var(--crm-success); }
+  .crm-stat-card .stat-delta.negative { color: var(--crm-danger); }
+
+  /* Status badges */
+  .badge-lead {
+    background: var(--crm-primary-light);
+    color: var(--crm-primary);
+  }
+  .badge-active {
+    background: var(--crm-success-light);
+    color: var(--crm-success);
+  }
+  .badge-inactive {
+    background: var(--crm-neutral-light);
+    color: var(--crm-neutral);
+  }
+  .badge-churned {
+    background: var(--crm-danger-light);
+    color: var(--crm-danger);
+  }
+
+  /* Role badges */
+  .badge-owner {
+    background: var(--crm-owner-bg);
+    color: var(--crm-owner-text);
+  }
+  .badge-admin {
+    background: var(--crm-admin-bg);
+    color: var(--crm-admin-text);
+  }
+  .badge-user {
+    @apply bg-gray-100 text-gray-600;
+  }
+
+  /* Table row hover actions */
+  .table-row-actions {
+    @apply opacity-0 transition-opacity duration-150;
+  }
+  tr:hover .table-row-actions,
+  .group:hover .table-row-actions {
+    @apply opacity-100;
+  }
+
+  /* Slide-over panel */
+  .slide-over-enter {
+    animation: slideIn 0.25s ease-out forwards;
+  }
+  .slide-over-exit {
+    animation: slideOut 0.2s ease-in forwards;
+  }
+  @keyframes slideIn {
+    from { transform: translateX(100%); }
+    to   { transform: translateX(0); }
+  }
+  @keyframes slideOut {
+    from { transform: translateX(0); }
+    to   { transform: translateX(100%); }
   }
 }

@@ -12,6 +12,7 @@ export const AUTH_ENDPOINTS = {
 export const USER_ENDPOINTS = {
   ME: "/users/me",
   CHANGE_PASSWORD: "/users/me/password",
+  DETAIL: (id: string) => `/users/${id}`,
 } as const;
 
 // ============================================
@@ -19,6 +20,7 @@ export const USER_ENDPOINTS = {
 // ============================================
 export const ADMIN_USER_ENDPOINTS = {
   LIST: "/admin/users",
+  ALL: "/admin/users/all",
   DETAIL: (id: string) => `/admin/users/${id}`,
   CREATE: "/admin/users",
   UPDATE: (id: string) => `/admin/users/${id}`,
@@ -34,26 +36,39 @@ export const AUDIT_LOG_ENDPOINTS = {
 } as const;
 
 // ============================================
-// CUSTOMER ENDPOINTS (Phase 2)
+// CUSTOMER ENDPOINTS
 // ============================================
 export const CUSTOMER_ENDPOINTS = {
   LIST: "/customers",
-  DETAIL: (id: string) => `/customers/${id}`,
+  SEARCH: "/customers/search",
+  DETAIL_360: (id: string) => `/customers/${id}/360`,
   CREATE: "/customers",
   UPDATE: (id: string) => `/customers/${id}`,
   UPDATE_STATUS: (id: string) => `/customers/${id}/status`,
+  UPDATE_OWNER: (id: string) => `/customers/${id}/owner`,
+  DELETE: (id: string) => `/customers/${id}`,
+  RESTORE: (id: string) => `/customers/${id}/restore`,
+  
+  // Contact endpoints
+  ADD_CONTACT: (custId: string) => `/customers/${custId}/contacts`,
+  UPDATE_CONTACT: (custId: string, contactId: string) => `/customers/${custId}/contacts/${contactId}`,
+  DELETE_CONTACT: (custId: string, contactId: string) => `/customers/${custId}/contacts/${contactId}`,
+  SET_PRIMARY_CONTACT: (custId: string, contactId: string) => `/customers/${custId}/contacts/${contactId}/primary`,
 } as const;
 
 // ============================================
 // SALES ENDPOINTS (Phase 3)
 // ============================================
 export const SALES_ENDPOINTS = {
-  DEALS: "/sales/deals",
-  DEAL_DETAIL: (id: string) => `/sales/deals/${id}`,
-  CREATE_DEAL: "/sales/deals",
-  UPDATE_DEAL: (id: string) => `/sales/deals/${id}`,
-  PIPELINE: "/sales/pipeline",
-  PIPELINE_STAGES: "/sales/pipeline/stages",
+  DEALS: "/deals",
+  DEAL_DETAIL: (id: string) => `/deals/${id}`,
+  CREATE_DEAL: "/deals",
+  UPDATE_DEAL: (id: string) => `/deals/${id}`,
+  DELETE_DEAL: (id: string) => `/deals/${id}`,
+  PATCH_STAGE: (id: string) => `/deals/${id}/stage`,
+  PIPELINE_STAGES: "/settings/pipeline-stages",
+  PIPELINE_STAGE_DETAIL: (id: string) => `/settings/pipeline-stages/${id}`,
+  PIPELINE_STAGE_REORDER: "/settings/pipeline-stages/reorder",
 } as const;
 
 // ============================================
@@ -80,8 +95,6 @@ export const TEAM_ENDPOINTS = {
   DELETE: (departmentId: string, id: string) =>
     `/departments/${departmentId}/teams/${id}`,
 } as const;
-
-
 
 // ============================================
 // NOTIFICATION ENDPOINTS (Phase 2)

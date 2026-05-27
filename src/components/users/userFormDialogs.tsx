@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { Loader2 } from "lucide-react";
@@ -29,13 +29,12 @@ import { useToast } from "@/helper/toastHelper";
 import { useCreateUser, useUpdateUser } from "@/hooks/useUsers";
 import { extractErrorMessage } from "@/lib/api/client";
 import { departmentService, teamService } from "@/services";
-import type { CreateUserRequest, UpdateUserRequest, User } from "@/models";
+import { UserRole, type CreateUserRequest, type UpdateUserRequest, type User } from "@/models";
 
 const createUserSchema = z
   .object({
     email: z.string().email("Email khong hop le"),
     displayName: z.string().min(2, "Ten hien thi phai co it nhat 2 ky tu"),
-    jobTitle: z.string().min(2, "Chuc danh phai co it nhat 2 ky tu"),
     role: z.number().min(1).max(4),
     departmentId: z.string().optional(),
     teamId: z.string().optional(),
@@ -47,30 +46,32 @@ const createUserSchema = z
       .or(z.literal("")),
   })
   .refine(
-    (data) => {
-      if (data.role === 3 && !data.departmentId) {
-        return false;
-      }
-
-      return true;
-    },
+    (data) => !(data.role === 3 && !data.departmentId),
     {
       message: "User (Role 3) phai duoc gan vao mot phong ban",
       path: ["departmentId"],
     }
   );
 
-const updateUserSchema = z.object({
-  displayName: z.string().min(2, "Ten hien thi phai co it nhat 2 ky tu"),
-  jobTitle: z.string().min(2, "Chuc danh phai co it nhat 2 ky tu"),
-  role: z.number().min(1).max(4),
-  departmentId: z.string().optional(),
-  phone: z
-    .string()
-    .regex(/^[0-9]{10,11}$/, "So dien thoai khong hop le (10-11 so)")
-    .optional()
-    .or(z.literal("")),
-});
+const updateUserSchema = z
+  .object({
+    displayName:  z.string().min(2, "Ten hien thi phai co it nhat 2 ky tu"),
+    role:         z.number().min(1).max(4),
+    departmentId: z.string().optional(),
+    teamId:       z.string().optional(),
+    phone: z
+      .string()
+      .regex(/^[0-9]{10,11}$/, "So dien thoai khong hop le (10-11 so)")
+      .optional()
+      .or(z.literal("")),
+  })
+  .refine(
+    (data) => !(data.role === 3 && !data.departmentId),
+    {
+      message: "User (Role 3) phai duoc gan vao mot phong ban",
+      path: ["departmentId"],
+    }
+  );
 
 type CreateUserFormData = z.infer<typeof createUserSchema>;
 type UpdateUserFormData = z.infer<typeof updateUserSchema>;
@@ -87,6 +88,7 @@ interface UserDialogProps extends DialogProps {
 export function CreateUserDialog({ open, onOpenChange }: DialogProps) {
   const { toast } = useToast();
   const createUser = useCreateUser();
+  const queryClient = useQueryClient();
   const [selectedDepartmentId, setSelectedDepartmentId] = useState("");
 
   const { data: departments = [] } = useQuery({
@@ -110,9 +112,7 @@ export function CreateUserDialog({ open, onOpenChange }: DialogProps) {
     control,
   } = useForm<CreateUserFormData>({
     resolver: zodResolver(createUserSchema),
-    defaultValues: {
-      role: 3,
-    },
+    defaultValues: { role: 3 },
   });
 
   const currentRole = watch("role");
@@ -126,25 +126,22 @@ export function CreateUserDialog({ open, onOpenChange }: DialogProps) {
 
   const onSubmit = async (data: CreateUserFormData) => {
     try {
-      await createUser.mutateAsync({
+      const result = await createUser.mutateAsync({
         ...data,
         phone: data.phone || undefined,
       } as CreateUserRequest);
 
-      toast({
-        title: "Thanh cong",
-        description: "Tai khoan da duoc tao thanh cong.",
-      });
+      toast({ title: "Thanh cong", description: "Tai khoan da duoc tao thanh cong." });
+
+      if (result?.id) {
+        queryClient.invalidateQueries({ queryKey: ["users", result.id] });
+      }
 
       reset();
       setSelectedDepartmentId("");
       onOpenChange(false);
     } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Loi",
-        description: extractErrorMessage(error),
-      });
+      toast({ variant: "destructive", title: "Loi", description: extractErrorMessage(error) });
     }
   };
 
@@ -153,51 +150,20 @@ export function CreateUserDialog({ open, onOpenChange }: DialogProps) {
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>Tao tai khoan moi</DialogTitle>
-          <DialogDescription>
-            Nhap thong tin de tao tai khoan nguoi dung moi.
-          </DialogDescription>
+          <DialogDescription>Nhap thong tin de tao tai khoan nguoi dung moi.</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="email">Email *</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="user@company.com"
-              {...register("email")}
-            />
-            {errors.email && (
-              <p className="text-sm text-destructive">{errors.email.message}</p>
-            )}
+            <Input id="email" type="email" placeholder="user@company.com" {...register("email")} />
+            {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="displayName">Ho va ten *</Label>
-            <Input
-              id="displayName"
-              placeholder="Nguyen Van A"
-              {...register("displayName")}
-            />
-            {errors.displayName && (
-              <p className="text-sm text-destructive">
-                {errors.displayName.message}
-              </p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="jobTitle">Chuc vu *</Label>
-            <Input
-              id="jobTitle"
-              placeholder="Sales Executive"
-              {...register("jobTitle")}
-            />
-            {errors.jobTitle && (
-              <p className="text-sm text-destructive">
-                {errors.jobTitle.message}
-              </p>
-            )}
+            <Input id="displayName" placeholder="Nguyen Van A" {...register("displayName")} />
+            {errors.displayName && <p className="text-sm text-destructive">{errors.displayName.message}</p>}
           </div>
 
           <div className="space-y-2">
@@ -215,9 +181,7 @@ export function CreateUserDialog({ open, onOpenChange }: DialogProps) {
                     setSelectedDepartmentId("");
                   }}
                 >
-                  <SelectTrigger id="role">
-                    <SelectValue placeholder="Chon vai tro" />
-                  </SelectTrigger>
+                  <SelectTrigger id="role"><SelectValue placeholder="Chon vai tro" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="2">Admin</SelectItem>
                     <SelectItem value="3">User</SelectItem>
@@ -235,28 +199,17 @@ export function CreateUserDialog({ open, onOpenChange }: DialogProps) {
                   name="departmentId"
                   control={control}
                   render={({ field }) => (
-                    <Select
-                      value={field.value || ""}
-                      onValueChange={handleDepartmentChange}
-                    >
-                      <SelectTrigger id="departmentId">
-                        <SelectValue placeholder="Chon phong ban" />
-                      </SelectTrigger>
+                    <Select value={field.value || ""} onValueChange={handleDepartmentChange}>
+                      <SelectTrigger id="departmentId"><SelectValue placeholder="Chon phong ban" /></SelectTrigger>
                       <SelectContent>
-                        {departments.map((department) => (
-                          <SelectItem key={department.id} value={department.id}>
-                            {department.name}
-                          </SelectItem>
+                        {departments.map((dept) => (
+                          <SelectItem key={dept.id} value={dept.id}>{dept.name}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
                   )}
                 />
-                {errors.departmentId && (
-                  <p className="text-sm text-destructive">
-                    {errors.departmentId.message}
-                  </p>
-                )}
+                {errors.departmentId && <p className="text-sm text-destructive">{errors.departmentId.message}</p>}
               </div>
 
               {currentDepartmentId && (
@@ -266,24 +219,15 @@ export function CreateUserDialog({ open, onOpenChange }: DialogProps) {
                     name="teamId"
                     control={control}
                     render={({ field }) => (
-                      <Select
-                        value={field.value || ""}
-                        onValueChange={field.onChange}
-                      >
-                        <SelectTrigger id="teamId">
-                          <SelectValue placeholder="Chon team" />
-                        </SelectTrigger>
+                      <Select value={field.value || ""} onValueChange={field.onChange}>
+                        <SelectTrigger id="teamId"><SelectValue placeholder="Chon team" /></SelectTrigger>
                         <SelectContent>
                           {teams.length > 0 ? (
                             teams.map((team) => (
-                              <SelectItem key={team.id} value={team.id}>
-                                {team.name}
-                              </SelectItem>
+                              <SelectItem key={team.id} value={team.id}>{team.name}</SelectItem>
                             ))
                           ) : (
-                            <div className="p-2 text-sm text-muted-foreground">
-                              Khong co team trong phong ban nay
-                            </div>
+                            <div className="p-2 text-sm text-muted-foreground">Khong co team trong phong ban nay</div>
                           )}
                         </SelectContent>
                       </Select>
@@ -296,44 +240,20 @@ export function CreateUserDialog({ open, onOpenChange }: DialogProps) {
 
           <div className="space-y-2">
             <Label htmlFor="password">Mat khau tam thoi *</Label>
-            <Input
-              id="password"
-              type="password"
-              placeholder="********"
-              {...register("password")}
-            />
-            {errors.password && (
-              <p className="text-sm text-destructive">
-                {errors.password.message}
-              </p>
-            )}
+            <Input id="password" type="password" placeholder="********" {...register("password")} />
+            {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="phone">So dien thoai</Label>
-            <Input
-              id="phone"
-              type="tel"
-              placeholder="0901234567"
-              {...register("phone")}
-            />
-            {errors.phone && (
-              <p className="text-sm text-destructive">{errors.phone.message}</p>
-            )}
+            <Input id="phone" type="tel" placeholder="0901234567" {...register("phone")} />
+            {errors.phone && <p className="text-sm text-destructive">{errors.phone.message}</p>}
           </div>
 
           <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-            >
-              Huy
-            </Button>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Huy</Button>
             <Button type="submit" disabled={createUser.isPending}>
-              {createUser.isPending && (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              )}
+              {createUser.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Tao tai khoan
             </Button>
           </DialogFooter>
@@ -343,14 +263,22 @@ export function CreateUserDialog({ open, onOpenChange }: DialogProps) {
   );
 }
 
-export function EditUserDialog({
-  open,
-  onOpenChange,
-  user,
-}: UserDialogProps) {
+export function EditUserDialog({ open, onOpenChange, user }: UserDialogProps) {
   const { toast } = useToast();
   const updateUser = useUpdateUser();
-  const [selectedRole, setSelectedRole] = useState("3");
+  const queryClient = useQueryClient();
+  const [selectedDepartmentId, setSelectedDepartmentId] = useState("");
+
+  const { data: departments = [] } = useQuery({
+    queryKey: ["departments"],
+    queryFn: () => departmentService.getAll(),
+  });
+
+  const { data: teams = [] } = useQuery({
+    queryKey: ["teams", selectedDepartmentId],
+    queryFn: () => teamService.getByDepartment(selectedDepartmentId),
+    enabled: !!selectedDepartmentId,
+  });
 
   const {
     register,
@@ -358,52 +286,57 @@ export function EditUserDialog({
     formState: { errors },
     reset,
     setValue,
+    watch,
+    control,
   } = useForm<UpdateUserFormData>({
     resolver: zodResolver(updateUserSchema),
   });
 
-  useEffect(() => {
-    if (!user) {
-      return;
-    }
+  const currentRole = watch("role");
+  const currentDepartmentId = watch("departmentId");
 
+  // Populate form khi mở dialog
+  useEffect(() => {
+    if (!user) return;
     setValue("displayName", user.displayName);
-    setValue("jobTitle", user.jobTitle ?? "");
     setValue("role", user.role);
     setValue("phone", user.phone || "");
-    setSelectedRole(user.role.toString());
+    setValue("departmentId", user.departmentId || "");
+    setValue("teamId", user.teamId || "");
+    if (user.departmentId) setSelectedDepartmentId(user.departmentId);
   }, [user, setValue]);
 
-  const onSubmit = async (data: UpdateUserFormData) => {
-    if (!user) {
-      return;
-    }
+  const handleDepartmentChange = (value: string) => {
+    setValue("departmentId", value);
+    setSelectedDepartmentId(value);
+    setValue("teamId", ""); // reset team khi đổi phòng ban
+  };
 
+  const onSubmit = async (data: UpdateUserFormData) => {
+    if (!user) return;
     try {
       await updateUser.mutateAsync({
         id: user.id,
-        payload: data as UpdateUserRequest,
+        payload: {
+          displayName:  data.displayName,
+          role:         data.role,
+          phone:        data.phone || undefined,
+          departmentId: data.departmentId || undefined,
+          teamId:       data.teamId || undefined,
+        } as UpdateUserRequest,
       });
 
-      toast({
-        title: "Thanh cong",
-        description: "Thong tin nguoi dung da duoc cap nhat.",
-      });
-
+      toast({ title: "Thanh cong", description: "Thong tin nguoi dung da duoc cap nhat." });
+      queryClient.invalidateQueries({ queryKey: ["users", user.id] });
       reset();
+      setSelectedDepartmentId("");
       onOpenChange(false);
     } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Loi",
-        description: extractErrorMessage(error),
-      });
+      toast({ variant: "destructive", title: "Loi", description: extractErrorMessage(error) });
     }
   };
 
-  if (!user) {
-    return null;
-  }
+  if (!user) return null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -414,97 +347,109 @@ export function EditUserDialog({
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          {/* Email — readonly */}
           <div className="space-y-2">
             <Label htmlFor="edit-email">Email</Label>
-            <Input
-              id="edit-email"
-              type="email"
-              value={user.email}
-              disabled
-              className="bg-muted"
-            />
-            <p className="text-xs text-muted-foreground">
-              Email khong the thay doi
-            </p>
+            <Input id="edit-email" type="email" value={user.email} disabled className="bg-muted" />
+            <p className="text-xs text-muted-foreground">Email khong the thay doi</p>
           </div>
 
+          {/* Họ và tên */}
           <div className="space-y-2">
             <Label htmlFor="edit-displayName">Ho va ten *</Label>
-            <Input
-              id="edit-displayName"
-              placeholder="Nguyen Van A"
-              {...register("displayName")}
-            />
-            {errors.displayName && (
-              <p className="text-sm text-destructive">
-                {errors.displayName.message}
-              </p>
-            )}
+            <Input id="edit-displayName" placeholder="Nguyen Van A" {...register("displayName")} />
+            {errors.displayName && <p className="text-sm text-destructive">{errors.displayName.message}</p>}
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="edit-jobTitle">Chuc vu *</Label>
-            <Input
-              id="edit-jobTitle"
-              placeholder="Sales Executive"
-              {...register("jobTitle")}
-            />
-            {errors.jobTitle && (
-              <p className="text-sm text-destructive">
-                {errors.jobTitle.message}
-              </p>
-            )}
-          </div>
-
+          {/* Vai trò */}
           <div className="space-y-2">
             <Label htmlFor="edit-role">Vai tro *</Label>
-            <Select
-              value={selectedRole}
-              onValueChange={(value) => {
-                setSelectedRole(value);
-                setValue("role", Number.parseInt(value, 10));
-              }}
-            >
-              <SelectTrigger id="edit-role">
-                <SelectValue placeholder="Chon vai tro" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="1">Owner</SelectItem>
-                <SelectItem value="2">Admin</SelectItem>
-                <SelectItem value="3">Sales Manager</SelectItem>
-                <SelectItem value="4">Sales User</SelectItem>
-              </SelectContent>
-            </Select>
-            {errors.role && (
-              <p className="text-sm text-destructive">{errors.role.message}</p>
-            )}
+            <Controller
+              name="role"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  value={String(field.value)}
+                  onValueChange={(value) => {
+                    field.onChange(Number(value));
+                    if (Number(value) !== UserRole.User) {
+                      setValue("departmentId", "");
+                      setValue("teamId", "");
+                      setSelectedDepartmentId("");
+                    }
+                  }}
+                >
+                  <SelectTrigger id="edit-role"><SelectValue placeholder="Chon vai tro" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="2">Admin</SelectItem>
+                    <SelectItem value="3">User</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            {errors.role && <p className="text-sm text-destructive">{errors.role.message}</p>}
           </div>
 
+          {/* Phòng ban */}
+          <div className="space-y-2">
+            <Label htmlFor="edit-departmentId">
+              Phong ban {currentRole === UserRole.User && <span className="text-destructive">*</span>}
+            </Label>
+            <Controller
+              name="departmentId"
+              control={control}
+              render={({ field }) => (
+                <Select value={field.value || ""} onValueChange={handleDepartmentChange}>
+                  <SelectTrigger id="edit-departmentId"><SelectValue placeholder="Chon phong ban" /></SelectTrigger>
+                  <SelectContent>
+                    {departments.map((dept) => (
+                      <SelectItem key={dept.id} value={dept.id}>{dept.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            {errors.departmentId && <p className="text-sm text-destructive">{errors.departmentId.message}</p>}
+          </div>
+
+          {/* Team — chỉ hiện khi đã chọn phòng ban */}
+          {currentDepartmentId && (
+            <div className="space-y-2">
+              <Label htmlFor="edit-teamId">Team (tuy chon)</Label>
+              <Controller
+                name="teamId"
+                control={control}
+                render={({ field }) => (
+                  <Select value={field.value || ""} onValueChange={field.onChange}>
+                    <SelectTrigger id="edit-teamId"><SelectValue placeholder="Chon team" /></SelectTrigger>
+                    <SelectContent>
+                      {teams.length > 0 ? (
+                        teams.map((team) => (
+                          <SelectItem key={team.id} value={team.id}>{team.name}</SelectItem>
+                        ))
+                      ) : (
+                        <div className="p-2 text-sm text-muted-foreground">Khong co team trong phong ban nay</div>
+                      )}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            </div>
+          )}
+
+          {/* Số điện thoại */}
           <div className="space-y-2">
             <Label htmlFor="edit-phone">So dien thoai</Label>
-            <Input
-              id="edit-phone"
-              type="tel"
-              placeholder="0901234567"
-              {...register("phone")}
-            />
-            {errors.phone && (
-              <p className="text-sm text-destructive">{errors.phone.message}</p>
-            )}
+            <Input id="edit-phone" type="tel" placeholder="0901234567" {...register("phone")} />
+            {errors.phone && <p className="text-sm text-destructive">{errors.phone.message}</p>}
           </div>
 
           <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-            >
+            <Button type="button" variant="outline" onClick={() => { reset(); setSelectedDepartmentId(""); onOpenChange(false); }}>
               Huy
             </Button>
             <Button type="submit" disabled={updateUser.isPending}>
-              {updateUser.isPending && (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              )}
+              {updateUser.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Cap nhat
             </Button>
           </DialogFooter>
@@ -512,4 +457,4 @@ export function EditUserDialog({
       </DialogContent>
     </Dialog>
   );
-}
+} 

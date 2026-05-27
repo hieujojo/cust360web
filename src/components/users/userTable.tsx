@@ -5,105 +5,97 @@ import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
-  getFilteredRowModel,
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 import {
-  KeyRound,
-  MoreHorizontal,
   Pencil,
   Search,
   UserCheck,
   UserX,
 } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdownMenu";
-import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import type { User } from "@/models";
+import { getRoleLabel } from "@/helper/authHelper";
 
 interface UserTableProps {
   data: User[];
   onEdit: (user: User) => void;
-  onDelete: (user: User) => void;
-  onResetPassword: (user: User) => void;
+  onToggleStatus: (user: User) => void;
   canManage?: boolean;
 }
 
-function getUserColumns({
+export function UserTable({
+  data,
   onEdit,
-  onDelete,
-  onResetPassword,
+  onToggleStatus,
   canManage = true,
-}: Omit<UserTableProps, "data">): ColumnDef<User>[] {
+}: UserTableProps) {
+  const [globalFilter, setGlobalFilter] = useState("");
+
   const columns: ColumnDef<User>[] = [
     {
       accessorKey: "employeeCode",
-      header: "Ma NV",
+      header: "Mã NV",
       cell: ({ row }) => (
-        <div className="font-mono text-sm">{row.getValue("employeeCode")}</div>
-      ),
-    },
-    {
-      accessorKey: "displayName",
-      header: "Ho va ten",
-      cell: ({ row }) => (
-        <div className="font-medium">{row.getValue("displayName")}</div>
-      ),
-    },
-    {
-      accessorKey: "email",
-      header: "Email",
-      cell: ({ row }) => (
-        <div className="text-sm text-muted-foreground">
-          {row.getValue("email")}
+        <div className="font-mono text-[12px] text-gray-500">
+          {row.getValue("employeeCode")}
         </div>
       ),
     },
     {
-      accessorKey: "jobTitle",
-      header: "Chuc vu",
-      cell: ({ row }) => <div className="text-sm">{row.getValue("jobTitle")}</div>,
+      accessorKey: "displayName",
+      header: "Họ và tên",
+      cell: ({ row }) => (
+        <div>
+          <div className="font-medium text-gray-900 group-hover:text-[var(--crm-primary)] transition-colors">
+            {row.getValue("displayName")}
+          </div>
+          <div className="text-[11px] text-gray-400 mt-0.5">
+            {row.original.email}
+          </div>
+        </div>
+      ),
     },
     {
       accessorKey: "role",
-      header: "Vai tro",
+      header: "Vai trò",
       cell: ({ row }) => {
         const role = row.getValue("role") as number;
-        const roleName = role === 1 ? "Owner" : role === 2 ? "Admin" : "User";
-        const variant =
-          role === 1 ? "default" : role === 2 ? "secondary" : "outline";
+        let badgeClass = "badge-user";
+        if (role === 1) badgeClass = "badge-owner";
+        if (role === 2) badgeClass = "badge-admin";
 
-        return <Badge variant={variant}>{roleName}</Badge>;
+        return (
+          <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium ${badgeClass}`}>
+            {getRoleLabel(role)}
+          </span>
+        );
       },
     },
     {
+      accessorKey: "departmentName",
+      header: "Phòng ban",
+      cell: ({ row }) => (
+        <div className="text-[13px] text-gray-600">
+          {row.getValue("departmentName") || "—"}
+        </div>
+      ),
+    },
+    {
       accessorKey: "isActive",
-      header: "Trang thai",
+      header: "Trạng thái",
       cell: ({ row }) => {
         const isActive = row.getValue("isActive") as boolean;
+        const badgeClass = isActive ? "badge-active" : "badge-inactive";
+        const dotClass = isActive ? "bg-[var(--crm-success)]" : "bg-gray-400";
+        const label = isActive ? "Hoạt động" : "Tạm ngưng";
 
         return (
-          <Badge variant={isActive ? "default" : "destructive"}>
-            {isActive ? "Hoat dong" : "Vo hieu hoa"}
-          </Badge>
+          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium ${badgeClass}`}>
+            <span className={`h-1.5 w-1.5 rounded-full ${dotClass}`} />
+            {label}
+          </span>
         );
       },
     },
@@ -112,179 +104,124 @@ function getUserColumns({
   if (canManage) {
     columns.push({
       id: "actions",
-      header: "Thao tac",
+      header: () => <div className="text-right">Thao tác</div>,
       cell: ({ row }) => {
         const user = row.original;
         const isActive = user.isActive;
 
         return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                className="h-8 w-8 p-0"
-                aria-label="Mo menu thao tac"
-              >
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Thao tac</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => onEdit(user)}>
-                <Pencil className="mr-2 h-4 w-4" />
-                Chinh sua
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onResetPassword(user)}>
-                <KeyRound className="mr-2 h-4 w-4" />
-                Reset mat khau
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() => onDelete(user)}
-                className={isActive ? "text-destructive focus:text-destructive" : ""}
-              >
-                {isActive ? (
-                  <>
-                    <UserX className="mr-2 h-4 w-4" />
-                    Vo hieu hoa
-                  </>
-                ) : (
-                  <>
-                    <UserCheck className="mr-2 h-4 w-4" />
-                    Kich hoat
-                  </>
-                )}
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="table-row-actions flex items-center justify-end gap-1">
+            <button
+              onClick={(e) => { e.stopPropagation(); onEdit(user); }}
+              className="p-1.5 rounded-md hover:bg-gray-100 text-gray-400 hover:text-[var(--crm-primary)] transition-colors"
+              title="Chỉnh sửa"
+            >
+              <Pencil className="h-4 w-4" />
+            </button>
+            <button
+              onClick={(e) => { e.stopPropagation(); onToggleStatus(user); }}
+              className={`p-1.5 rounded-md hover:bg-gray-100 transition-colors ${
+                isActive ? "text-gray-400 hover:text-[var(--crm-danger)]" : "text-gray-400 hover:text-[var(--crm-success)]"
+              }`}
+              title={isActive ? "Vô hiệu hoá" : "Kích hoạt"}
+            >
+              {isActive ? <UserX className="h-4 w-4" /> : <UserCheck className="h-4 w-4" />}
+            </button>
+          </div>
         );
       },
     });
   }
 
-  return columns;
-}
-
-export function UserTable({
-  data,
-  onEdit,
-  onDelete,
-  onResetPassword,
-  canManage = true,
-}: UserTableProps) {
-  const [globalFilter, setGlobalFilter] = useState("");
-
-  const columns = getUserColumns({
-    onEdit,
-    onDelete,
-    onResetPassword,
-    canManage,
-  });
-
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    globalFilterFn: "includesString",
-    state: {
-      globalFilter,
-    },
-    onGlobalFilterChange: setGlobalFilter,
     initialState: {
-      pagination: { pageSize: 10 },
+      pagination: { pageSize: 20 },
     },
   });
 
   return (
     <div className="space-y-4">
-      <div className="relative max-w-sm">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          placeholder="Tim kiem nguoi dung..."
+      {/* ── Search Input ─────────────────────────────── */}
+      <div className="relative w-full sm:w-[320px]">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+        <input
+          type="text"
+          placeholder="Tìm kiếm người dùng..."
           value={globalFilter}
           onChange={(e) => setGlobalFilter(e.target.value)}
-          className="pl-9"
-          aria-label="Tim kiem nguoi dung"
+          className="h-9 w-full rounded-lg border border-[var(--crm-border)] bg-white pl-9 pr-3 text-[13px] text-gray-700 placeholder:text-gray-400 outline-none focus:border-[var(--crm-primary)] focus:ring-1 focus:ring-[var(--crm-primary)]/20 transition-colors"
         />
       </div>
 
-      <div className="overflow-x-auto rounded-md border">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id} className="whitespace-nowrap">
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="whitespace-nowrap">
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </TableCell>
+      {/* ── Table ────────────────────────────────────── */}
+      <div className="bg-white border border-[var(--crm-border)] rounded-xl overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-[13px] text-left text-gray-600">
+            <thead className="text-[11px] text-gray-500 uppercase bg-gray-50/80 border-b border-[var(--crm-border)]">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <th key={header.id} className="px-4 py-3 font-medium whitespace-nowrap">
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(header.column.columnDef.header, header.getContext())}
+                    </th>
                   ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center text-muted-foreground"
-                >
-                  {globalFilter
-                    ? "Khong tim thay ket qua phu hop."
-                    : "Khong co du lieu."}
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+                </tr>
+              ))}
+            </thead>
+            <tbody>
+              {table.getRowModel().rows.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <tr
+                    key={row.id}
+                    className="group border-b border-gray-100 hover:bg-gray-50/60 transition-colors"
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <td key={cell.id} className="px-4 py-3 whitespace-nowrap">
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </td>
+                    ))}
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={columns.length} className="px-4 py-16 text-center text-[13px] text-gray-500">
+                    {globalFilter ? "Không tìm thấy kết quả phù hợp." : "Chưa có dữ liệu."}
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
+      {/* ── Pagination ───────────────────────────────── */}
       {table.getPageCount() > 1 && (
         <div className="flex items-center justify-between">
-          <p className="text-sm text-muted-foreground">
-            Hien thi {table.getRowModel().rows.length} /{" "}
-            {table.getFilteredRowModel().rows.length} nguoi dung
+          <p className="text-[13px] text-gray-500">
+            Hiển thị <span className="font-medium text-gray-900">{((table.getState().pagination.pageIndex) * 20) + 1}–{Math.min((table.getState().pagination.pageIndex + 1) * 20, data.length)}</span>
+            {" "}của <span className="font-medium text-gray-900">{data.length}</span> người dùng
           </p>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.previousPage()}
+          <div className="flex gap-2">
+            <button
               disabled={!table.getCanPreviousPage()}
+              onClick={() => table.previousPage()}
+              className="h-8 px-3 text-[13px] font-medium text-gray-700 bg-white border border-[var(--crm-border)] rounded-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
-              Trang truoc
-            </Button>
-            <span className="text-sm text-muted-foreground">
-              {table.getState().pagination.pageIndex + 1} / {table.getPageCount()}
-            </span>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.nextPage()}
+              Trang trước
+            </button>
+            <button
               disabled={!table.getCanNextPage()}
+              onClick={() => table.nextPage()}
+              className="h-8 px-3 text-[13px] font-medium text-gray-700 bg-white border border-[var(--crm-border)] rounded-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               Trang sau
-            </Button>
+            </button>
           </div>
         </div>
       )}

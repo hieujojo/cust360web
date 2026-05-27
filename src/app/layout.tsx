@@ -6,6 +6,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
+import { ReduxProvider } from "@/components/providers/ReduxProvider";
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -33,10 +34,12 @@ export default function RootLayout({
   return (
     <html lang="vi" suppressHydrationWarning>
       <body className={`${inter.variable} font-sans antialiased`} suppressHydrationWarning>
-        <QueryClientProvider client={queryClient}>
-          {children}
-          <Toaster />
-        </QueryClientProvider>
+        <ReduxProvider>
+          <QueryClientProvider client={queryClient}>
+            {children}
+            <Toaster />
+          </QueryClientProvider>
+        </ReduxProvider>
       </body>
     </html>
   );
