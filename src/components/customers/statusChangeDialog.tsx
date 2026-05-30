@@ -5,6 +5,7 @@ import { X, Loader2 } from "lucide-react";
 import { useChangeCustomerStatus } from "@/hooks/useCustomers";
 import type { Customer, CustomerStatus } from "@/models/customerModel";
 import { useToast } from "@/helper/toastHelper";
+import { ContactFormDialog } from "./contactFormDialog";
 
 interface StatusChangeDialogProps {
   open: boolean;
@@ -31,6 +32,7 @@ export function StatusChangeDialog({ open, onOpenChange, customer }: StatusChang
   const changeStatusMutation = useChangeCustomerStatus();
   const [selectedStatus, setSelectedStatus] = useState<CustomerStatus | "">("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [contactOpen, setContactOpen] = useState(false);
 
   if (!open || !customer) return null;
 
@@ -107,29 +109,46 @@ export function StatusChangeDialog({ open, onOpenChange, customer }: StatusChang
               </select>
             </div>
           ) : (
-            <div className="p-3 bg-amber-50 text-amber-800 text-sm border border-amber-200 rounded-lg">
-              Trạng thái "{statusLabels[customer.status]}" không thể chuyển đổi sang trạng thái khác.
-            </div>
+            <p className="text-sm text-amber-600 bg-amber-50 p-3 rounded-lg border border-amber-200 mt-4">
+              Khách hàng ở trạng thái này không thể chuyển sang trạng thái khác.
+            </p>
           )}
 
-          <div className="pt-4 flex justify-end gap-3 border-t border-slate-100">
+          <div className="pt-4 flex justify-between items-center border-t border-slate-100 mt-4">
             <button
-              onClick={() => onOpenChange(false)}
-              className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors"
+              type="button"
+              onClick={() => setContactOpen(true)}
+              className="text-xs font-medium text-blue-600 hover:underline"
             >
-              Hủy
+              + Thêm người liên hệ
             </button>
-            <button
-              onClick={handleSubmit}
-              disabled={isSubmitting || !selectedStatus}
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center"
-            >
-              {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {isSubmitting ? "Đang lưu..." : "Cập nhật"}
-            </button>
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => onOpenChange(false)}
+                className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors"
+              >
+                Hủy
+              </button>
+              <button
+                type="button"
+                onClick={handleSubmit}
+                disabled={!selectedStatus || isSubmitting}
+                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center"
+              >
+                {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {isSubmitting ? "Đang lưu..." : "Cập nhật"}
+              </button>
+            </div>
           </div>
         </div>
       </div>
+      
+      <ContactFormDialog
+        open={contactOpen}
+        onOpenChange={setContactOpen}
+        customerId={customer.id}
+      />
     </div>
   );
 }

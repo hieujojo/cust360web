@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Plus, Building2, TrendingUp, TrendingDown, Users2 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useUsers } from "@/hooks/useUsers";
-import { useCustomers, useCustomerSearch } from "@/hooks/useCustomers";
+import { useCustomers, useCustomerSearch, useCustomer360 } from "@/hooks/useCustomers";
 import { canDeleteCustomer, canChangeCustomerOwner, canRestoreCustomer } from "@/helper/authHelper";
 import type { Customer, CustomerStatus } from "@/models/customerModel";
 
@@ -62,6 +62,17 @@ export default function CustomersPage() {
     sortBy,
     sortDir,
   });
+
+  const { data: customer360Data } = useCustomer360(panelCustomer?.id ?? "");
+  const panelCustomerData = panelCustomer && customer360Data
+    ? {
+        ...panelCustomer,
+        ...customer360Data.info,
+        createdAt: new Date(customer360Data.info.createdAt),
+        updatedAt: new Date(customer360Data.info.updatedAt),
+        contacts: customer360Data.tabs.contacts,
+      } as Customer
+    : panelCustomer;
 
   // Stat counts — mỗi query dùng pageSize=1 để lấy totalCount chính xác
   const { data: totalData }   = useCustomers({ page: 1, pageSize: 1 });
@@ -249,7 +260,7 @@ export default function CustomersPage() {
 
       {/* ── Slide-over Panel ───────────────────────────── */}
       <Customer360Panel
-        customer={panelCustomer}
+        customer={panelCustomerData}
         open={panelOpen}
         onClose={() => setPanelOpen(false)}
       />

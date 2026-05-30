@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, type FormEvent } from "react";
 import { X, Loader2, Search, ChevronDown, Check } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useCreateCustomer } from "@/hooks/useCustomers";
 import { useUsers } from "@/hooks/useUsers";
-import type { CustomerSource } from "@/models/customerModel";
+import type { CustomerSource, CreateContactRequest } from "@/models/customerModel";
 import { useToast } from "@/helper/toastHelper";
 
 const customerSchema = z.object({
@@ -41,6 +41,13 @@ export function CustomerFormDialog({ open, onOpenChange }: CustomerFormDialogPro
   const { toast } = useToast();
   const createCustomerMutation = useCreateCustomer();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  const [step, setStep] = useState<1 | 2>(1);
+  const [contactName, setContactName] = useState("");
+  const [contactRole, setContactRole] = useState("");
+  const [contactEmail, setContactEmail] = useState("");
+  const [contactPhone, setContactPhone] = useState("");
+  const [contactIsPrimary, setContactIsPrimary] = useState(true);
 
   // Owner combobox state
   const [ownerSearch, setOwnerSearch] = useState("");
@@ -72,6 +79,7 @@ export function CustomerFormDialog({ open, onOpenChange }: CustomerFormDialogPro
     reset,
     watch,
     setValue,
+    trigger,
     formState: { errors },
   } = useForm<CustomerFormValues>({
     resolver: zodResolver(customerSchema),
@@ -106,26 +114,39 @@ export function CustomerFormDialog({ open, onOpenChange }: CustomerFormDialogPro
   const handleClose = () => {
     reset();
     handleClearOwner();
+    setStep(1);
+    setContactName("");
+    setContactRole("");
+    setContactEmail("");
+    setContactPhone("");
+    setContactIsPrimary(true);
     onOpenChange(false);
   };
 
   const onSubmit = async (data: CustomerFormValues) => {
     setIsSubmitting(true);
     try {
+      const contactsPayload = contactName.trim() ? [{
+        name: contactName.trim(),
+        role: contactRole.trim() || undefined,
+        email: contactEmail.trim() || undefined,
+        phone: contactPhone.trim() || undefined,
+        isPrimary: contactIsPrimary,
+      }] : undefined;
+
       await createCustomerMutation.mutateAsync({
         name: data.name,
         source: data.source as CustomerSource,
         email: data.email || undefined,
         phone: data.phone || undefined,
         ownerId: data.ownerId || undefined,
+        contacts: contactsPayload,
       });
       toast({
         title: "Thành công",
         description: "Đã tạo khách hàng mới.",
       });
-      reset();
-      handleClearOwner();
-      onOpenChange(false);
+      handleClose();
     } catch (error: any) {
       toast({
         title: "Lỗi",
@@ -137,25 +158,49 @@ export function CustomerFormDialog({ open, onOpenChange }: CustomerFormDialogPro
     }
   };
 
+  const handleFormSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (step === 2) {
+      void handleSubmit(onSubmit)(e as any);
+    }
+  };
+
   if (!open) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl animate-in fade-in zoom-in-95 duration-200">
+      <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col animate-in fade-in zoom-in-95 duration-200">
         {/* Header */}
-        <div className="flex items-center justify-between px-8 py-5 border-b border-slate-100">
-          <h2 className="text-lg font-semibold text-slate-800">Tạo khách hàng mới</h2>
+        <div className="flex items-center justify-between px-8 py-5 border-b border-slate-100 bg-slate-50/50">
+          <div className="flex items-center gap-6">
+            <h2 className="text-lg font-semibold text-slate-800">Tạo khách hàng</h2>
+            <div className="flex items-center gap-3 text-sm">
+              <div className={`flex items-center gap-1.5 ${step >= 1 ? "text-blue-600" : "text-slate-400"}`}>
+                <span className={`flex items-center justify-center w-5 h-5 rounded-full text-[10px] font-bold ${step >= 1 ? "bg-blue-600 text-white" : "bg-slate-200 text-slate-500"}`}>1</span>
+                <span className={step >= 1 ? "font-medium" : ""}>Thông tin chung</span>
+              </div>
+              <div className="w-8 h-px bg-slate-200"></div>
+              <div className={`flex items-center gap-1.5 ${step >= 2 ? "text-blue-600" : "text-slate-400"}`}>
+                <span className={`flex items-center justify-center w-5 h-5 rounded-full text-[10px] font-bold ${step >= 2 ? "bg-blue-600 text-white" : "bg-slate-200 text-slate-500"}`}>2</span>
+                <span className={step >= 2 ? "font-medium" : ""}>Người liên hệ</span>
+              </div>
+            </div>
+          </div>
           <button
+            type="button"
             onClick={handleClose}
-            className="p-1 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-md transition-colors"
+            className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-200 rounded-md transition-colors"
           >
             <X className="h-4 w-4" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="px-8 py-6 space-y-5">
-          {/* Tên khách hàng */}
-          <div>
+        <form id="customer-form" onSubmit={handleFormSubmit} className="px-8 py-6 space-y-5 overflow-y-auto flex-1">
+          {/* STEP 1: Thông tin chung */}
+          {step === 1 && (
+            <div className="space-y-5 animate-in slide-in-from-right-4 duration-300">
+              {/* Tên khách hàng */}
+              <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">
               Tên khách hàng <span className="text-red-500">*</span>
             </label>
@@ -349,29 +394,125 @@ export function CustomerFormDialog({ open, onOpenChange }: CustomerFormDialogPro
                   </div>
                 )}
               </div>
-              <p className="text-xs text-slate-400 mt-1">Mặc định gán cho bạn</p>
+            </div>
             </div>
           </div>
+          )}
 
-          {/* Footer */}
-          <div className="pt-4 flex justify-end gap-3 border-t border-slate-100">
-            <button
-              type="button"
-              onClick={handleClose}
-              className="px-5 py-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
-            >
-              Hủy
-            </button>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="px-5 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-1.5"
-            >
-              {isSubmitting && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-              {isSubmitting ? "Đang lưu..." : "Tạo khách hàng"}
-            </button>
-          </div>
+          {/* STEP 2: Người liên hệ */}
+          {step === 2 && (
+            <div className="space-y-5 animate-in slide-in-from-right-4 duration-300">
+              <div className="bg-blue-50 text-blue-700 p-3 rounded-lg text-sm border border-blue-100">
+                Thêm một người liên hệ chính cho khách hàng này. (Bạn có thể bỏ qua nếu chưa có thông tin)
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Họ tên người liên hệ
+                </label>
+                <input
+                  value={contactName}
+                  onChange={(e) => setContactName(e.target.value)}
+                  className="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-lg outline-none focus:border-blue-500 placeholder:text-slate-400 transition-colors"
+                  placeholder="Nhập tên người liên hệ"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Chức vụ</label>
+                <input
+                  value={contactRole}
+                  onChange={(e) => setContactRole(e.target.value)}
+                  className="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-lg outline-none focus:border-blue-500 placeholder:text-slate-400 transition-colors"
+                  placeholder="Ví dụ: Giám đốc, Kế toán..."
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Email</label>
+                  <input
+                    value={contactEmail}
+                    onChange={(e) => setContactEmail(e.target.value)}
+                    type="email"
+                    className="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-lg outline-none focus:border-blue-500 placeholder:text-slate-400 transition-colors"
+                    placeholder="email@example.com"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Số điện thoại</label>
+                  <input
+                    value={contactPhone}
+                    onChange={(e) => setContactPhone(e.target.value)}
+                    className="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-lg outline-none focus:border-blue-500 placeholder:text-slate-400 transition-colors"
+                    placeholder="0912 345 678"
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 pt-2">
+                <input
+                  type="checkbox"
+                  id="inlineIsPrimary"
+                  checked={contactIsPrimary}
+                  onChange={(e) => setContactIsPrimary(e.target.checked)}
+                  className="h-4 w-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500"
+                />
+                <label htmlFor="inlineIsPrimary" className="text-sm text-slate-700">
+                  Đặt làm người liên hệ chính
+                </label>
+              </div>
+            </div>
+          )}
+
         </form>
+        {/* Footer */}
+        <div className="px-8 pb-6 pt-4 flex justify-between gap-3 border-t border-slate-100">
+            {step === 2 ? (
+              <button
+                type="button"
+                onClick={() => setStep(1)}
+                className="px-5 py-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+              >
+                Quay lại
+              </button>
+            ) : (
+              <div />
+            )}
+            
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={handleClose}
+                className="px-5 py-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+              >
+                Hủy
+              </button>
+              
+              {step === 1 ? (
+                <button
+                  type="button"
+                  onClick={async () => {
+                    const isValid = await trigger(["name", "status", "source", "email", "phone"]);
+                    if (isValid) setStep(2);
+                  }}
+                  className="px-5 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors flex items-center"
+                >
+                  Tiếp tục
+                </button>
+              ) : (
+                <button
+                  type="submit"
+                  form="customer-form"
+                  disabled={isSubmitting}
+                  className="px-5 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-1.5"
+                >
+                  {isSubmitting && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+                  {isSubmitting ? "Đang lưu..." : "Hoàn tất"}
+                </button>
+              )}
+            </div>
+          </div>
       </div>
     </div>
   );

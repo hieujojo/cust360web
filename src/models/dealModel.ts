@@ -10,6 +10,7 @@ export interface Deal {
   customerId: string;
   customerName: string;
   value: number;
+  expectedRevenue?: number;
   currency: string;
   expectedCloseDate?: string;
   ownerId: string;
@@ -27,14 +28,22 @@ export interface Deal {
 export interface DealListParams {
   stage?: string;
   owner?: string;
+  customerId?: string;
   sort?: string;
   search?: string;
+}
+
+export interface DealStats {
+  totalCount: number;
+  wonCount: number;
+  openCount: number;
 }
 
 export interface CreateDealRequest {
   title: string;
   customer: string;
   value: number;
+  expectedRevenue?: number;
   currency: string;
   expectedCloseDate?: string;
   owner?: string;

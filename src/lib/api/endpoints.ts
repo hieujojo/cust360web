@@ -66,9 +66,12 @@ export const SALES_ENDPOINTS = {
   UPDATE_DEAL: (id: string) => `/deals/${id}`,
   DELETE_DEAL: (id: string) => `/deals/${id}`,
   PATCH_STAGE: (id: string) => `/deals/${id}/stage`,
+  DEALS_STATS: "/deals/stats",
   PIPELINE_STAGES: "/settings/pipeline-stages",
   PIPELINE_STAGE_DETAIL: (id: string) => `/settings/pipeline-stages/${id}`,
   PIPELINE_STAGE_REORDER: "/settings/pipeline-stages/reorder",
+  QUOTATIONS: (dealId: string) => `/deals/${dealId}/quotations`,
+  QUOTATION_DETAIL: (dealId: string, id: string) => `/deals/${dealId}/quotations/${id}`,
 } as const;
 
 // ============================================

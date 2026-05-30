@@ -56,7 +56,7 @@ function StatCard({ title, value, label, icon: Icon, isLoading, color = "text-mu
 
 export default function DashboardPage() {
   const { user } = useAuth();
-  const { customerCount, departmentCount, userCount, isLoading, isAdmin, isError } = useDashboardStats();
+  const { customerCount, departmentCount, userCount, openDealsCount, isLoading, isAdmin, isError } = useDashboardStats();
 
   return (
     <div className="space-y-6">
@@ -88,10 +88,10 @@ export default function DashboardPage() {
 
         <StatCard
           title="Deals"
-          value={0}
+          value={openDealsCount}
           label="Deals đang mở"
           icon={TrendingUp}
-          isLoading={false}
+          isLoading={isLoading}
           color="text-muted-foreground"
         />
 

@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import { useCustomer360 } from "@/hooks/useCustomers";
+import { useDeals } from "@/hooks/useDeals";
 import { useAuth } from "@/hooks/useAuth";
 import { useUsers } from "@/hooks/useUsers";
 import { canDeleteCustomer, canChangeCustomerOwner, canRestoreCustomer } from "@/helper/authHelper";
@@ -14,6 +15,7 @@ import { Tabs } from "@/components/ui/tabs";
 import { CustomerInfoTab } from "@/components/customers/customerInfoTab";
 import { ContactsTab } from "@/components/customers/contactsTab";
 import { PlaceholderTab } from "@/components/customers/placeholderTab";
+import { DealListView } from "@/components/deals/dealListView";
 
 // Dialogs
 import { StatusChangeDialog } from "@/components/customers/statusChangeDialog";
@@ -39,6 +41,9 @@ export default function Customer360Page() {
 
   // Data
   const { data, isLoading, error } = useCustomer360(id);
+  const { data: deals = [], isLoading: dealsLoading } = useDeals({ customerId: id });
+
+  const customerDeals = deals.filter((deal) => deal.customerId === id);
 
   // Dialog states
   const [statusDialogOpen, setStatusDialogOpen] = useState(false);
@@ -90,11 +95,14 @@ export default function Customer360Page() {
     },
     {
       id: "deals",
-      label: "Cơ hội bán hàng (Deals)",
-      content: <PlaceholderTab 
-        title="Quản lý Deals" 
-        description="Giao diện theo dõi các cơ hội bán hàng liên kết với khách hàng này." 
-      />
+      label: `Cơ hội bán hàng (Deals) (${customerDeals.length})`,
+      content: dealsLoading ? (
+        <div className="flex items-center justify-center min-h-[220px]">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
+        </div>
+      ) : (
+        <DealListView deals={customerDeals} />
+      ),
     },
     {
       id: "timeline",

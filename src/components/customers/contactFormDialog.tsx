@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useAddContact, useUpdateContact } from "@/hooks/useCustomers";
-import type { Contact } from "@/models/customerModel";
+import type { Contact, CreateContactRequest } from "@/models/customerModel";
 import { useToast } from "@/helper/toastHelper";
 
 const contactSchema = z.object({
@@ -22,11 +22,12 @@ type ContactFormValues = z.infer<typeof contactSchema>;
 interface ContactFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  customerId: string;
+  customerId?: string; // made optional for local-only submission
   contact?: Contact | null;
+  onSubmitLocal?: (data: Omit<CreateContactRequest, "custId">) => void;
 }
 
-export function ContactFormDialog({ open, onOpenChange, customerId, contact }: ContactFormDialogProps) {
+export function ContactFormDialog({ open, onOpenChange, customerId, contact, onSubmitLocal }: ContactFormDialogProps) {
   const { toast } = useToast();
   const addMutation = useAddContact();
   const updateMutation = useUpdateContact();
@@ -71,6 +72,20 @@ export function ContactFormDialog({ open, onOpenChange, customerId, contact }: C
   }, [contact, open, reset]);
 
   const onSubmit = async (data: ContactFormValues) => {
+    if (onSubmitLocal) {
+      onSubmitLocal({
+        name: data.name,
+        role: data.role || undefined,
+        email: data.email || undefined,
+        phone: data.phone || undefined,
+        isPrimary: data.isPrimary,
+      });
+      onOpenChange(false);
+      return;
+    }
+
+    if (!customerId) return;
+
     setIsSubmitting(true);
     try {
       if (isEdit && contact) {

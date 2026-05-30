@@ -3,12 +3,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { CustomerService } from "@/services/customerService";
 import { DepartmentService } from "@/services/departmentService";
+import { DealService } from "@/services/dealService";
 import { UserService } from "@/services/userService";
 import { useAuth } from "@/hooks/useAuth";
 import { canManageUsers } from "@/helper/authHelper";
 
 const customerService = new CustomerService();
 const departmentService = new DepartmentService();
+const dealService = new DealService();
 const userService = new UserService();
 
 export function useDashboardStats() {
@@ -39,15 +41,24 @@ export function useDashboardStats() {
     staleTime: 60_000,
   });
 
+  const dealStatsQuery = useQuery({
+    queryKey: ["dashboard", "deal-stats"],
+    queryFn: () => dealService.getStats(),
+    enabled: !!user,
+    staleTime: 60_000,
+  });
+
   const isLoading =
     customerQuery.isLoading ||
     departmentQuery.isLoading ||
+    dealStatsQuery.isLoading ||
     (isAdmin && usersQuery.isLoading);
 
   return {
     customerCount: customerQuery.data?.pagination.totalCount ?? 0,
     departmentCount: departmentQuery.data?.length ?? 0,
     userCount: usersQuery.data?.length ?? 0,
+    openDealsCount: dealStatsQuery.data?.openCount ?? 0,
     isLoading,
     isAdmin,
     isError:

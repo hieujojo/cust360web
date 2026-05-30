@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { X, Mail, Phone, Building2, User, Calendar, FileText, MessageSquare, DollarSign } from "lucide-react";
+import { useDeals } from "@/hooks/useDeals";
+import { DealListView } from "@/components/deals/dealListView";
 import type { Customer, CustomerStatus, Contact } from "@/models/customerModel";
 import { formatDistanceToNow } from "date-fns";
 import { vi } from "date-fns/locale";
@@ -103,7 +105,7 @@ export function Customer360Panel({ customer, open, onClose }: Customer360PanelPr
         <div className="flex-1 overflow-y-auto p-6">
           {activeTab === "info"     && <InfoTab customer={customer} />}
           {activeTab === "contacts" && <ContactsTab contacts={customer.contacts} />}
-          {activeTab === "deals"    && <PlaceholderTab title="Deals" description="Danh sách deals sẽ hiển thị ở đây khi được kết nối với backend." />}
+          {activeTab === "deals"    && <DealsTab customerId={customer.id} />}
           {activeTab === "timeline" && <PlaceholderTab title="Timeline" description="Lịch sử hoạt động sẽ hiển thị ở đây khi được kết nối với backend." />}
         </div>
       </div>
@@ -196,6 +198,20 @@ function ContactsTab({ contacts }: { contacts: Contact[] }) {
 }
 
 /* ── Placeholder tab ──────────────────────────────────── */
+
+function DealsTab({ customerId }: { customerId: string }) {
+  const { data: deals = [], isLoading } = useDeals({ customerId });
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[220px]">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
+      </div>
+    );
+  }
+
+  return <DealListView deals={deals} />;
+}
 
 function PlaceholderTab({ title, description }: { title: string; description: string }) {
   return (
