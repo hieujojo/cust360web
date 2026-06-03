@@ -10,7 +10,6 @@ import {
   BarChart3,
   Settings,
   Ticket,
-  Activity,
   Search,
   Bell,
   Menu,
@@ -39,7 +38,6 @@ const mainNavItems: NavigationItem[] = [
   { label: "Dashboard",    href: "/dashboard",  icon: LayoutDashboard },
   { label: "Khách hàng",   href: "/customers",  icon: Building2 },
   { label: "Pipeline",     href: "/pipeline",   icon: GitBranch },
-  { label: "Hoạt động",    href: "/activities",  icon: Activity },
   { label: "Tickets",      href: "/tickets",    icon: Ticket },
 ];
 

@@ -48,6 +48,7 @@ export function useUpdateDeal() {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["deals"] });
       queryClient.invalidateQueries({ queryKey: ["deals", "detail", variables.id] });
+      queryClient.invalidateQueries({ queryKey: ["activities"] });
     },
   });
 }
@@ -69,6 +70,7 @@ export function usePatchDealStage() {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["deals"] });
       queryClient.invalidateQueries({ queryKey: ["deals", "detail", variables.id] });
+      queryClient.invalidateQueries({ queryKey: ["activities"] });
     },
   });
 }

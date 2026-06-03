@@ -9,6 +9,7 @@ import {
   Clock,
   User,
   FileText,
+  MessageSquare,
   ChevronRight,
   AlertTriangle,
   TrendingUp,
@@ -21,6 +22,7 @@ import { useQuotations, useDeleteQuotation } from "@/hooks/useQuotations";
 import { QuotationFormDialog } from "@/components/deals/quotationFormDialog";
 import type { Quotation } from "@/models/quotationModel";
 import { useCustomer360 } from "@/hooks/useCustomers";
+import { TimelineTab } from "@/components/activities/timelineTab";
 
 // ─────────────────────────────────────────────
 // Helpers
@@ -44,7 +46,7 @@ export default function DealDetailPage() {
   const { data: deal, isLoading } = useDeal(id);
   const { data: customer360 } = useCustomer360(deal?.customerId ?? "");
   const contactMap = Object.fromEntries(
-    (customer360?.tabs.contacts ?? []).map((c: any) => [c.id, c])
+    (customer360?.tabs.contacts ?? []).map((c: any) => [c.id, c]),
   );
   const [editOpen, setEditOpen] = useState(false);
   const [quoteOpen, setQuoteOpen] = useState(false);
@@ -87,7 +89,8 @@ export default function DealDetailPage() {
     Won: 999,
   };
   const threshold = STUCK_DEFAULTS[deal.stage] ?? 7;
-  const isStuck = !isNaN(daysInStage) && daysInStage > threshold && deal.stage !== "Won";
+  const isStuck =
+    !isNaN(daysInStage) && daysInStage > threshold && deal.stage !== "Won";
 
   // FIX 4: Expected revenue
   const expectedRevenue = (deal.value ?? 0) * ((deal.probability ?? 0) / 100);
@@ -217,19 +220,20 @@ export default function DealDetailPage() {
           <ul className="divide-y divide-slate-100">
             {deal.contacts.map((id: string) => {
               const c = contactMap[id];
-              if (!c) return (
-                <li key={id} className="py-2 text-sm text-gray-400 italic">
-                  Đang tải...
-                </li>
-              );
+              if (!c) return null;
               return (
                 <li key={id} className="flex items-center justify-between py-2">
                   <div>
-                    <p className="text-sm font-medium text-gray-800">{c.name}</p>
+                    <p className="text-sm font-medium text-gray-800">
+                      {c.name}
+                    </p>
                     <p className="text-xs text-gray-500">{c.role}</p>
                   </div>
                   {c.email && (
-                    <a href={`mailto:${c.email}`} className="text-xs text-blue-600 hover:underline">
+                    <a
+                      href={`mailto:${c.email}`}
+                      className="text-xs text-blue-600 hover:underline"
+                    >
                       {c.email}
                     </a>
                   )}
@@ -238,6 +242,14 @@ export default function DealDetailPage() {
             })}
           </ul>
         )}
+      </section>
+
+      <section className="rounded-xl border bg-white p-4">
+        <h2 className="mb-3 flex items-center gap-1.5 text-sm font-semibold">
+          <MessageSquare className="h-4 w-4 text-gray-400" />
+          Hoạt động (Activities)
+        </h2>
+        <TimelineTab customerId={deal.customerId} />
       </section>
 
       {/* ── Quotations ── */}
@@ -267,23 +279,43 @@ export default function DealDetailPage() {
             {quotations.map((q) => {
               let badgeColor = "bg-gray-100 text-gray-700";
               if (q.status === "Sent") badgeColor = "bg-blue-100 text-blue-700";
-              if (q.status === "Accepted") badgeColor = "bg-green-100 text-green-700";
-              if (q.status === "Rejected") badgeColor = "bg-red-100 text-red-700";
+              if (q.status === "Accepted")
+                badgeColor = "bg-green-100 text-green-700";
+              if (q.status === "Rejected")
+                badgeColor = "bg-red-100 text-red-700";
 
               return (
-                <li key={q.id} className="flex items-center justify-between py-3">
+                <li
+                  key={q.id}
+                  className="flex items-center justify-between py-3"
+                >
                   <div>
-                    <p className="font-mono text-sm font-medium text-gray-800">{q.code}</p>
+                    <p className="font-mono text-sm font-medium text-gray-800">
+                      {q.code}
+                    </p>
                     <div className="mt-1 flex flex-wrap items-center gap-2">
-                      <span className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${badgeColor}`}>
+                      <span
+                        className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${badgeColor}`}
+                      >
                         {q.status}
                       </span>
                       <span className="text-xs text-gray-500">
-                        {vnd(q.totalValue, q.currency)}
+                        {vnd(
+                          q.items.reduce(
+                            (sum, item) => sum + item.quantity * item.unitPrice,
+                            0,
+                          ),
+                          q.currency,
+                        )}
                       </span>
-                      <span className="text-xs text-gray-500">Phiên bản {q.version}</span>
+                      <span className="text-xs text-gray-500">
+                        Phiên bản {q.version}
+                      </span>
                       {q.validUntil && (
-                        <span className="text-xs text-gray-500">Hết hạn {new Date(q.validUntil).toLocaleDateString("vi-VN")}</span>
+                        <span className="text-xs text-gray-500">
+                          Hết hạn{" "}
+                          {new Date(q.validUntil).toLocaleDateString("vi-VN")}
+                        </span>
                       )}
                     </div>
                   </div>
@@ -409,13 +441,22 @@ function Info({
       <p
         className={[
           "mt-1 text-sm font-semibold",
-          highlight ? "text-blue-700" : danger ? "text-red-600" : "text-gray-800",
+          highlight
+            ? "text-blue-700"
+            : danger
+              ? "text-red-600"
+              : "text-gray-800",
         ].join(" ")}
       >
         {value}
       </p>
       {sub && (
-        <p className={["mt-0.5 text-xs", danger ? "text-red-400" : "text-gray-400"].join(" ")}>
+        <p
+          className={[
+            "mt-0.5 text-xs",
+            danger ? "text-red-400" : "text-gray-400",
+          ].join(" ")}
+        >
           {sub}
         </p>
       )}

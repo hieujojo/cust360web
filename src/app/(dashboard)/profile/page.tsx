@@ -1,7 +1,8 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-import { Loader2, User as UserIcon, Mail, Phone, Shield, Building2 } from "lucide-react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Loader2, User as UserIcon, Mail, Phone, Shield, Building2, Camera } from "lucide-react";
+import { ChangeEvent, useState, useRef } from "react";
 import {
   Card,
   CardContent,
@@ -10,13 +11,42 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { userService } from "@/services";
+import { User } from "@/models";
 
 export default function ProfilePage() {
+  const queryClient = useQueryClient();
   const { data: profile, isLoading } = useQuery({
     queryKey: ["profile"],
     queryFn: () => userService.getCurrentUser(),
   });
+
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const saveAvatarMutation = useMutation<User, Error, string>({
+    mutationFn: (avatarUrl: string) => userService.updateMyProfile({ avatarUrl }),
+    onSuccess: (updatedProfile: User) => {
+      queryClient.setQueryData(["profile"], updatedProfile);
+      setAvatarPreview(null);
+    },
+  });
+
+  const handleAvatarClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleAvatarChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAvatarPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -33,6 +63,58 @@ export default function ProfilePage() {
         <p className="text-muted-foreground">Xem thông tin cá nhân của bạn</p>
       </div>
 
+      {/* Avatar Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Ảnh đại diện</CardTitle>
+          <CardDescription>Cập nhật ảnh profile của bạn</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+            <div className="relative w-24 h-24">
+              <img
+                src={avatarPreview || profile?.avatarUrl || "/default-avatar.png"}
+                alt="Avatar"
+                className="w-full h-full rounded-full object-cover border-2 border-muted"
+              />
+              <button
+                onClick={handleAvatarClick}
+                className="absolute bottom-0 right-0 bg-primary text-primary-foreground rounded-full p-2 hover:bg-primary/90"
+              >
+                <Camera className="h-4 w-4" />
+              </button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleAvatarChange}
+                className="hidden"
+              />
+            </div>
+            <div className="flex-1 space-y-3">
+              <p className="text-sm text-muted-foreground">
+                Nhấp vào icon camera để chọn ảnh đại diện mới.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  onClick={() => saveAvatarMutation.mutate(avatarPreview ?? "")}
+                  disabled={!avatarPreview || saveAvatarMutation.isPending}
+                  variant="secondary"
+                >
+                  {saveAvatarMutation.isPending ? "Đang lưu..." : "Lưu ảnh"}
+                </Button>
+                {avatarPreview && (
+                  <span className="text-sm text-muted-foreground">Ảnh mới đã sẵn sàng để lưu.</span>
+                )}
+              </div>
+              {saveAvatarMutation.isError && (
+                <p className="text-sm text-destructive">Không lưu được ảnh. Vui lòng thử lại.</p>
+              )}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Profile Information */}
       <Card>
         <CardHeader>
@@ -47,7 +129,15 @@ export default function ProfilePage() {
               <p className="text-sm font-medium">{profile?.email}</p>
             </div>
           </div>
-          
+
+          <div className="flex items-center gap-3">
+            <UserIcon className="h-4 w-4 text-muted-foreground shrink-0" />
+            <div>
+              <p className="text-xs text-muted-foreground">Mã nhân viên</p>
+              <p className="text-sm font-medium">{profile?.employeeCode}</p>
+            </div>
+          </div>
+
           <div className="flex items-center gap-3">
             <UserIcon className="h-4 w-4 text-muted-foreground shrink-0" />
             <div>
@@ -102,7 +192,7 @@ export default function ProfilePage() {
       <Card className="border-muted">
         <CardContent className="pt-6">
           <p className="text-sm text-muted-foreground">
-            💡 <strong>Lưu ý:</strong> Để cập nhật thông tin cá nhân, vui lòng liên hệ với quản trị viên.
+            💡 <strong>Lưu ý:</strong> Để cập nhật các thông tin cá nhân khác (ngoài ảnh đại diện), vui lòng liên hệ với quản trị viên.
           </p>
         </CardContent>
       </Card>

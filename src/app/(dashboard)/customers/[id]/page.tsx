@@ -16,6 +16,7 @@ import { CustomerInfoTab } from "@/components/customers/customerInfoTab";
 import { ContactsTab } from "@/components/customers/contactsTab";
 import { PlaceholderTab } from "@/components/customers/placeholderTab";
 import { DealListView } from "@/components/deals/dealListView";
+import { TimelineTab } from "@/components/activities/timelineTab";
 
 // Dialogs
 import { StatusChangeDialog } from "@/components/customers/statusChangeDialog";
@@ -107,10 +108,7 @@ export default function Customer360Page() {
     {
       id: "timeline",
       label: "Lịch sử hoạt động",
-      content: <PlaceholderTab 
-        title="Timeline" 
-        description="Ghi nhận mọi lịch sử tương tác, meeting, gọi điện, email." 
-      />
+      content: <TimelineTab customerId={id} />,
     },
     {
       id: "tickets",

@@ -21,6 +21,10 @@ export default function SettingsPage() {
         <p className="font-medium">Pipeline Stages</p>
         <p className="text-sm text-gray-500">Cấu hình stage cho sales pipeline.</p>
       </Link>
+      <Link href="/settings/google" className="block rounded-xl border bg-white p-4 hover:bg-slate-50">
+        <p className="font-medium">Gmail & Calendar</p>
+        <p className="text-sm text-gray-500">Kết nối Google để tự động đồng bộ hoạt động vào timeline.</p>
+      </Link>
     </div>
   );
 }

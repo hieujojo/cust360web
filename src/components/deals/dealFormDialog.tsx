@@ -104,10 +104,16 @@ export function DealFormDialog({ open, onOpenChange, deal }: DealFormDialogProps
 
   const onSubmit = async (values: FormValues) => {
     try {
+      const payload = {
+        ...values,
+        expectedCloseDate: values.expectedCloseDate ? values.expectedCloseDate : undefined,
+        owner: values.owner && values.owner.length > 0 ? values.owner : undefined,
+      } as FormValues & { expectedCloseDate?: string; owner?: string };
+
       if (deal) {
-        await updateDeal.mutateAsync({ id: deal.id, payload: values });
+        await updateDeal.mutateAsync({ id: deal.id, payload });
       } else {
-        await createDeal.mutateAsync(values);
+        await createDeal.mutateAsync(payload);
       }
       toast({ title: "Thành công", description: deal ? "Đã cập nhật deal." : "Đã tạo deal mới." });
       onOpenChange(false);

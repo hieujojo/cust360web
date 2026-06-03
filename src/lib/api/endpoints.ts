@@ -57,6 +57,23 @@ export const CUSTOMER_ENDPOINTS = {
 } as const;
 
 // ============================================
+// ACTIVITY ENDPOINTS (Module 4)
+// ============================================
+export const ACTIVITY_ENDPOINTS = {
+  LIST: "/activities",
+  DETAIL: (id: string) => `/activities/${id}`,
+  CREATE: "/activities",
+  UPDATE: (id: string) => `/activities/${id}`,
+  DELETE: (id: string) => `/activities/${id}`,
+} as const;
+
+export const GOOGLE_ENDPOINTS = {
+  CONNECT_URL: "/auth/google/connect-url",
+  STATUS: "/auth/google/status",
+  DISCONNECT: "/auth/google/disconnect",
+} as const;
+
+// ============================================
 // SALES ENDPOINTS (Phase 3)
 // ============================================
 export const SALES_ENDPOINTS = {

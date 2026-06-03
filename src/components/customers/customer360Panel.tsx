@@ -4,6 +4,7 @@ import { useState } from "react";
 import { X, Mail, Phone, Building2, User, Calendar, FileText, MessageSquare, DollarSign } from "lucide-react";
 import { useDeals } from "@/hooks/useDeals";
 import { DealListView } from "@/components/deals/dealListView";
+import { TimelineTab } from "@/components/activities/timelineTab";
 import type { Customer, CustomerStatus, Contact } from "@/models/customerModel";
 import { formatDistanceToNow } from "date-fns";
 import { vi } from "date-fns/locale";
@@ -106,7 +107,9 @@ export function Customer360Panel({ customer, open, onClose }: Customer360PanelPr
           {activeTab === "info"     && <InfoTab customer={customer} />}
           {activeTab === "contacts" && <ContactsTab contacts={customer.contacts} />}
           {activeTab === "deals"    && <DealsTab customerId={customer.id} />}
-          {activeTab === "timeline" && <PlaceholderTab title="Timeline" description="Lịch sử hoạt động sẽ hiển thị ở đây khi được kết nối với backend." />}
+          {activeTab === "timeline" && customer && (
+            <TimelineTab customerId={customer.id} compact />
+          )}
         </div>
       </div>
     </>

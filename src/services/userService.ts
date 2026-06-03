@@ -135,6 +135,11 @@ export class UserService {
     return mapUser(response.data);
   }
 
+  async updateMyProfile(data: Partial<Pick<User, "displayName" | "phone" | "avatarUrl">>): Promise<User> {
+    const response = await apiClient.put<UserDto>(USER_ENDPOINTS.ME, data);
+    return mapUser(response.data);
+  }
+
   /** PUT /api/admin/users/{id}/status */
   async toggleUserStatus(
     id: string,
