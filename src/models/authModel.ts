@@ -11,6 +11,7 @@ export interface LoginResponse {
   accessToken: string;
   expiresAt: string;
   user: User;
+  firebaseToken: string;
 }
 
 // ─── Forgot / Reset Password ──────────────────────────────────────────────────

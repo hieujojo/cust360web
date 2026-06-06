@@ -1,12 +1,19 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Plus } from "lucide-react";
-import { useDeals, usePatchDealStage, usePipelineStages } from "@/hooks/useDeals";
+import {
+  useDeals,
+  usePatchDealStage,
+  usePipelineStages,
+} from "@/hooks/useDeals";
+import { useAuth } from "@/hooks/useAuth";
+import { usePipelineSync } from "@/hooks/usePipelineSync";
 import { useToast } from "@/helper/toastHelper";
 import { DealFormDialog } from "@/components/deals/dealFormDialog";
 import { KanbanBoard } from "@/components/deals/kanbanBoard";
 import { DealListView } from "@/components/deals/dealListView";
+import type { Deal } from "@/models/dealModel";
 
 export default function PipelinePage() {
   const [view, setView] = useState<"kanban" | "list">("kanban");
@@ -15,6 +22,8 @@ export default function PipelinePage() {
   const [owner, setOwner] = useState("");
   const [search, setSearch] = useState("");
   const { toast } = useToast();
+  const { user } = useAuth();
+  const { latestEvent } = usePipelineSync(user?.organizationId);
 
   const { data: stages = [] } = usePipelineStages();
   const { data: deals = [], isLoading } = useDeals({
@@ -24,20 +33,62 @@ export default function PipelinePage() {
     sort: "updatedAt:desc",
   });
   const patchStage = usePatchDealStage();
+  const [kanbanDeals, setKanbanDeals] = useState<Deal[]>([]);
+
+  useEffect(() => {
+    setKanbanDeals(deals);
+  }, [JSON.stringify(deals)]);
+
+  useEffect(() => {
+    if (!latestEvent?.dealId || !latestEvent.stage) return;
+
+    setKanbanDeals((prev) =>
+      prev.map((deal) => {
+        if (deal.id !== latestEvent.dealId) return deal;
+        if (deal.stage === latestEvent.stage) return deal;
+
+        const changedAt = latestEvent.createdAt.toISOString();
+        return {
+          ...deal,
+          stage: latestEvent.stage,
+          updatedAt: changedAt,
+          stageHistory: [
+            {
+              stage: latestEvent.stage,
+              changedAt,
+              changedBy: latestEvent.changedBy ?? "",
+            },
+            ...(deal.stageHistory ?? []),
+          ],
+        };
+      }),
+    );
+  }, [latestEvent]);
 
   const ownerOptions = useMemo(
     () =>
-      Array.from(new Set(deals.map((d) => JSON.stringify({ id: d.ownerId, name: d.ownerName })))).map((x) =>
-        JSON.parse(x),
-      ),
+      Array.from(
+        new Set(
+          deals.map((d) =>
+            JSON.stringify({ id: d.ownerId, name: d.ownerName }),
+          ),
+        ),
+      ).map((x) => JSON.parse(x)),
     [deals],
   );
 
   const handleChangeStage = async (dealId: string, nextStage: string) => {
     try {
-      await patchStage.mutateAsync({ id: dealId, payload: { stage: nextStage } });
+      await patchStage.mutateAsync({
+        id: dealId,
+        payload: { stage: nextStage },
+      });
     } catch {
-      toast({ title: "Lỗi", description: "Không thể chuyển stage.", variant: "destructive" });
+      toast({
+        title: "Lỗi",
+        description: "Không thể chuyển stage.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -46,7 +97,9 @@ export default function PipelinePage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-semibold">Sales Pipeline</h1>
-          <p className="text-sm text-gray-500">Kanban realtime và danh sách deal.</p>
+          <p className="text-sm text-gray-500">
+            Kanban realtime và danh sách deal.
+          </p>
         </div>
         <button
           onClick={() => setCreateOpen(true)}
@@ -64,7 +117,11 @@ export default function PipelinePage() {
           placeholder="Search title/notes"
           className="h-9 rounded-lg border px-3 text-sm"
         />
-        <select value={stage} onChange={(e) => setStage(e.target.value)} className="h-9 rounded-lg border px-3 text-sm">
+        <select
+          value={stage}
+          onChange={(e) => setStage(e.target.value)}
+          className="h-9 rounded-lg border px-3 text-sm"
+        >
           <option value="">All stages</option>
           {stages.map((s) => (
             <option key={s.id} value={s.name}>
@@ -72,7 +129,11 @@ export default function PipelinePage() {
             </option>
           ))}
         </select>
-        <select value={owner} onChange={(e) => setOwner(e.target.value)} className="h-9 rounded-lg border px-3 text-sm">
+        <select
+          value={owner}
+          onChange={(e) => setOwner(e.target.value)}
+          className="h-9 rounded-lg border px-3 text-sm"
+        >
           <option value="">All owners</option>
           {ownerOptions.map((o: { id: string; name: string }) => (
             <option key={o.id} value={o.id}>
@@ -99,7 +160,11 @@ export default function PipelinePage() {
       {isLoading ? (
         <div className="py-10 text-center text-gray-500">Đang tải...</div>
       ) : view === "kanban" ? (
-        <KanbanBoard deals={deals} stages={stages} onChangeStage={handleChangeStage} />
+        <KanbanBoard
+          deals={kanbanDeals}
+          stages={stages}
+          onChangeStage={handleChangeStage}
+        />
       ) : (
         <DealListView deals={deals} />
       )}
@@ -108,4 +173,3 @@ export default function PipelinePage() {
     </div>
   );
 }
-

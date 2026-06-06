@@ -17,7 +17,6 @@ import {
   extractErrorMessage,
 } from "@/lib/api/client";
 import { AuthService } from "@/services";
-import type { LoginResponse } from "@/models";
 
 const loginSchema = z.object({
   email: z.string().email("Email không hợp lệ"),
@@ -49,7 +48,7 @@ export function LoginForm() {
         password: data.password,
       });
 
-      const { accessToken, user } = loginResponse;
+      const { accessToken, user, firebaseToken  } = loginResponse;
 
       if (!accessToken) {
         throw new Error("Token not received from server");
@@ -59,7 +58,7 @@ export function LoginForm() {
         throw new Error("User data incomplete");
       }
 
-      login(user, accessToken);
+      await login(user, accessToken , firebaseToken);
 
       toast({
         title: "Đăng nhập thành công",

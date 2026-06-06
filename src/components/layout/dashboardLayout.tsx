@@ -11,7 +11,6 @@ import {
   Settings,
   Ticket,
   Search,
-  Bell,
   Menu,
   X,
   ChevronRight,
@@ -24,6 +23,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { toggleSidebar, setSidebarOpen } from "@/store/uiSlice";
 import { canManageUsers } from "@/helper/authHelper";
 import { UserDropdown } from "./userDropdown";
+import { NotificationBell } from "@/components/notifications/notificationBell";
 
 /* ────────────────── Navigation config ────────────────── */
 
@@ -277,15 +277,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             />
           </div>
 
-          {/* Notification bell */}
-          <button
-            className="relative p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
-            aria-label="Thông báo"
-          >
-            <Bell className="h-[18px] w-[18px] text-gray-500" />
-            {/* Unread dot — TODO: wire to backend notification count */}
-            <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-[var(--crm-danger)] ring-2 ring-white" />
-          </button>
+          <NotificationBell />
 
           {/* User dropdown */}
           <UserDropdown user={user} />

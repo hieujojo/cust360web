@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { User } from "@/models";
 import { setAuthToken, removeAuthToken } from "@/lib/api/client";
-
+import { signInWithCustomToken, signOut } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 /**
  * Custom hook for authentication
  * Manages user state and token in localStorage
@@ -17,7 +18,7 @@ export function useAuth() {
 
   useEffect(() => {
     setIsMounted(true);
-    
+
     // Load user from localStorage on mount (client-side only)
     if (typeof window !== "undefined") {
       const storedUser = localStorage.getItem("user");
@@ -36,7 +37,7 @@ export function useAuth() {
     setIsLoading(false);
   }, []);
 
-  const login = (user: User, token: string) => {
+  const login = async (user: User, token: string, firebaseToken: string) => {
     if (typeof window !== "undefined") {
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("accessToken", token);
@@ -45,20 +46,22 @@ export function useAuth() {
       setAuthToken(token);
 
       // Set cookie for middleware
-      document.cookie = `accessToken=${token}; path=/; max-age=${60 * 60}`; // 1 hour
+      document.cookie = `accessToken=${token}; path=/; max-age=${60 * 60}`;
+      await signInWithCustomToken(auth, firebaseToken);
     }
   };
 
-  const logout = () => {
-  if (typeof window !== "undefined") {
-    localStorage.removeItem("user");
-    localStorage.removeItem("accessToken");
-    document.cookie = "accessToken=; path=/; max-age=0";
-    removeAuthToken();
-    setUser(null);
-    router.push("/login"); // ✅ Dùng Next.js router, không reload
-  }
-};
+  const logout = async () => {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("user");
+      localStorage.removeItem("accessToken");
+      document.cookie = "accessToken=; path=/; max-age=0";
+      removeAuthToken();
+      setUser(null);
+      await signOut(auth);
+      router.push("/login"); // ✅ Dùng Next.js router, không reload
+    }
+  };
 
   const isAuthenticated = !!user;
 
