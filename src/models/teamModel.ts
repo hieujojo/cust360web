@@ -5,6 +5,8 @@ export interface Team {
   name: string;
   description?: string;
   leadId?: string;
+  leadName?: string;
+  memberCount?: number;
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;

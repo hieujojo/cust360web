@@ -141,7 +141,7 @@ export function CreateUserDialog({ open, onOpenChange }: DialogProps) {
       setSelectedDepartmentId("");
       onOpenChange(false);
     } catch (error) {
-      toast({ variant: "destructive", title: "Loi", description: extractErrorMessage(error) });
+      toast({ variant: "destructive", title: "Lỗi", description: extractErrorMessage(error) });
     }
   };
 
@@ -332,7 +332,7 @@ export function EditUserDialog({ open, onOpenChange, user }: UserDialogProps) {
       setSelectedDepartmentId("");
       onOpenChange(false);
     } catch (error) {
-      toast({ variant: "destructive", title: "Loi", description: extractErrorMessage(error) });
+      toast({ variant: "destructive", title: "Lỗi", description: extractErrorMessage(error) });
     }
   };
 
@@ -342,8 +342,8 @@ export function EditUserDialog({ open, onOpenChange, user }: UserDialogProps) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>Chinh sua thong tin nguoi dung</DialogTitle>
-          <DialogDescription>Cap nhat thong tin cho {user.email}</DialogDescription>
+          <DialogTitle>Chỉnh sửa thông tin người dùng</DialogTitle>
+          <DialogDescription>Cập nhật thông tin cho {user.email}</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -351,19 +351,19 @@ export function EditUserDialog({ open, onOpenChange, user }: UserDialogProps) {
           <div className="space-y-2">
             <Label htmlFor="edit-email">Email</Label>
             <Input id="edit-email" type="email" value={user.email} disabled className="bg-muted" />
-            <p className="text-xs text-muted-foreground">Email khong the thay doi</p>
+            <p className="text-xs text-muted-foreground">Email không thể thay đổi</p>
           </div>
 
           {/* Họ và tên */}
           <div className="space-y-2">
-            <Label htmlFor="edit-displayName">Ho va ten *</Label>
+            <Label htmlFor="edit-displayName">Họ và tên *</Label>
             <Input id="edit-displayName" placeholder="Nguyen Van A" {...register("displayName")} />
             {errors.displayName && <p className="text-sm text-destructive">{errors.displayName.message}</p>}
           </div>
 
           {/* Vai trò */}
           <div className="space-y-2">
-            <Label htmlFor="edit-role">Vai tro *</Label>
+            <Label htmlFor="edit-role">Vai trò *</Label>
             <Controller
               name="role"
               control={control}
@@ -379,7 +379,7 @@ export function EditUserDialog({ open, onOpenChange, user }: UserDialogProps) {
                     }
                   }}
                 >
-                  <SelectTrigger id="edit-role"><SelectValue placeholder="Chon vai tro" /></SelectTrigger>
+                  <SelectTrigger id="edit-role"><SelectValue placeholder="Chọn vai trò" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="2">Admin</SelectItem>
                     <SelectItem value="3">User</SelectItem>
@@ -393,14 +393,14 @@ export function EditUserDialog({ open, onOpenChange, user }: UserDialogProps) {
           {/* Phòng ban */}
           <div className="space-y-2">
             <Label htmlFor="edit-departmentId">
-              Phong ban {currentRole === UserRole.User && <span className="text-destructive">*</span>}
+              Phòng ban {currentRole === UserRole.User && <span className="text-destructive">*</span>}
             </Label>
             <Controller
               name="departmentId"
               control={control}
               render={({ field }) => (
                 <Select value={field.value || ""} onValueChange={handleDepartmentChange}>
-                  <SelectTrigger id="edit-departmentId"><SelectValue placeholder="Chon phong ban" /></SelectTrigger>
+                  <SelectTrigger id="edit-departmentId"><SelectValue placeholder="Chọn phòng ban" /></SelectTrigger>
                   <SelectContent>
                     {departments.map((dept) => (
                       <SelectItem key={dept.id} value={dept.id}>{dept.name}</SelectItem>
@@ -415,20 +415,20 @@ export function EditUserDialog({ open, onOpenChange, user }: UserDialogProps) {
           {/* Team — chỉ hiện khi đã chọn phòng ban */}
           {currentDepartmentId && (
             <div className="space-y-2">
-              <Label htmlFor="edit-teamId">Team (tuy chon)</Label>
+              <Label htmlFor="edit-teamId">Team (tùy chọn)</Label>
               <Controller
                 name="teamId"
                 control={control}
                 render={({ field }) => (
                   <Select value={field.value || ""} onValueChange={field.onChange}>
-                    <SelectTrigger id="edit-teamId"><SelectValue placeholder="Chon team" /></SelectTrigger>
+                    <SelectTrigger id="edit-teamId"><SelectValue placeholder="Chọn team" /></SelectTrigger>
                     <SelectContent>
                       {teams.length > 0 ? (
                         teams.map((team) => (
                           <SelectItem key={team.id} value={team.id}>{team.name}</SelectItem>
                         ))
                       ) : (
-                        <div className="p-2 text-sm text-muted-foreground">Khong co team trong phong ban nay</div>
+                        <div className="p-2 text-sm text-muted-foreground">không có team trong phòng ban này</div>
                       )}
                     </SelectContent>
                   </Select>
@@ -439,18 +439,18 @@ export function EditUserDialog({ open, onOpenChange, user }: UserDialogProps) {
 
           {/* Số điện thoại */}
           <div className="space-y-2">
-            <Label htmlFor="edit-phone">So dien thoai</Label>
+            <Label htmlFor="edit-phone">Số điện thoại</Label>
             <Input id="edit-phone" type="tel" placeholder="0901234567" {...register("phone")} />
             {errors.phone && <p className="text-sm text-destructive">{errors.phone.message}</p>}
           </div>
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => { reset(); setSelectedDepartmentId(""); onOpenChange(false); }}>
-              Huy
+              Hủy
             </Button>
             <Button type="submit" disabled={updateUser.isPending}>
               {updateUser.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Cap nhat
+              Cập nhật
             </Button>
           </DialogFooter>
         </form>

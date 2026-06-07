@@ -48,10 +48,32 @@ export function useDashboardStats() {
     staleTime: 60_000,
   });
 
+  // Lấy danh sách deals để lọc hoạt động hôm nay
+  const dealsQuery = useQuery({
+    queryKey: ["dashboard", "deals-today"],
+    queryFn: () => dealService.list(),
+    enabled: !!user,
+    staleTime: 60_000,
+  });
+
+  // Đếm deals có hoạt động hôm nay (updatedAt là hôm nay)
+  const getTodayDealsCount = () => {
+    if (!dealsQuery.data) return 0;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    return dealsQuery.data.filter((deal) => {
+      const updatedDate = new Date(deal.updatedAt);
+      updatedDate.setHours(0, 0, 0, 0);
+      return updatedDate.getTime() === today.getTime();
+    }).length;
+  };
+
   const isLoading =
     customerQuery.isLoading ||
     departmentQuery.isLoading ||
     dealStatsQuery.isLoading ||
+    dealsQuery.isLoading ||
     (isAdmin && usersQuery.isLoading);
 
   return {
@@ -59,6 +81,7 @@ export function useDashboardStats() {
     departmentCount: departmentQuery.data?.length ?? 0,
     userCount: usersQuery.data?.length ?? 0,
     openDealsCount: dealStatsQuery.data?.openCount ?? 0,
+    todayDealsCount: getTodayDealsCount(),
     isLoading,
     isAdmin,
     isError:

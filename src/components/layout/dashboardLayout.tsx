@@ -22,6 +22,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { toggleSidebar, setSidebarOpen } from "@/store/uiSlice";
 import { canManageUsers } from "@/helper/authHelper";
+import { useOrganizationProfile } from "@/hooks/useOrganizationSettings";
 import { UserDropdown } from "./userDropdown";
 import { NotificationBell } from "@/components/notifications/notificationBell";
 
@@ -80,6 +81,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const pathname = usePathname();
   const router = useRouter();
   const { user, isLoading } = useAuth();
+  const { data: orgProfile } = useOrganizationProfile();
 
   const dispatch = useAppDispatch();
   const isSidebarOpen = useAppSelector((state) => state.ui.isSidebarOpen);
@@ -146,11 +148,22 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       >
         {/* Sidebar header — Logo */}
         <div className="flex h-[52px] items-center gap-2.5 border-b border-[var(--crm-border)] px-4">
-          <Link href="/dashboard" className="flex items-center gap-2.5">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--crm-primary)] text-white text-xs font-semibold">
-              C
-            </div>
-            <span className="text-[13px] font-medium text-gray-900">CRM Customer 360</span>
+          <Link href="/dashboard" className="flex items-center gap-2.5 min-w-0">
+            {orgProfile?.logoUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={orgProfile.logoUrl}
+                alt={orgProfile.name}
+                className="h-7 w-7 shrink-0 rounded-lg object-contain"
+              />
+            ) : (
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[var(--crm-primary)] text-white text-xs font-semibold">
+                {(orgProfile?.name ?? "C").charAt(0).toUpperCase()}
+              </div>
+            )}
+            <span className="text-[13px] font-medium text-gray-900 truncate">
+              {orgProfile?.name ?? "CRM Customer 360"}
+            </span>
           </Link>
           <button
             className="ml-auto md:hidden p-1 rounded hover:bg-gray-100"
@@ -229,18 +242,6 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           )}
         </nav>
 
-        {/* Sidebar footer — User info */}
-        <div className="border-t border-[var(--crm-border)] p-3">
-          <div className="flex items-center gap-2.5 rounded-lg px-2 py-2 hover:bg-gray-50 transition-colors">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--crm-primary)] text-white text-[11px] font-semibold">
-              {initials}
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-[13px] font-medium text-gray-900 truncate">{user.displayName}</p>
-              <p className="text-[11px] text-gray-500 truncate">{user.roleName || "User"}</p>
-            </div>
-          </div>
-        </div>
       </aside>
 
       {/* ══════════ Main area ══════════ */}
@@ -266,16 +267,6 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
           {/* Spacer */}
           <div className="flex-1" />
-
-          {/* Search bar */}
-          <div className="relative hidden sm:block">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Tìm kiếm..."
-              className="h-8 w-[240px] rounded-lg border border-[var(--crm-border)] bg-[var(--crm-surface)] pl-9 pr-3 text-[13px] text-gray-700 placeholder:text-gray-400 outline-none focus:border-[var(--crm-primary)] focus:ring-1 focus:ring-[var(--crm-primary)]/20 transition-colors"
-            />
-          </div>
 
           <NotificationBell />
 

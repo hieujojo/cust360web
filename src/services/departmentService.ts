@@ -18,9 +18,13 @@ function toDate(value?: string | Date): Date {
 function mapDepartment(dto?: DepartmentDto | null): Department {
   return {
     id: dto?.id ?? "",
-    organizationId: dto?.organizationId ?? "",
+    organizationId: dto?.organizationId,
     name: dto?.name ?? "",
     description: dto?.description,
+    managerId: (dto as { managerId?: string })?.managerId,
+    managerName: (dto as { managerName?: string })?.managerName,
+    teamCount: (dto as { teamCount?: number })?.teamCount,
+    userCount: (dto as { userCount?: number })?.userCount,
     isDeleted: dto?.isDeleted ?? false,
     createdAt: toDate(dto?.createdAt),
     updatedAt: toDate(dto?.updatedAt),
@@ -32,6 +36,7 @@ function buildPayload(data: Partial<Department>) {
   return {
     name: data.name,
     description: data.description,
+    managerId: data.managerId,
   };
 }
 

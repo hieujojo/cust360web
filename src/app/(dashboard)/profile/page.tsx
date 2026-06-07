@@ -14,8 +14,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { userService } from "@/services";
 import { User } from "@/models";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function ProfilePage() {
+  const { updateUser } = useAuth();
   const queryClient = useQueryClient();
   const { data: profile, isLoading } = useQuery({
     queryKey: ["profile"],
@@ -23,13 +25,16 @@ export default function ProfilePage() {
   });
 
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const saveAvatarMutation = useMutation<User, Error, string>({
-    mutationFn: (avatarUrl: string) => userService.updateMyProfile({ avatarUrl }),
+  const saveAvatarMutation = useMutation<User, Error, File>({
+    mutationFn: (file: File) => userService.uploadMyAvatar(file),
     onSuccess: (updatedProfile: User) => {
       queryClient.setQueryData(["profile"], updatedProfile);
+      updateUser({ avatarUrl: updatedProfile.avatarUrl });
       setAvatarPreview(null);
+      setSelectedFile(null);
     },
   });
 
@@ -40,6 +45,7 @@ export default function ProfilePage() {
   const handleAvatarChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setSelectedFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setAvatarPreview(reader.result as string);
@@ -97,8 +103,8 @@ export default function ProfilePage() {
               </p>
               <div className="flex flex-wrap gap-2">
                 <Button
-                  onClick={() => saveAvatarMutation.mutate(avatarPreview ?? "")}
-                  disabled={!avatarPreview || saveAvatarMutation.isPending}
+                  onClick={() => selectedFile && saveAvatarMutation.mutate(selectedFile)}
+                  disabled={!selectedFile || saveAvatarMutation.isPending}
                   variant="secondary"
                 >
                   {saveAvatarMutation.isPending ? "Đang lưu..." : "Lưu ảnh"}

@@ -5,3 +5,4 @@ export * from "./auditLogModel";
 export * from "./authModel";
 export * from "./customerModel";
 export * from "./dealModel";
+export * from "./organizationModel";

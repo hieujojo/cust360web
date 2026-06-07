@@ -11,22 +11,26 @@ export const AUTH_ENDPOINTS = {
 // ============================================
 export const USER_ENDPOINTS = {
   ME: "/users/me",
+  UPLOAD_AVATAR: "/users/me/avatar",
   CHANGE_PASSWORD: "/users/me/password",
   DETAIL: (id: string) => `/users/${id}`,
 } as const;
 
 // ============================================
-// ADMIN - USER MANAGEMENT ENDPOINTS
+// SETTINGS - USER MANAGEMENT ENDPOINTS
 // ============================================
-export const ADMIN_USER_ENDPOINTS = {
-  LIST: "/admin/users",
-  ALL: "/admin/users/all",
-  DETAIL: (id: string) => `/admin/users/${id}`,
-  CREATE: "/admin/users",
-  UPDATE: (id: string) => `/admin/users/${id}`,
-  TOGGLE_STATUS: (id: string) => `/admin/users/${id}/status`,
-  RESET_PASSWORD: (id: string) => `/admin/users/${id}/reset-password`,
+export const SETTINGS_USER_ENDPOINTS = {
+  LIST: "/settings/users",
+  ALL: "/settings/users/all",
+  DETAIL: (id: string) => `/settings/users/${id}`,
+  CREATE: "/settings/users",
+  UPDATE: (id: string) => `/settings/users/${id}`,
+  TOGGLE_STATUS: (id: string) => `/settings/users/${id}/status`,
+  RESET_PASSWORD: (id: string) => `/settings/users/${id}/reset-password`,
 } as const;
+
+/** @deprecated Use SETTINGS_USER_ENDPOINTS */
+export const ADMIN_USER_ENDPOINTS = SETTINGS_USER_ENDPOINTS;
 
 // ============================================
 // AUDIT LOG ENDPOINTS
@@ -95,11 +99,11 @@ export const SALES_ENDPOINTS = {
 // DEPARTMENT ENDPOINTS (Phase 2)
 // ============================================
 export const DEPARTMENT_ENDPOINTS = {
-  LIST: "/departments",
-  DETAIL: (id: string) => `/departments/${id}`,
-  CREATE: "/departments",
-  UPDATE: (id: string) => `/departments/${id}`,
-  DELETE: (id: string) => `/departments/${id}`,
+  LIST: "/settings/departments",
+  DETAIL: (id: string) => `/settings/departments/${id}`,
+  CREATE: "/settings/departments",
+  UPDATE: (id: string) => `/settings/departments/${id}`,
+  DELETE: (id: string) => `/settings/departments/${id}`,
 } as const;
 
 // ============================================
@@ -130,6 +134,8 @@ export const NOTIFICATION_ENDPOINTS = {
 // SETTINGS ENDPOINTS (Phase 2)
 // ============================================
 export const SETTINGS_ENDPOINTS = {
+  ORGANIZATION: "/settings/organization",
+  ORGANIZATION_LOGO: "/settings/organization/logo",
   SYSTEM: "/settings/system",
   UPDATE_SYSTEM: "/settings/system",
   EMAIL: "/settings/email",

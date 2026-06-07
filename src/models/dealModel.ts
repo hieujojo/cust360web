@@ -65,12 +65,14 @@ export interface PipelineStage {
   name: string;
   order: number;
   color: string;
+  defaultProbability: number;
   stuckThreshold: number;
 }
 
 export interface UpsertPipelineStageRequest {
   name: string;
   color: string;
+  defaultProbability: number;
   stuckThreshold: number;
 }
 

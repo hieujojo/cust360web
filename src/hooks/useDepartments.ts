@@ -1,20 +1,10 @@
 // hooks/useDepartments.ts
-import { useState, useEffect, useMemo } from "react";
-import { DepartmentService } from "@/services/departmentService";
-import { Department } from "@/models";
+import { useMemo } from "react";
+import { useDepartmentList } from "@/hooks/useDepartmentSettings";
 import type { User } from "@/models";
 
-const departmentService = new DepartmentService();
-
 export function useDepartments(items: User[] = [], departmentFilter: string = "", teamFilter: string = "") {
-  const [departments, setDepartments] = useState<Department[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    departmentService.getAll()
-      .then(setDepartments)
-      .finally(() => setLoading(false));
-  }, []);
+  const { data: departments = [], isLoading: loading } = useDepartmentList();
 
   const filteredItems = useMemo(() => {
     let result = items;
@@ -29,7 +19,6 @@ export function useDepartments(items: User[] = [], departmentFilter: string = ""
 
   const activeCount = useMemo(() => filteredItems.filter((u) => u.isActive).length, [filteredItems]);
   const adminCount  = useMemo(() => filteredItems.filter((u) => u.role <= 2).length, [filteredItems]);
-  const salesCount  = useMemo(() => filteredItems.filter((u) => u.role >= 3).length, [filteredItems]);
 
-  return { departments, loading, filteredItems, activeCount, adminCount, salesCount };
+  return { departments, loading, filteredItems, activeCount, adminCount };
 }

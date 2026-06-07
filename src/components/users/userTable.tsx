@@ -9,6 +9,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import {
+  KeyRound,
   Pencil,
   Search,
   UserCheck,
@@ -22,6 +23,7 @@ interface UserTableProps {
   data: User[];
   onEdit: (user: User) => void;
   onToggleStatus: (user: User) => void;
+  onResetPassword: (user: User) => void; // ← thêm
   canManage?: boolean;
 }
 
@@ -29,6 +31,7 @@ export function UserTable({
   data,
   onEdit,
   onToggleStatus,
+  onResetPassword, // ← thêm
   canManage = true,
 }: UserTableProps) {
   const [globalFilter, setGlobalFilter] = useState("");
@@ -83,18 +86,21 @@ export function UserTable({
       ),
     },
     {
-      accessorKey: "isActive",
+      accessorKey: "status",
       header: "Trạng thái",
       cell: ({ row }) => {
-        const isActive = row.getValue("isActive") as boolean;
-        const badgeClass = isActive ? "badge-active" : "badge-inactive";
-        const dotClass = isActive ? "bg-[var(--crm-success)]" : "bg-gray-400";
-        const label = isActive ? "Hoạt động" : "Tạm ngưng";
+        const status = row.original.status;
+        const config =
+          status === "Pending"
+            ? { badgeClass: "bg-amber-50 text-amber-700", dotClass: "bg-amber-500", label: "Chờ đăng nhập" }
+            : status === "Inactive"
+              ? { badgeClass: "badge-inactive", dotClass: "bg-gray-400", label: "Tạm ngưng" }
+              : { badgeClass: "badge-active", dotClass: "bg-[var(--crm-success)]", label: "Hoạt động" };
 
         return (
-          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium ${badgeClass}`}>
-            <span className={`h-1.5 w-1.5 rounded-full ${dotClass}`} />
-            {label}
+          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium ${config.badgeClass}`}>
+            <span className={`h-1.5 w-1.5 rounded-full ${config.dotClass}`} />
+            {config.label}
           </span>
         );
       },
@@ -117,6 +123,14 @@ export function UserTable({
               title="Chỉnh sửa"
             >
               <Pencil className="h-4 w-4" />
+            </button>
+            {/* ── Reset Password ── */}
+            <button
+              onClick={(e) => { e.stopPropagation(); onResetPassword(user); }}
+              className="p-1.5 rounded-md hover:bg-gray-100 text-gray-400 hover:text-amber-500 transition-colors"
+              title="Đặt lại mật khẩu"
+            >
+              <KeyRound className="h-4 w-4" />
             </button>
             <button
               onClick={(e) => { e.stopPropagation(); onToggleStatus(user); }}

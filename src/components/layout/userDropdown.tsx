@@ -62,7 +62,7 @@ export function UserDropdown({ user }: UserDropdownProps) {
         <DropdownMenuItem asChild>
           <Link href="/profile" className="flex cursor-pointer items-center gap-2">
             <UserCircle className="h-4 w-4" />
-            <span>Ho so ca nhan</span>
+            <span>Hồ sơ cá nhân</span>
           </Link>
         </DropdownMenuItem>
 
@@ -72,7 +72,7 @@ export function UserDropdown({ user }: UserDropdownProps) {
             className="flex cursor-pointer items-center gap-2"
           >
             <KeyRound className="h-4 w-4" />
-            <span>Doi mat khau</span>
+            <span>Đổi mật khẩu</span>
           </Link>
         </DropdownMenuItem>
 

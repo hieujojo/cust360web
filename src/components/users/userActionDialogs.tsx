@@ -23,11 +23,11 @@ import type { ResetPasswordRequest, User } from "@/models";
 
 const resetPasswordSchema = z
   .object({
-    newPassword: z.string().min(8, "Mat khau phai co it nhat 8 ky tu"),
-    confirmPassword: z.string().min(8, "Vui long xac nhan mat khau"),
+    newPassword: z.string().min(8, "Mật khẩu phải có ít nhất 8 ký tự"),
+    confirmPassword: z.string().min(8, "Vui lòng xác nhận mật khẩu"),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
-    message: "Mat khau xac nhan khong khop",
+    message: "Mật khẩu xác nhận không khớp",
     path: ["confirmPassword"],
   });
 
@@ -70,8 +70,8 @@ export function ResetPasswordDialog({
       });
 
       toast({
-        title: "Thanh cong",
-        description: `Da dat lai mat khau cho ${user.email}`,
+        title: "Thành công",
+        description: `Đã đặt lại mật khẩu cho ${user.email}`,
       });
 
       reset();
@@ -79,7 +79,7 @@ export function ResetPasswordDialog({
     } catch (error) {
       toast({
         variant: "destructive",
-        title: "Loi",
+        title: "Lỗi",
         description: extractErrorMessage(error),
       });
     }
@@ -93,8 +93,8 @@ export function ResetPasswordDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Dat lai mat khau</DialogTitle>
-          <DialogDescription>Dat mat khau moi cho {user.email}</DialogDescription>
+          <DialogTitle>Đặt lại mật khẩu</DialogTitle>
+          <DialogDescription>Đặt mật khẩu mới cho {user.email}</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -110,7 +110,7 @@ export function ResetPasswordDialog({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="newPassword">Mat khau moi *</Label>
+            <Label htmlFor="newPassword">Mật khẩu mới *</Label>
             <Input
               id="newPassword"
               type="password"
@@ -125,7 +125,7 @@ export function ResetPasswordDialog({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="confirmPassword">Xac nhan mat khau *</Label>
+            <Label htmlFor="confirmPassword">Xác nhận mật khẩu *</Label>
             <Input
               id="confirmPassword"
               type="password"
@@ -140,10 +140,10 @@ export function ResetPasswordDialog({
           </div>
 
           <div className="rounded-lg bg-blue-50 p-3 text-sm text-blue-800">
-            <p className="font-medium">Luu y:</p>
+            <p className="font-medium">Lưu ý:</p>
             <ul className="mt-1 list-inside list-disc space-y-1">
-              <li>Mat khau phai co it nhat 8 ky tu</li>
-              <li>Nguoi dung nen doi mat khau sau lan dang nhap dau tien</li>
+              <li>Mật khẩu phải có ít nhất 8 ký tự</li>
+              <li>Người dùng nên đổi mật khẩu sau lần đăng nhập đầu tiên</li>
             </ul>
           </div>
 
@@ -153,13 +153,13 @@ export function ResetPasswordDialog({
               variant="outline"
               onClick={() => onOpenChange(false)}
             >
-              Huy
+              Hủy
             </Button>
             <Button type="submit" disabled={resetPassword.isPending}>
               {resetPassword.isPending && (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               )}
-              Dat lai mat khau
+              Đặt lại mật khẩu
             </Button>
           </DialogFooter>
         </form>
@@ -181,7 +181,7 @@ export function ToggleStatusDialog({
   }
 
   const isActive = user.isActive;
-  const action = isActive ? "vo hieu hoa" : "kich hoat";
+  const action = isActive ? "vô hiệu hóa" : "kích hoạt";
 
   const handleConfirm = async () => {
     try {
@@ -193,15 +193,15 @@ export function ToggleStatusDialog({
       });
 
       toast({
-        title: "Thanh cong",
-        description: `Da ${action} tai khoan ${user.email}`,
+        title: "Thành công",
+        description: `Đã ${action} tài khoản ${user.email}`,
       });
 
       onOpenChange(false);
     } catch (error) {
       toast({
         variant: "destructive",
-        title: "Loi",
+        title: "Lỗi",
         description: extractErrorMessage(error),
       });
     }
@@ -211,9 +211,9 @@ export function ToggleStatusDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>{isActive ? "Vo hieu hoa" : "Kich hoat"} tai khoan</DialogTitle>
+          <DialogTitle>{isActive ? "Vô hiệu hóa" : "Kích hoạt"} tài khoản</DialogTitle>
           <DialogDescription>
-            Ban co chac chan muon {action} tai khoan nay?
+            Bạn có chắc muốn {action} tài khoản này không?
           </DialogDescription>
         </DialogHeader>
 
@@ -223,28 +223,28 @@ export function ToggleStatusDialog({
             <span className="text-sm text-muted-foreground">{user.email}</span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium">Ho ten:</span>
+            <span className="text-sm font-medium">Họ tên:</span>
             <span className="text-sm text-muted-foreground">
               {user.displayName}
             </span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium">Trang thai hien tai:</span>
+            <span className="text-sm font-medium">Trạng thái hiện tại:</span>
             <span
               className={`text-sm font-medium ${
                 isActive ? "text-green-600" : "text-red-600"
               }`}
             >
-              {isActive ? "Dang hoat dong" : "Da vo hieu hoa"}
+              {isActive ? "Đang hoạt động" : "Đã vô hiệu hóa"}
             </span>
           </div>
         </div>
 
         {isActive && (
           <div className="rounded-lg bg-yellow-50 p-3 text-sm text-yellow-800">
-            <p className="font-medium">Luu y:</p>
+            <p className="font-medium">Lưu ý:</p>
             <p className="mt-1">
-              Nguoi dung se khong the dang nhap sau khi tai khoan bi vo hieu hoa.
+              Người dùng sẽ không thể đăng nhập sau khi tài khoản bị vô hiệu hóa.
             </p>
           </div>
         )}
@@ -255,7 +255,7 @@ export function ToggleStatusDialog({
             variant="outline"
             onClick={() => onOpenChange(false)}
           >
-            Huy
+            Hủy
           </Button>
           <Button
             type="button"
@@ -266,7 +266,7 @@ export function ToggleStatusDialog({
             {toggleStatus.isPending && (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             )}
-            Xac nhan {action}
+            Xác nhận {action}
           </Button>
         </DialogFooter>
       </DialogContent>

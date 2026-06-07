@@ -1,5 +1,5 @@
 import { apiClient } from "@/lib/api/client";
-import { ADMIN_USER_ENDPOINTS, USER_ENDPOINTS } from "@/lib/api/endpoints";
+import { SETTINGS_USER_ENDPOINTS, USER_ENDPOINTS } from "@/lib/api/endpoints";
 import { User, UserRole, UsersListResponse } from "@/models";
 
 // ─── DTO types (ánh xạ raw JSON trả về từ server) ────────────────────────────
@@ -60,7 +60,7 @@ function mapUser(dto?: UserDto | null): User {
     phone:          dto?.phone,
     avatarUrl:      dto?.avatarUrl,
     status,
-    isActive:       status === "Active",
+    isActive:       status === "Active" || status === "Pending",
     createdAt:      toDate(dto?.createdAt),
     updatedAt:      toDate(dto?.updatedAt),
     createdBy:      dto?.createdBy,
@@ -80,7 +80,7 @@ export class UserService {
     phone?: string;
   }): Promise<User> {
     const response = await apiClient.post<UserDto>(
-      ADMIN_USER_ENDPOINTS.CREATE,
+      SETTINGS_USER_ENDPOINTS.CREATE,
       data
     );
     return mapUser(response.data);
@@ -94,7 +94,7 @@ export class UserService {
     phone?: string;
   }): Promise<User> {
     const response = await apiClient.put<UserDto>(
-      ADMIN_USER_ENDPOINTS.UPDATE(id),
+      SETTINGS_USER_ENDPOINTS.UPDATE(id),
       data
     );
     return mapUser(response.data);
@@ -102,14 +102,14 @@ export class UserService {
 
   async getUserById(id: string): Promise<User | null> {
     const response = await apiClient.get<UserDto>(
-      ADMIN_USER_ENDPOINTS.DETAIL(id)
+      SETTINGS_USER_ENDPOINTS.DETAIL(id)
     );
     return mapUser(response.data);
   }
 
   async getUsers(filters?: Record<string, unknown>): Promise<UsersListResponse> {
     const response = await apiClient.get<UsersListResponseDto>(
-      ADMIN_USER_ENDPOINTS.LIST,
+      SETTINGS_USER_ENDPOINTS.LIST,
       { params: filters }
     );
 
@@ -126,7 +126,7 @@ export class UserService {
   }
 
   async getAllUsers(): Promise<User[]> {
-    const response = await apiClient.get<UserDto[]>(ADMIN_USER_ENDPOINTS.ALL);
+    const response = await apiClient.get<UserDto[]>(SETTINGS_USER_ENDPOINTS.ALL);
     return response.data.map(mapUser);
   }
 
@@ -140,13 +140,25 @@ export class UserService {
     return mapUser(response.data);
   }
 
+  async uploadMyAvatar(file: File): Promise<User> {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await apiClient.post<UserDto>(
+      USER_ENDPOINTS.UPLOAD_AVATAR,
+      formData,
+      { headers: { "Content-Type": "multipart/form-data" } }
+    );
+    return mapUser(response.data);
+  }
+
   /** PUT /api/admin/users/{id}/status */
   async toggleUserStatus(
     id: string,
     isActive: boolean,
     reason?: string
   ): Promise<void> {
-    await apiClient.put(ADMIN_USER_ENDPOINTS.TOGGLE_STATUS(id), {
+    await apiClient.put(SETTINGS_USER_ENDPOINTS.TOGGLE_STATUS(id), {
       isActive,
       reason,
     });
@@ -165,7 +177,7 @@ export class UserService {
 
   /** PUT /api/admin/users/{id}/reset-password */
   async resetUserPassword(id: string, newPassword: string): Promise<void> {
-    await apiClient.put(ADMIN_USER_ENDPOINTS.RESET_PASSWORD(id), {
+    await apiClient.put(SETTINGS_USER_ENDPOINTS.RESET_PASSWORD(id), {
       newPassword,
     });
   }

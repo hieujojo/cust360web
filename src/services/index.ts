@@ -6,6 +6,7 @@ import { AuthService } from "./authService";
 import { DealService } from "./dealService";
 import { ActivityService } from "./activityService";
 import { GoogleService } from "./googleService";
+import { SettingsService } from "./settingsService";
 
 export {
   AuthService,
@@ -16,6 +17,7 @@ export {
   DealService,
   ActivityService,
   GoogleService,
+  SettingsService,
 };
 
 export const authService = new AuthService();
@@ -26,3 +28,4 @@ export const customerService = new CustomerService();
 export const dealService = new DealService();
 export const activityService = new ActivityService();
 export const googleService = new GoogleService();
+export const settingsService = new SettingsService();

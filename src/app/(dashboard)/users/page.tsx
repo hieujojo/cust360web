@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Plus } from "lucide-react";
-import { ToggleStatusDialog } from "@/components/users/userActionDialogs";
+import { ResetPasswordDialog, ToggleStatusDialog } from "@/components/users/userActionDialogs";
 import {
   CreateUserDialog,
   EditUserDialog,
@@ -20,19 +20,25 @@ export default function UsersPage() {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [toggleStatusDialogOpen, setToggleStatusDialogOpen] = useState(false);
+  const [resetPasswordDialogOpen, setResetPasswordDialogOpen] = useState(false); // ← thêm
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [departmentFilter, setDepartmentFilter] = useState<string>("");
   const [teamFilter, setTeamFilter] = useState<string>("");
+  const [statusFilter, setStatusFilter] = useState<string>("");
 
   const canManage = canManageUsers(currentUser ?? null);
   const isAdminUser = isAdmin(currentUser ?? null);
 
   const { data, isLoading, error } = useUsers();
-  const { departments, filteredItems, activeCount, adminCount, salesCount } = useDepartments(
-  data?.items ?? [],
-  departmentFilter,
-  teamFilter
-);
+  const { departments, filteredItems: deptFiltered, activeCount, adminCount } = useDepartments(
+    data?.items ?? [],
+    departmentFilter,
+    teamFilter
+  );
+
+  const filteredItems = statusFilter
+    ? deptFiltered.filter((u) => u.status.toLowerCase() === statusFilter)
+    : deptFiltered;
   const { teams } = useTeams(departmentFilter);
 
   const handleEdit = (user: User) => {
@@ -43,6 +49,11 @@ export default function UsersPage() {
   const handleToggleStatus = (user: User) => {
     setSelectedUser(user);
     setToggleStatusDialogOpen(true);
+  };
+
+  const handleResetPassword = (user: User) => { // ← thêm
+    setSelectedUser(user);
+    setResetPasswordDialogOpen(true);
   };
 
   if (error) {
@@ -94,16 +105,24 @@ export default function UsersPage() {
           <p className="stat-label">Quản trị viên (Admin)</p>
           <p className="stat-value text-gray-700">{adminCount}</p>
         </div>
-        <div className="crm-stat-card">
-          <p className="stat-label">Nhân viên Sales</p>
-          <p className="stat-value text-gray-700">{salesCount}</p>
-        </div>
       </div>
 
       {/* ── Filter Bar ─────────────────────────────────── */}
       {isAdminUser && (
-        <div className="flex items-center gap-2">
-          <span className="text-[13px] font-medium text-gray-500">Phòng ban:</span>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-[13px] font-medium text-gray-500">Trạng thái:</span>
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="h-8 px-2.5 min-w-[140px] text-[13px] text-gray-700 bg-white border border-[var(--crm-border)] rounded-lg outline-none cursor-pointer"
+          >
+            <option value="">Tất cả</option>
+            <option value="active">Hoạt động</option>
+            <option value="inactive">Tạm ngưng</option>
+            <option value="pending">Chờ đăng nhập</option>
+          </select>
+
+          <span className="text-[13px] font-medium text-gray-500 ml-2">Phòng ban:</span>
           <select
             value={departmentFilter}
             onChange={(e) => {
@@ -118,8 +137,7 @@ export default function UsersPage() {
               </option>
             ))}
           </select>
-          
-          {/* Team Filter */}
+
           {departmentFilter && (
             <select
               value={teamFilter}
@@ -147,6 +165,7 @@ export default function UsersPage() {
           data={filteredItems}
           onEdit={handleEdit}
           onToggleStatus={handleToggleStatus}
+          onResetPassword={handleResetPassword} // ← thêm
           canManage={canManage}
         />
       )}
@@ -164,6 +183,11 @@ export default function UsersPage() {
       <ToggleStatusDialog
         open={toggleStatusDialogOpen}
         onOpenChange={setToggleStatusDialogOpen}
+        user={selectedUser}
+      />
+      <ResetPasswordDialog  // ← thêm
+        open={resetPasswordDialogOpen}
+        onOpenChange={setResetPasswordDialogOpen}
         user={selectedUser}
       />
     </div>

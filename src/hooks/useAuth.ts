@@ -19,29 +19,50 @@ export function useAuth() {
   useEffect(() => {
     setIsMounted(true);
 
-    // Load user from localStorage on mount (client-side only)
-    if (typeof window !== "undefined") {
-      const storedUser = localStorage.getItem("user");
-      const token = localStorage.getItem("accessToken");
+    const loadUser = () => {
+      if (typeof window !== "undefined") {
+        const storedUser = localStorage.getItem("user");
+        const token = localStorage.getItem("accessToken");
 
-      if (storedUser && token) {
-        try {
-          setUser(JSON.parse(storedUser));
-          setAuthToken(token);
-        } catch (error) {
-          localStorage.removeItem("user");
-          localStorage.removeItem("accessToken");
+        if (storedUser && token) {
+          try {
+            setUser(JSON.parse(storedUser));
+            setAuthToken(token);
+          } catch (error) {
+            localStorage.removeItem("user");
+            localStorage.removeItem("accessToken");
+          }
         }
       }
-    }
+    };
+
+    loadUser();
     setIsLoading(false);
+
+    if (typeof window !== "undefined") {
+      window.addEventListener("user-updated", loadUser);
+      return () => window.removeEventListener("user-updated", loadUser);
+    }
   }, []);
+
+  const updateUser = (updatedFields: Partial<User>) => {
+    if (typeof window !== "undefined" && user) {
+      const newUser = { ...user, ...updatedFields };
+      localStorage.setItem("user", JSON.stringify(newUser));
+      setUser(newUser);
+      window.dispatchEvent(new Event("user-updated"));
+    }
+  };
 
   const login = async (user: User, token: string, firebaseToken: string) => {
     if (typeof window !== "undefined") {
-      localStorage.setItem("user", JSON.stringify(user));
+       const userWithLogin = {
+            ...user,
+            lastLoginAt: new Date().toISOString(),
+        };
+      localStorage.setItem("user", JSON.stringify(userWithLogin));
       localStorage.setItem("accessToken", token);
-      setUser(user);
+      setUser(userWithLogin);
 
       setAuthToken(token);
 
@@ -76,6 +97,7 @@ export function useAuth() {
     isMounted,
     login,
     logout,
+    updateUser,
     hasRole,
   };
 }

@@ -26,7 +26,7 @@ interface DecodedJWT {
  */
 const routePermissions: Record<string, UserRole[]> = {
   "/users": [UserRole.Owner, UserRole.Admin],
-  "/settings": [UserRole.Owner],
+  "/settings": [UserRole.Owner, UserRole.Admin],
   "/dashboard": [], // All authenticated users
   "/profile": [], // All authenticated users
   "/customers": [], // All authenticated users

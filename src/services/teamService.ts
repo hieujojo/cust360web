@@ -23,6 +23,8 @@ function mapTeam(dto?: TeamDto | null): Team {
     name: dto?.name ?? "",
     description: dto?.description,
     leadId: dto?.leadId,
+    leadName: (dto as any)?.leadName,
+    memberCount: (dto as any)?.memberCount,
     isDeleted: dto?.isDeleted ?? false,
     createdAt: toDate(dto?.createdAt),
     updatedAt: toDate(dto?.updatedAt),
