@@ -167,37 +167,37 @@ export default function DealDetailPage() {
 
       {/* FIX 2: Notes section */}
       {(deal.notes ?? "").trim().length > 0 && (
-        <section className="rounded-xl border bg-white p-4">
-          <h2 className="mb-2 flex items-center gap-1.5 text-sm font-semibold">
-            <FileText className="h-4 w-4 text-gray-400" />
+        <section className="rounded-xl border border-border bg-card p-4">
+          <h2 className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-card-foreground">
+            <FileText className="h-4 w-4 text-muted-foreground" />
             Ghi chú
           </h2>
-          <p className="whitespace-pre-wrap text-sm text-gray-700 leading-relaxed">
+          <p className="whitespace-pre-wrap text-sm text-foreground leading-relaxed">
             {deal.notes}
           </p>
         </section>
       )}
 
       {/* ── Stage History ── */}
-      <section className="rounded-xl border bg-white p-4">
-        <h2 className="mb-3 flex items-center gap-1.5 text-sm font-semibold">
-          <Clock className="h-4 w-4 text-gray-400" />
+      <section className="rounded-xl border border-border bg-card p-4">
+        <h2 className="mb-3 flex items-center gap-1.5 text-sm font-semibold text-card-foreground">
+          <Clock className="h-4 w-4 text-muted-foreground" />
           Lịch sử giai đoạn
         </h2>
 
         {history.length === 0 ? (
-          <p className="text-sm text-gray-500">Chưa có lịch sử.</p>
+          <p className="text-sm text-muted-foreground">Chưa có lịch sử.</p>
         ) : (
-          <ol className="relative border-l border-slate-200 pl-5 space-y-4">
+          <ol className="relative border-l border-border pl-5 space-y-4">
             {history.map((item, idx) => (
               <li key={`${item.changedAt}-${idx}`} className="relative">
                 {/* Timeline dot */}
-                <span className="absolute -left-[21px] top-1 h-3 w-3 rounded-full border-2 border-white bg-blue-400 ring-1 ring-slate-200" />
-                <div className="rounded-lg bg-slate-50 px-3 py-2">
-                  <div className="text-sm font-medium text-gray-800">
+                <span className="absolute -left-[21px] top-1 h-3 w-3 rounded-full border-2 border-card bg-blue-400 ring-1 ring-border" />
+                <div className="rounded-lg bg-muted px-3 py-2">
+                  <div className="text-sm font-medium text-foreground">
                     {item.stage}
                   </div>
-                  <div className="mt-0.5 text-xs text-gray-500">
+                  <div className="mt-0.5 text-xs text-muted-foreground">
                     {localDateTime(item.changedAt)}
                     {item.changedBy ? ` · ${item.changedBy}` : ""}
                   </div>
@@ -208,31 +208,31 @@ export default function DealDetailPage() {
         )}
       </section>
 
-      <section className="rounded-xl border bg-white p-4">
-        <h2 className="mb-3 flex items-center gap-1.5 text-sm font-semibold">
-          <User className="h-4 w-4 text-gray-400" />
+      <section className="rounded-xl border border-border bg-card p-4">
+        <h2 className="mb-3 flex items-center gap-1.5 text-sm font-semibold text-card-foreground">
+          <User className="h-4 w-4 text-muted-foreground" />
           Contacts liên quan
         </h2>
 
         {!deal.contacts || deal.contacts.length === 0 ? (
-          <p className="text-sm text-gray-500">Không có contacts.</p>
+          <p className="text-sm text-muted-foreground">Không có contacts.</p>
         ) : (
-          <ul className="divide-y divide-slate-100">
+          <ul className="divide-y divide-border">
             {deal.contacts.map((id: string) => {
               const c = contactMap[id];
               if (!c) return null;
               return (
                 <li key={id} className="flex items-center justify-between py-2">
                   <div>
-                    <p className="text-sm font-medium text-gray-800">
+                    <p className="text-sm font-medium text-foreground">
                       {c.name}
                     </p>
-                    <p className="text-xs text-gray-500">{c.role}</p>
+                    <p className="text-xs text-muted-foreground">{c.role}</p>
                   </div>
                   {c.email && (
                     <a
                       href={`mailto:${c.email}`}
-                      className="text-xs text-blue-600 hover:underline"
+                      className="text-xs text-blue-500 hover:underline"
                     >
                       {c.email}
                     </a>
@@ -244,19 +244,19 @@ export default function DealDetailPage() {
         )}
       </section>
 
-      <section className="rounded-xl border bg-white p-4">
-        <h2 className="mb-3 flex items-center gap-1.5 text-sm font-semibold">
-          <MessageSquare className="h-4 w-4 text-gray-400" />
+      <section className="rounded-xl border border-border bg-card p-4">
+        <h2 className="mb-3 flex items-center gap-1.5 text-sm font-semibold text-card-foreground">
+          <MessageSquare className="h-4 w-4 text-muted-foreground" />
           Hoạt động (Activities)
         </h2>
         <TimelineTab customerId={deal.customerId} />
       </section>
 
       {/* ── Quotations ── */}
-      <section className="rounded-xl border bg-white p-4">
+      <section className="rounded-xl border border-border bg-card p-4">
         <div className="mb-3 flex items-center justify-between">
-          <h2 className="flex items-center gap-1.5 text-sm font-semibold">
-            <TrendingUp className="h-4 w-4 text-gray-400" />
+          <h2 className="flex items-center gap-1.5 text-sm font-semibold text-card-foreground">
+            <TrendingUp className="h-4 w-4 text-muted-foreground" />
             Báo giá (Quotations)
           </h2>
           <button
@@ -264,25 +264,23 @@ export default function DealDetailPage() {
               setEditingQuote(null);
               setQuoteOpen(true);
             }}
-            className="text-xs font-medium text-blue-600 hover:underline"
+            className="text-xs font-medium text-[var(--crm-primary)] hover:underline"
           >
             + Thêm báo giá
           </button>
         </div>
 
         {loadingQuotes ? (
-          <p className="text-sm text-gray-500">Đang tải báo giá...</p>
+          <p className="text-sm text-muted-foreground">Đang tải báo giá...</p>
         ) : quotations.length === 0 ? (
-          <p className="text-sm text-gray-500">Chưa có báo giá.</p>
+          <p className="text-sm text-muted-foreground">Chưa có báo giá.</p>
         ) : (
-          <ul className="divide-y divide-slate-100">
+          <ul className="divide-y divide-border">
             {quotations.map((q) => {
-              let badgeColor = "bg-gray-100 text-gray-700";
-              if (q.status === "Sent") badgeColor = "bg-blue-100 text-blue-700";
-              if (q.status === "Accepted")
-                badgeColor = "bg-green-100 text-green-700";
-              if (q.status === "Rejected")
-                badgeColor = "bg-red-100 text-red-700";
+              let badgeColor = "bg-muted text-muted-foreground";
+              if (q.status === "Sent") badgeColor = "bg-blue-500/15 text-blue-500";
+              if (q.status === "Accepted") badgeColor = "bg-emerald-500/15 text-emerald-500";
+              if (q.status === "Rejected") badgeColor = "bg-red-500/15 text-red-500";
 
               return (
                 <li
@@ -290,7 +288,7 @@ export default function DealDetailPage() {
                   className="flex items-center justify-between py-3"
                 >
                   <div>
-                    <p className="font-mono text-sm font-medium text-gray-800">
+                    <p className="font-mono text-sm font-medium text-foreground">
                       {q.code}
                     </p>
                     <div className="mt-1 flex flex-wrap items-center gap-2">
@@ -299,7 +297,7 @@ export default function DealDetailPage() {
                       >
                         {q.status}
                       </span>
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-muted-foreground">
                         {vnd(
                           q.items.reduce(
                             (sum, item) => sum + item.quantity * item.unitPrice,
@@ -308,24 +306,24 @@ export default function DealDetailPage() {
                           q.currency,
                         )}
                       </span>
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-muted-foreground">
                         Phiên bản {q.version}
                       </span>
                       {q.validUntil && (
-                        <span className="text-xs text-gray-500">
+                        <span className="text-xs text-muted-foreground">
                           Hết hạn{" "}
                           {new Date(q.validUntil).toLocaleDateString("vi-VN")}
                         </span>
                       )}
                     </div>
                   </div>
-                  <div className="flex gap-1 text-gray-400">
+                  <div className="flex gap-1 text-muted-foreground">
                     <button
                       onClick={() => {
                         setEditingQuote(q);
                         setQuoteOpen(true);
                       }}
-                      className="rounded p-1.5 hover:bg-slate-100 hover:text-blue-600"
+                      className="rounded p-1.5 hover:bg-muted hover:text-blue-500"
                       aria-label="Sửa"
                     >
                       <Pencil className="h-4 w-4" />
@@ -336,7 +334,7 @@ export default function DealDetailPage() {
                           deleteQuote.mutate(q.id);
                         }
                       }}
-                      className="rounded p-1.5 hover:bg-slate-100 hover:text-red-600"
+                      className="rounded p-1.5 hover:bg-muted hover:text-red-500"
                       aria-label="Xóa"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -370,7 +368,7 @@ function StageProgressBar({ currentStage }: { currentStage: string }) {
   const currentIdx = STAGES.indexOf(currentStage);
 
   return (
-    <div className="rounded-xl border bg-white px-4 py-3">
+    <div className="rounded-xl border border-border bg-card px-4 py-3">
       <div className="flex items-center gap-1">
         {STAGES.map((stage, idx) => {
           const isActive = idx === currentIdx;
@@ -385,24 +383,24 @@ function StageProgressBar({ currentStage }: { currentStage: string }) {
                       ? "bg-blue-500"
                       : isActive
                         ? "bg-blue-400"
-                        : "bg-slate-200",
+                        : "bg-muted",
                   ].join(" ")}
                 />
                 <span
                   className={[
                     "text-xs",
                     isActive
-                      ? "font-semibold text-blue-600"
+                      ? "font-semibold text-blue-500"
                       : isDone
                         ? "text-blue-400"
-                        : "text-gray-400",
+                        : "text-muted-foreground",
                   ].join(" ")}
                 >
                   {stage}
                 </span>
               </div>
               {idx < STAGES.length - 1 && (
-                <ChevronRight className="h-3 w-3 flex-shrink-0 text-slate-300" />
+                <ChevronRight className="h-3 w-3 flex-shrink-0 text-muted-foreground/40" />
               )}
             </div>
           );
@@ -433,19 +431,19 @@ function Info({
     <div
       className={[
         "rounded-xl border p-4",
-        highlight ? "border-blue-100 bg-blue-50" : "bg-white",
-        danger ? "border-red-100 bg-red-50" : "",
+        highlight ? "border-blue-500/20 bg-blue-500/10" : "bg-card border-border",
+        danger ? "border-red-500/20 bg-red-500/10" : "",
       ].join(" ")}
     >
-      <p className="text-xs uppercase tracking-wide text-gray-400">{label}</p>
+      <p className="text-xs uppercase tracking-wide text-muted-foreground">{label}</p>
       <p
         className={[
           "mt-1 text-sm font-semibold",
           highlight
-            ? "text-blue-700"
+            ? "text-blue-500"
             : danger
-              ? "text-red-600"
-              : "text-gray-800",
+              ? "text-red-500"
+              : "text-foreground",
         ].join(" ")}
       >
         {value}
@@ -454,7 +452,7 @@ function Info({
         <p
           className={[
             "mt-0.5 text-xs",
-            danger ? "text-red-400" : "text-gray-400",
+            danger ? "text-red-400" : "text-muted-foreground",
           ].join(" ")}
         >
           {sub}

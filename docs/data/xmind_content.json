@@ -1,0 +1,667 @@
+[
+  {
+    "id": "34e508c5-955b-4ab0-93a2-94036e5eccd9",
+    "revisionId": "ca78af8e-057c-429a-bc0f-c61a31acb202",
+    "class": "sheet",
+    "rootTopic": {
+      "id": "d826bd09-484b-4771-8c00-abb2f84a3710",
+      "class": "topic",
+      "title": "CRM CUSTOMER 360 - Tính Năng",
+      "href": "xap:resources/29b75857b7bc6fe7c475da5e7e332983916d4d77de8e5ee6c5d7e8b6a9fea6d2.docx",
+      "structureClass": "org.xmind.ui.map.clockwise",
+      "extensions": [
+        {
+          "provider": "org.xmind.ui.map.unbalanced",
+          "content": [
+            {
+              "name": "right-number",
+              "content": "3"
+            }
+          ]
+        },
+        {
+          "provider": "org.xmind.ui.ice-cream-pancake",
+          "content": {
+            "slide-appearance": "default",
+            "slide-aspect-ratio": "Auto"
+          }
+        }
+      ],
+      "children": {
+        "attached": [
+          {
+            "id": "c368620a-d87f-49d5-bc4e-1ef37d7b9993",
+            "title": "Tổng quan",
+            "children": {
+              "attached": [
+                {
+                  "id": "76c0e696-5164-4a6e-a693-13c6be3552ff",
+                  "title": "Bao gồm khoảng 26 tính năng, phân chia thành 6 module."
+                },
+                {
+                  "id": "e458ee69-5e9e-449d-9e48-7e87c9a7f202",
+                  "title": "Hỗ trợ nền tảng Web và Mobile."
+                },
+                {
+                  "id": "c50f75cc-9aa3-4ece-92c6-d53874d2fe73",
+                  "title": "Mục tiêu: tập trung, gọn nhẹ, hiệu quả."
+                }
+              ]
+            }
+          },
+          {
+            "id": "ac78f2a1-a040-4c75-84ee-8eb083ed0f77",
+            "title": "Module 1: Xác Thực & Phân Quyền (Authentication & Authorization)",
+            "children": {
+              "attached": [
+                {
+                  "id": "500288cf-1544-4b47-b098-68443c7e9fe1",
+                  "title": "Tài khoản",
+                  "children": {
+                    "attached": [
+                      {
+                        "id": "12df7247-70c6-48cb-aed2-778813552660",
+                        "title": "Do Admin cấp, không có tự đăng ký hay Google OAuth."
+                      },
+                      {
+                        "id": "22e1a1b0-d2db-4a22-b9a3-9258ef191bd7",
+                        "title": "Flow đơn giản bằng mật khẩu phù hợp với môi trường tổ chức."
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "e4f9539f-8828-4037-93ac-3d9a2cfe748b",
+                  "title": "Các tính năng chính",
+                  "children": {
+                    "attached": [
+                      {
+                        "id": "e3336efe-1021-402c-aacd-348aba05e5ac",
+                        "title": "Admin tạo tài khoản với email, role, phòng ban, tên, chức vụ, mật khẩu."
+                      },
+                      {
+                        "id": "75060fda-7baa-4528-b747-3b4afc721254",
+                        "title": "Phân quyền dựa trên 3 role: Owner (1), Admin (2), User (3)."
+                      },
+                      {
+                        "id": "a78d3d1a-c876-49d6-a0f1-89b069398275",
+                        "title": "Phân quyền theo phòng ban: user chỉ thấy dữ liệu phòng mình; Owner & Admin thấy toàn bộ."
+                      },
+                      {
+                        "id": "14332c53-a6e6-46c9-9d3b-ceab0f861aa3",
+                        "title": "Kích hoạt hoặc vô hiệu hóa tài khoản nhân viên; vô hiệu hóa khiến token bị từ chối ngay."
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "id": "9c255033-35bf-43d4-b761-e2f835c953aa",
+            "title": "Module 2: Quản Lý Khách Hàng (Customer Management)",
+            "children": {
+              "attached": [
+                {
+                  "id": "76025053-db3f-401a-87fb-9285a185c9e3",
+                  "title": "Khách hàng là trung tâm hệ thống",
+                  "children": {
+                    "attached": [
+                      {
+                        "id": "e8700036-1324-46dd-846d-438665667803",
+                        "title": "Tất cả tính năng xoay quanh tài liệu khách hàng trong MongoDB."
+                      },
+                      {
+                        "id": "5c9a69b4-6552-4a5a-9fc8-45eb88407010",
+                        "title": "Phân quyền kết hợp Role & Department."
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "4770516b-0cdc-48f7-98d7-47ac0279d93a",
+                  "title": "Tính năng chính",
+                  "children": {
+                    "attached": [
+                      {
+                        "id": "bca53915-a66b-4f10-9884-1f37abd0e606",
+                        "title": "Hồ sơ khách hàng: tên, mã tự sinh, trạng thái, nguồn, người sở hữu, phòng ban, trường tuỳ chỉnh."
+                      },
+                      {
+                        "id": "f52377c7-ea27-4fe9-9ca9-1c03064ac0b3",
+                        "title": "Phân quyền xem theo Role (User giới hạn phòng, Admin & Owner toàn quyền)."
+                      },
+                      {
+                        "id": "5793efaf-7a7f-4b97-b7ee-a3772ff58091",
+                        "title": "Tìm kiếm khách hàng full-text, hỗ trợ lỗi gõ, kết quả nhanh."
+                      },
+                      {
+                        "id": "be800ff5-627e-468d-b9f5-1083d763dd70",
+                        "title": "Danh sách khách hàng có sắp xếp, lọc."
+                      },
+                      {
+                        "id": "e3a42d4b-4a13-4b11-b624-4c60a3937a74",
+                        "title": "Customer 360 view gồm tab thông tin, liên hệ, giao dịch, lịch sử, ticket."
+                      },
+                      {
+                        "id": "e7ee1824-5ab5-495b-a5d8-5b8be507f26d",
+                        "title": "Contact nhúng trong khách hàng với nhiều contact, có trường chi tiết."
+                      },
+                      {
+                        "id": "7aefa016-dedf-4908-bb70-509b8fc4acdc",
+                        "title": "Thay đổi trạng thái khách hàng với log hoạt động tự động."
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "id": "a99f6a6e-6aed-431d-b135-61443af1f79e",
+            "title": "Module 3: Quy Trình Bán Hàng & Giao Dịch (Sales Pipeline & Deals)",
+            "children": {
+              "attached": [
+                {
+                  "id": "6861e82f-1834-4cc8-88f5-68f7d027e427",
+                  "title": "Đặc điểm nổi bật",
+                  "children": {
+                    "attached": [
+                      {
+                        "id": "d04068fd-9a21-478d-be56-4b0f761792b6",
+                        "title": "Quy trình hiển thị trực quan, có bảng Kanban realtime."
+                      },
+                      {
+                        "id": "05032140-0307-44cc-936d-43072fd63c52",
+                        "title": "Hỗ trợ báo giá nhanh từ giao dịch."
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "60b9cea8-6835-4cf8-9b43-b79fc902c660",
+                  "title": "Tính năng",
+                  "children": {
+                    "attached": [
+                      {
+                        "id": "895fcc3f-d784-4559-a42f-1ee2f8a4e8d4",
+                        "title": "Tạo/ sửa giao dịch với thông tin chi tiết và form rút gọn trên mobile."
+                      },
+                      {
+                        "id": "670a02df-7ce2-4eb5-8184-78e3bdcc475c",
+                        "title": "Cấu hình các giai đoạn pipeline bởi admin."
+                      },
+                      {
+                        "id": "00460d41-00a6-4617-863e-8a10553e8ed2",
+                        "title": "Kanban board kéo thả trực quan (web)."
+                      },
+                      {
+                        "id": "27353cd9-ed60-48d0-8bfe-4cb23751e7f0",
+                        "title": "Danh sách giao dịch với bộ lọc, sắp xếp, xem chi tiết."
+                      },
+                      {
+                        "id": "9c93fe13-9ab2-4af7-aa96-a265eee47435",
+                        "title": "Trang chi tiết giao dịch có đầy đủ timeline, lịch sử giai đoạn, liên hệ, báo giá."
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "id": "b594e94e-3e3b-47ef-8b4f-240cc784ac05",
+            "title": "Module 4: Nhật Ký Hoạt Động & Lịch Sử Khách Hàng",
+            "children": {
+              "attached": [
+                {
+                  "id": "8c0d0d9b-4995-41b5-b5f6-86142c7cd0f0",
+                  "title": "Tính năng log",
+                  "children": {
+                    "attached": [
+                      {
+                        "id": "7cc793bd-d0ef-49bd-a52e-57dc3131c03b",
+                        "title": "Ghi nhật ký cuộc gọi, email, cuộc họp, ghi chú với các trường chi tiết."
+                      },
+                      {
+                        "id": "ad952ca6-8b0c-4eb9-a6ca-da1f159eb1a0",
+                        "title": "Tự động ghi các sự kiện hệ thống như thay đổi giai đoạn, tạo/giải quyết ticket."
+                      },
+                      {
+                        "id": "794d291f-d77e-4e50-980b-13d57fa00368",
+                        "title": "Giao diện timeline theo thứ tự thời gian, có icon, tên người log, hỗ trợ kéo cuộn vô tận."
+                      },
+                      {
+                        "id": "6d3a3798-4dd0-419d-9463-29609e864cc7",
+                        "title": "Đồng bộ tự động Gmail & Google Calendar cho email và cuộc họp liên quan khách hàng mà không cần thao tác thủ công."
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "id": "8d0de3fa-d77e-4e3d-a71a-9b9e00e1cedc",
+            "title": "Module 5: Realtime & Thông Báo",
+            "children": {
+              "attached": [
+                {
+                  "id": "74eddf77-5b50-4f80-a632-d05c70eef935",
+                  "title": "Các tính năng realtime",
+                  "children": {
+                    "attached": [
+                      {
+                        "id": "90993b29-5e79-47f2-bb58-b626308dce9a",
+                        "title": "Trung tâm thông báo trong ứng dụng với biểu tượng chuông, số lượng thông báo chưa đọc."
+                      },
+                      {
+                        "id": "3c27e7b6-f971-4670-81f5-067fd82894da",
+                        "title": "Đồng bộ realtime pipeline khi giao dịch thay đổi giai đoạn, mọi user cùng tổ chức thấy ngay."
+                      },
+                      {
+                        "id": "cf1b7d28-5286-4899-8075-171dd253782d",
+                        "title": "Thông báo khi giao dịch được phân công người chịu trách nhiệm cả trên web và mobile."
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "id": "304c717d-46f3-4fd2-a354-30cb034a7f89",
+            "title": "Module 6: Cấu Hình & Quản Trị",
+            "children": {
+              "attached": [
+                {
+                  "id": "4b04ba76-fb7e-406d-9b69-7f34d6ec372d",
+                  "title": "Cấu hình tổ chức",
+                  "children": {
+                    "attached": [
+                      {
+                        "id": "36489d8a-d88d-4c61-a964-65e382313fad",
+                        "title": "Quản lý hồ sơ tổ chức: tên, logo, múi giờ, tiền tệ, ngôn ngữ."
+                      },
+                      {
+                        "id": "8bbb1c8f-4126-4bb6-884d-ecc2680d2fac",
+                        "title": "Quản lý phòng ban: thêm, sửa, xoá, gán quản lý phòng."
+                      },
+                      {
+                        "id": "b2618c58-bdfc-4849-b47d-f831d220055e",
+                        "title": "Quản lý người dùng: danh sách, tạo tài khoản, vô hiệu hóa, đặt lại mật khẩu."
+                      },
+                      {
+                        "id": "5341302d-61df-4e74-a61f-76a22799fdb8",
+                        "title": "Cấu hình giai đoạn pipeline: thêm, đổi tên, sắp xếp, màu sắc, xác định ngưỡng thời gian stuck."
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "id": "3270259b-c5f0-481a-8fc5-f931995c6135",
+            "title": "Tóm tắt ma trận tính năng",
+            "children": {
+              "attached": [
+                {
+                  "id": "db825d52-f8fc-4ed6-970f-027bca50fa7c",
+                  "title": "Tổng 26 tính năng, phân bổ ưu tiên:",
+                  "children": {
+                    "attached": [
+                      {
+                        "id": "2f4a2e97-c1ac-409a-8c5e-854ff8b28c9a",
+                        "title": "P0 (quan trọng nhất): 19 tính năng"
+                      },
+                      {
+                        "id": "b3aacafc-8c1a-44b3-8957-0ca0d2562a3f",
+                        "title": "P1 + P2 (cao & trung bình): 7 tính năng"
+                      },
+                      {
+                        "id": "211194ce-b60c-49eb-bc6b-4fa25e0c6f04",
+                        "title": "Không có tính năng P3 (mức nâng cao) được đưa vào giai đoạn hiện tại."
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "973a50d7-c1bb-4328-9e41-875737198f1f",
+                  "title": "Phân bố tính năng trên nền tảng:",
+                  "children": {
+                    "attached": [
+                      {
+                        "id": "cf359edf-a2e1-469d-9f68-3a32c1fadd3f",
+                        "title": "Web + Mobile: Modules 1, 2, 4, 5"
+                      },
+                      {
+                        "id": "9eec8342-5576-4724-9433-ec53603817a8",
+                        "title": "Web (kanban) và Mobile (list): Module 3"
+                      },
+                      {
+                        "id": "7c1296b6-4290-4a7d-b7d4-e04782067ba4",
+                        "title": "Chỉ Web: Module 6"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "id": "32728b6b-020d-44ea-92a5-eae5b1f16e98",
+            "title": "Nguyên tắc ưu tiên phát triển tính năng",
+            "children": {
+              "attached": [
+                {
+                  "id": "8360092a-90d6-4793-bdb2-1cb06fa6aa4d",
+                  "title": "P0: Không có thì không thể ra mắt, xây dựng đầu tiên và đúng cách."
+                },
+                {
+                  "id": "7e483bed-ff54-40ee-a4f9-292130e1f3be",
+                  "title": "P1: Cần thiết cho hiệu quả công việc hàng ngày, xây dựng trong các pha đầu."
+                },
+                {
+                  "id": "82b13e10-a575-4304-be2f-b65bd2bc5218",
+                  "title": "P2: Tạo sự khác biệt, phát triển khi các yếu tố P0, P1 đã ổn định."
+                },
+                {
+                  "id": "b3a88f71-53e0-4327-883b-a07f25d351bb",
+                  "title": "P3: Giá trị lâu dài, xây dựng khi có phản hồi người dùng hoặc có thời gian."
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "title": "Map 1",
+    "topicOverlapping": "overlap",
+    "arrangeableLayerOrder": [
+      "d826bd09-484b-4771-8c00-abb2f84a3710"
+    ],
+    "zones": [],
+    "extensions": [
+      {
+        "provider": "org.xmind.ui.skeleton.structure.style",
+        "content": {
+          "centralTopic": "org.xmind.ui.map.clockwise"
+        }
+      }
+    ],
+    "theme": {
+      "centralTopic": {
+        "id": "50c6f999-0913-4473-96a7-542ba66b101b",
+        "properties": {
+          "fo:font-family": "NeverMind",
+          "fo:font-size": "30pt",
+          "fo:font-weight": "800",
+          "fo:font-style": "normal",
+          "fo:color": "inherited",
+          "fo:text-transform": "manual",
+          "fo:text-decoration": "none",
+          "fo:text-align": "center",
+          "svg:fill": "#000000",
+          "fill-pattern": "none",
+          "line-width": "2pt",
+          "line-color": "#ADADAD",
+          "line-pattern": "solid",
+          "border-line-color": "#000000",
+          "border-line-width": "0pt",
+          "border-line-pattern": "inherited",
+          "shape-class": "org.xmind.topicShape.roundedRect",
+          "line-class": "org.xmind.branchConnection.curve",
+          "arrow-end-class": "org.xmind.arrowShape.none",
+          "alignment-by-level": "inherited"
+        }
+      },
+      "mainTopic": {
+        "id": "24962d5f-c3d4-4f74-975f-b5c4e7c1086b",
+        "properties": {
+          "fo:font-family": "NeverMind",
+          "fo:font-size": "18pt",
+          "fo:font-weight": "500",
+          "fo:font-style": "normal",
+          "fo:color": "inherited",
+          "fo:text-transform": "manual",
+          "fo:text-decoration": "none",
+          "fo:text-align": "left",
+          "svg:fill": "inherited",
+          "fill-pattern": "solid",
+          "line-width": "2pt",
+          "line-color": "inherited",
+          "line-pattern": "inherited",
+          "border-line-color": "inherited",
+          "border-line-width": "0pt",
+          "border-line-pattern": "inherited",
+          "shape-class": "org.xmind.topicShape.roundedRect",
+          "line-class": "org.xmind.branchConnection.roundedElbow",
+          "arrow-end-class": "inherited",
+          "alignment-by-level": "inherited"
+        }
+      },
+      "subTopic": {
+        "id": "3513212d-37e3-40bf-bf0d-cd5ec14db0c8",
+        "properties": {
+          "fo:font-family": "NeverMind",
+          "fo:font-size": "14pt",
+          "fo:font-weight": "400",
+          "fo:font-style": "normal",
+          "fo:color": "inherited",
+          "fo:text-transform": "manual",
+          "fo:text-decoration": "none",
+          "fo:text-align": "left",
+          "svg:fill": "inherited",
+          "fill-pattern": "none",
+          "line-width": "2pt",
+          "line-color": "inherited",
+          "line-pattern": "inherited",
+          "border-line-color": "inherited",
+          "border-line-width": "0pt",
+          "border-line-pattern": "inherited",
+          "shape-class": "org.xmind.topicShape.roundedRect",
+          "line-class": "org.xmind.branchConnection.roundedElbow",
+          "arrow-end-class": "inherited",
+          "alignment-by-level": "inherited"
+        }
+      },
+      "floatingTopic": {
+        "id": "45cfeb5b-0736-4cc8-9631-19fbb6a39293",
+        "properties": {
+          "fo:font-family": "NeverMind",
+          "fo:font-size": "14pt",
+          "fo:font-weight": "500",
+          "fo:font-style": "normal",
+          "fo:color": "inherited",
+          "fo:text-transform": "manual",
+          "fo:text-decoration": "none",
+          "fo:text-align": "left",
+          "svg:fill": "#EEEBEE",
+          "fill-pattern": "solid",
+          "line-width": "2pt",
+          "line-color": "inherited",
+          "line-pattern": "solid",
+          "border-line-color": "#EEEBEE",
+          "border-line-width": "0pt",
+          "border-line-pattern": "inherited",
+          "shape-class": "org.xmind.topicShape.roundedRect",
+          "line-class": "org.xmind.branchConnection.roundedElbow",
+          "arrow-end-class": "org.xmind.arrowShape.none",
+          "alignment-by-level": "inherited"
+        }
+      },
+      "summaryTopic": {
+        "id": "2af1f8ab-e962-4d7f-b9ee-ac4e6c8c793e",
+        "properties": {
+          "fo:font-family": "NeverMind",
+          "fo:font-size": "14pt",
+          "fo:font-weight": "400",
+          "fo:font-style": "normal",
+          "fo:color": "inherited",
+          "fo:text-transform": "manual",
+          "fo:text-decoration": "none",
+          "fo:text-align": "left",
+          "svg:fill": "#000000",
+          "fill-pattern": "none",
+          "line-width": "inherited",
+          "line-color": "inherited",
+          "line-pattern": "inherited",
+          "border-line-color": "#000000",
+          "border-line-width": "inherited",
+          "border-line-pattern": "inherited",
+          "shape-class": "org.xmind.topicShape.roundedRect",
+          "line-class": "org.xmind.branchConnection.roundedElbow",
+          "arrow-end-class": "inherited",
+          "alignment-by-level": "inherited"
+        }
+      },
+      "calloutTopic": {
+        "id": "a37c6990-f95e-456e-8fa5-9a03d7e3fce0",
+        "properties": {
+          "fo:font-family": "NeverMind",
+          "fo:font-size": "14pt",
+          "fo:font-weight": "400",
+          "fo:font-style": "normal",
+          "fo:color": "inherited",
+          "fo:text-transform": "manual",
+          "fo:text-decoration": "none",
+          "fo:text-align": "left",
+          "svg:fill": "#000000",
+          "fill-pattern": "solid",
+          "line-width": "inherited",
+          "line-color": "inherited",
+          "line-pattern": "inherited",
+          "border-line-color": "#000000",
+          "border-line-width": "inherited",
+          "border-line-pattern": "inherited",
+          "shape-class": "org.xmind.topicShape.roundedRect",
+          "line-class": "org.xmind.branchConnection.roundedElbow",
+          "arrow-end-class": "inherited",
+          "alignment-by-level": "inherited"
+        }
+      },
+      "level3": {
+        "id": "16287d63-a187-4f90-9825-e79348c2aa5c",
+        "properties": {
+          "fo:font-family": "NeverMind",
+          "fo:font-size": "14pt",
+          "fo:font-weight": "400",
+          "fo:font-style": "normal",
+          "fo:text-transform": "manual",
+          "fo:text-decoration": "none",
+          "fo:text-align": "left",
+          "fill-pattern": "solid",
+          "line-width": "2pt",
+          "line-pattern": "inherited",
+          "border-line-width": "0pt",
+          "border-line-pattern": "inherited",
+          "shape-class": "org.xmind.topicShape.roundedRect",
+          "line-class": "org.xmind.branchConnection.roundedElbow",
+          "arrow-end-class": "inherited",
+          "alignment-by-level": "inherited"
+        }
+      },
+      "importantTopic": {
+        "id": "30af996c-f82d-492f-a4e2-1f6797d0304b",
+        "properties": {
+          "fo:font-weight": "bold",
+          "svg:fill": "#7F00AC",
+          "fill-pattern": "solid",
+          "border-line-color": "#7F00AC",
+          "border-line-width": "0"
+        }
+      },
+      "minorTopic": {
+        "id": "035eedb0-c465-4983-9de5-db2aa156150b",
+        "properties": {
+          "fo:font-weight": "bold",
+          "svg:fill": "#82004A",
+          "fill-pattern": "solid",
+          "border-line-color": "#82004A",
+          "border-line-width": "0"
+        }
+      },
+      "expiredTopic": {
+        "id": "e57fac00-b71e-4d6d-9351-0347acacfef1",
+        "properties": {
+          "fo:text-decoration": "line-through",
+          "fill-pattern": "none"
+        }
+      },
+      "summary": {
+        "id": "8e870d2c-d09e-4deb-a755-f352916a91ba",
+        "properties": {
+          "line-width": "2pt",
+          "line-color": "#000000",
+          "line-pattern": "solid",
+          "shape-class": "org.xmind.summaryShape.round"
+        }
+      },
+      "boundary": {
+        "id": "6282029b-ca67-4761-beda-fb9461cbe0a6",
+        "properties": {
+          "fo:font-family": "NeverMind",
+          "fo:font-size": "14pt",
+          "fo:font-weight": "400",
+          "fo:font-style": "normal",
+          "fo:color": "inherited",
+          "fo:text-transform": "manual",
+          "fo:text-decoration": "none",
+          "fo:text-align": "center",
+          "svg:fill": "#9B9B9B",
+          "fill-pattern": "solid",
+          "line-width": "2",
+          "line-color": "#00000066",
+          "line-pattern": "dash",
+          "shape-class": "org.xmind.boundaryShape.roundedRect"
+        }
+      },
+      "relationship": {
+        "id": "0cfe9930-84ef-4c23-82a7-fc829872f7cd",
+        "properties": {
+          "fo:font-family": "NeverMind",
+          "fo:font-size": "13pt",
+          "fo:font-weight": "400",
+          "fo:font-style": "normal",
+          "fo:color": "inherited",
+          "fo:text-transform": "manual",
+          "fo:text-decoration": "none",
+          "fo:text-align": "center",
+          "line-width": "2",
+          "line-color": "#00000066",
+          "line-pattern": "dash",
+          "shape-class": "org.xmind.relationshipShape.curved",
+          "arrow-begin-class": "org.xmind.arrowShape.none",
+          "arrow-end-class": "org.xmind.arrowShape.triangle"
+        }
+      },
+      "map": {
+        "id": "a669e01a-7492-43cb-ac5b-61be0eec748d",
+        "properties": {
+          "svg:fill": "#ffffff",
+          "multi-line-colors": "#FF6B6B #FF9F69 #97D3B6 #88E2D7 #6FD0F9 #E18BEE",
+          "color-list": "#FF6B6B #FF9F69 #97D3B6 #88E2D7 #6FD0F9 #E18BEE",
+          "line-tapered": "none"
+        }
+      },
+      "zone": {
+        "id": "2ee308a7-fd57-4144-94c9-fb0ebfa97e27",
+        "properties": {
+          "fo:font-family": "NeverMind, sans-serif, Microsoft YaHei, PingFang SC, Microsoft JhengHei, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji",
+          "fo:font-size": "12",
+          "fo:font-weight": "400",
+          "fo:font-style": "normal",
+          "fo:text-transform": "manual",
+          "fo:text-decoration": "none",
+          "fo:text-align": "left",
+          "fill-pattern": "none",
+          "border-line-width": "2pt",
+          "border-line-pattern": "solid"
+        }
+      },
+      "skeletonThemeId": "8f137afe-a0f3-4f25-b56a-cfd05993ef4b",
+      "colorThemeId": "Dawn-#ffffff-MULTI_LINE_COLORS"
+    }
+  }
+]

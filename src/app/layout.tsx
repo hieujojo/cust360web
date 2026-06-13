@@ -6,6 +6,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
 import { ReduxProvider } from "@/components/providers/ReduxProvider";
+import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import NextTopLoader from "nextjs-toploader";
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -33,12 +35,20 @@ export default function RootLayout({
   return (
     <html lang="vi" suppressHydrationWarning>
       <body className={`${inter.variable} font-sans antialiased`} suppressHydrationWarning>
-        <ReduxProvider>
-          <QueryClientProvider client={queryClient}>
-            {children}
-            <Toaster />
-          </QueryClientProvider>
-        </ReduxProvider>
+        <NextTopLoader color="var(--crm-primary)" showSpinner={false} />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <ReduxProvider>
+            <QueryClientProvider client={queryClient}>
+              {children}
+              <Toaster />
+            </QueryClientProvider>
+          </ReduxProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

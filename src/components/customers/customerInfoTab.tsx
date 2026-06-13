@@ -74,11 +74,11 @@ export function CustomerInfoTab({ customerId, data, isDeleted }: CustomerInfoTab
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-      <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+    <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
+      <div className="p-6 border-b border-border flex items-center justify-between bg-muted/20">
         <div>
-          <h2 className="text-lg font-bold text-slate-800">Thông tin chung</h2>
-          <p className="text-sm text-slate-500 mt-1">Cập nhật thông tin hồ sơ của khách hàng</p>
+          <h2 className="text-lg font-bold text-foreground">Thông tin chung</h2>
+          <p className="text-sm text-muted-foreground mt-1">Cập nhật thông tin hồ sơ của khách hàng</p>
         </div>
       </div>
 
@@ -86,24 +86,24 @@ export function CustomerInfoTab({ customerId, data, isDeleted }: CustomerInfoTab
         <fieldset disabled={isDeleted || isSubmitting} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="col-span-1 md:col-span-2">
-              <label className="block text-sm font-medium text-slate-700 mb-1">
+              <label className="block text-sm font-medium text-foreground mb-1">
                 Tên khách hàng <span className="text-red-500">*</span>
               </label>
               <input
                 {...register("name")}
-                className={`w-full p-2.5 text-sm border rounded-lg outline-none transition-colors ${
-                  errors.name ? "border-red-300 focus:border-red-500" : "border-slate-200 focus:border-blue-500"
-                } disabled:bg-slate-50 disabled:text-slate-500`}
+                className={`w-full p-2.5 text-sm border rounded-lg outline-none transition-colors bg-background text-foreground ${
+                  errors.name ? "border-red-300 focus:border-red-500" : "border-border focus:border-primary"
+                } disabled:bg-muted disabled:text-muted-foreground`}
               />
               {errors.name && <p className="text-xs text-red-500 mt-1">{errors.name.message}</p>}
             </div>
 
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Nguồn khách hàng</label>
+              <label className="block text-sm font-medium text-foreground mb-1">Nguồn khách hàng</label>
               <select
                 {...register("source")}
-                className="w-full p-2.5 text-sm border border-slate-200 rounded-lg outline-none focus:border-blue-500 bg-white disabled:bg-slate-50 disabled:text-slate-500"
+                className="w-full p-2.5 text-sm border border-border rounded-lg outline-none focus:border-primary bg-background text-foreground disabled:bg-muted disabled:text-muted-foreground"
               >
                 <option value="Website">Website</option>
                 <option value="Referral">Giới thiệu</option>
@@ -115,32 +115,32 @@ export function CustomerInfoTab({ customerId, data, isDeleted }: CustomerInfoTab
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Email liên hệ chung</label>
+              <label className="block text-sm font-medium text-foreground mb-1">Email liên hệ chung</label>
               <input
                 {...register("email")}
                 type="email"
-                className={`w-full p-2.5 text-sm border rounded-lg outline-none transition-colors ${
-                  errors.email ? "border-red-300 focus:border-red-500" : "border-slate-200 focus:border-blue-500"
-                } disabled:bg-slate-50 disabled:text-slate-500`}
+                className={`w-full p-2.5 text-sm border rounded-lg outline-none transition-colors bg-background text-foreground ${
+                  errors.email ? "border-red-300 focus:border-red-500" : "border-border focus:border-primary"
+                } disabled:bg-muted disabled:text-muted-foreground`}
               />
               {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email.message}</p>}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Số điện thoại chung</label>
+              <label className="block text-sm font-medium text-foreground mb-1">Số điện thoại chung</label>
               <input
                 {...register("phone")}
-                className="w-full p-2.5 text-sm border border-slate-200 rounded-lg outline-none focus:border-blue-500 disabled:bg-slate-50 disabled:text-slate-500"
+                className="w-full p-2.5 text-sm border border-border rounded-lg outline-none focus:border-primary bg-background text-foreground disabled:bg-muted disabled:text-muted-foreground"
               />
             </div>
           </div>
 
           {!isDeleted && (
-            <div className="pt-6 border-t border-slate-100 flex justify-end">
+            <div className="pt-6 border-t border-border flex justify-end">
               <button
                 type="submit"
                 disabled={!isDirty || isSubmitting}
-                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+                className="inline-flex items-center px-4 py-2 bg-[var(--crm-primary)] text-white text-sm font-medium rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
               >
                 {isSubmitting ? (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />

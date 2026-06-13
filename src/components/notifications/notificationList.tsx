@@ -62,9 +62,9 @@ export function NotificationList({
     <div className="flex w-[360px] flex-col">
       <div className="flex items-center justify-between gap-2 border-b border-[var(--crm-border)] px-4 py-3">
         <div>
-          <p className="text-[13px] font-medium text-gray-900">Thông báo</p>
+          <p className="text-[13px] font-medium text-foreground">Thông báo</p>
           {unreadCount > 0 && (
-            <p className="text-[11px] text-gray-500">{unreadCount} chưa đọc</p>
+            <p className="text-[11px] text-muted-foreground">{unreadCount} chưa đọc</p>
           )}
         </div>
         <button
@@ -82,13 +82,13 @@ export function NotificationList({
 
       <div className="max-h-[min(420px,70vh)] overflow-y-auto">
         {loading ? (
-          <div className="flex items-center justify-center py-12 text-gray-400">
+          <div className="flex items-center justify-center py-12 text-muted-foreground">
             <Loader2 className="h-5 w-5 animate-spin" />
           </div>
         ) : notifications.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-2 py-12 px-4 text-center">
-            <Bell className="h-8 w-8 text-gray-300" />
-            <p className="text-[13px] text-gray-500">Chưa có thông báo</p>
+            <Bell className="h-8 w-8 text-muted-foreground opacity-40" />
+            <p className="text-[13px] text-muted-foreground">Chưa có thông báo</p>
           </div>
         ) : (
           <ul className="divide-y divide-[var(--crm-border)]">
@@ -98,24 +98,24 @@ export function NotificationList({
                   type="button"
                   onClick={() => handleItemClick(item)}
                   className={cn(
-                    "flex w-full flex-col gap-0.5 px-4 py-3 text-left transition-colors hover:bg-gray-50",
-                    !item.isRead && "bg-blue-50/60 hover:bg-blue-50"
+                    "flex w-full flex-col gap-0.5 px-4 py-3 text-left transition-colors hover:bg-muted/50",
+                    !item.isRead && "bg-blue-50/60 hover:bg-blue-50 dark:bg-blue-950/20 dark:hover:bg-blue-950/30"
                   )}
                 >
                   <div className="flex items-start justify-between gap-2">
                     <p
                       className={cn(
-                        "text-[13px] leading-snug text-gray-900",
+                        "text-[13px] leading-snug text-foreground",
                         !item.isRead && "font-medium"
                       )}
                     >
                       {item.title}
                     </p>
-                    <span className="shrink-0 text-[10px] text-gray-400">
+                    <span className="shrink-0 text-[10px] text-muted-foreground">
                       {formatRelativeTime(item.createdAt)}
                     </span>
                   </div>
-                  <p className="text-[12px] leading-snug text-gray-600 line-clamp-2">
+                  <p className="text-[12px] leading-snug text-muted-foreground line-clamp-2">
                     {item.body}
                   </p>
                 </button>

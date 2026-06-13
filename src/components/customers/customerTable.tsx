@@ -8,6 +8,7 @@ import {
   Eye,
   Pencil,
 } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type {
   Customer,
   CustomerStatus,
@@ -58,12 +59,12 @@ const sourceLabel: Record<CustomerSource, string> = {
 
 function EmptyState() {
   return (
-    <div className="flex flex-col items-center justify-center py-16 bg-white border border-[var(--crm-border)] rounded-xl">
-      <div className="h-14 w-14 rounded-full bg-gray-50 flex items-center justify-center mb-3">
-        <Building2 className="h-7 w-7 text-gray-300" />
+    <div className="flex flex-col items-center justify-center py-16 bg-card border border-border rounded-xl">
+      <div className="h-14 w-14 rounded-full bg-muted flex items-center justify-center mb-3">
+        <Building2 className="h-7 w-7 text-muted-foreground" />
       </div>
-      <p className="text-[15px] font-medium text-gray-500">Không tìm thấy khách hàng nào</p>
-      <p className="text-[13px] text-gray-400 mt-1">Hãy thử thay đổi bộ lọc hoặc tạo khách hàng mới</p>
+      <p className="text-[15px] font-medium text-muted-foreground">Không tìm thấy khách hàng nào</p>
+      <p className="text-[13px] text-muted-foreground opacity-70 mt-1">Hãy thử thay đổi bộ lọc hoặc tạo khách hàng mới</p>
     </div>
   );
 }
@@ -85,10 +86,10 @@ export function CustomerTable({
   if (!data?.length) return <EmptyState />;
 
   return (
-    <div className="bg-white border border-[var(--crm-border)] rounded-xl overflow-hidden">
+    <div className="bg-card border border-border rounded-xl overflow-hidden">
       <div className="overflow-x-auto">
-        <table className="w-full text-[13px] text-left text-gray-600">
-          <thead className="text-[11px] text-gray-500 uppercase bg-gray-50/80 border-b border-[var(--crm-border)]">
+        <table className="w-full text-[13px] text-left text-muted-foreground">
+          <thead className="text-[11px] text-muted-foreground uppercase bg-muted/50 border-b border-border">
             <tr>
               <SortableHeader label="Khách hàng"  column="name"      onSort={onSort} />
               <th className="px-4 py-3 font-medium hidden sm:table-cell">Nguồn</th>
@@ -105,25 +106,33 @@ export function CustomerTable({
                 key={customer.id}
                 onClick={() => onRowClick(customer)}
                 className={`
-                  border-b border-gray-100 cursor-pointer group
-                  hover:bg-gray-50/60 transition-colors
+                  border-b border-border cursor-pointer group
+                  hover:bg-muted/60 transition-colors
                   ${customer.isDeleted ? "opacity-50" : ""}
                 `}
               >
                 {/* Tên + mã KH */}
                 <td className="px-4 py-3">
-                  <div>
-                    <p className="font-medium text-gray-900 group-hover:text-[var(--crm-primary)] transition-colors">
-                      {customer.name}
-                    </p>
-                    <p className="text-[11px] text-gray-400 mt-0.5 font-mono">
-                      {customer.customerCode}
-                    </p>
+                  <div className="flex items-center gap-3">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={customer.avatarUrl} alt={customer.name} />
+                      <AvatarFallback className="bg-[var(--crm-primary-light)] text-[var(--crm-primary)] text-xs font-semibold">
+                        {customer.name ? customer.name.charAt(0).toUpperCase() : "C"}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="font-medium text-foreground group-hover:text-[var(--crm-primary)] transition-colors">
+                        {customer.name}
+                      </p>
+                      <p className="text-[11px] text-muted-foreground opacity-70 mt-0.5 font-mono">
+                        {customer.customerCode}
+                      </p>
+                    </div>
                   </div>
                 </td>
 
                 {/* Nguồn */}
-                <td className="px-4 py-3 hidden sm:table-cell text-gray-500 text-[12px]">
+                <td className="px-4 py-3 hidden sm:table-cell text-muted-foreground text-[12px]">
                   {sourceLabel[customer.source] ?? customer.source}
                 </td>
 
@@ -139,29 +148,32 @@ export function CustomerTable({
 
                 {/* Phụ trách */}
                 <td 
-                  className="px-4 py-3 hidden md:table-cell cursor-pointer group/owner hover:bg-gray-100 transition-colors"
+                  className="px-4 py-3 hidden md:table-cell cursor-pointer group/owner hover:bg-muted transition-colors"
                   onClick={(e) => { e.stopPropagation(); onOwnerClick(customer); }}
                   title="Đổi người phụ trách"
                 >
                   {customer.ownerName ? (
                     <div className="flex items-center gap-2">
-                      <div className="h-6 w-6 rounded-full bg-[var(--crm-primary-light)] text-[var(--crm-primary)] flex items-center justify-center text-[10px] font-semibold uppercase shrink-0">
-                        {customer.ownerName.charAt(0)}
-                      </div>
-                      <span className="text-[13px] text-gray-700 truncate group-hover/owner:text-[var(--crm-primary)] transition-colors">{customer.ownerName}</span>
+                      <Avatar className="h-6 w-6">
+                        <AvatarImage src={customer.ownerAvatarUrl} alt={customer.ownerName} />
+                        <AvatarFallback className="bg-[var(--crm-primary-light)] text-[var(--crm-primary)] text-[10px] font-semibold uppercase">
+                          {customer.ownerName.charAt(0)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className="text-[13px] text-foreground truncate group-hover/owner:text-[var(--crm-primary)] transition-colors">{customer.ownerName}</span>
                     </div>
                   ) : (
-                    <span className="text-gray-400 italic text-[12px] group-hover/owner:text-[var(--crm-primary)] transition-colors">Chưa giao (Nhấn để phân công)</span>
+                    <span className="text-muted-foreground italic text-[12px] group-hover/owner:text-[var(--crm-primary)] transition-colors">Chưa giao (Nhấn để phân công)</span>
                   )}
                 </td>
 
                 {/* Phòng ban */}
-                <td className="px-4 py-3 hidden lg:table-cell text-gray-500 text-[13px]">
+                <td className="px-4 py-3 hidden lg:table-cell text-muted-foreground text-[13px]">
                   {customer.departmentName || "—"}
                 </td>
 
                 {/* Cập nhật */}
-                <td className="px-4 py-3 hidden lg:table-cell text-gray-400 text-[12px]">
+                <td className="px-4 py-3 hidden lg:table-cell text-muted-foreground opacity-70 text-[12px]">
                   {formatDistanceToNow(new Date(customer.updatedAt), {
                     addSuffix: true,
                     locale: vi,
@@ -173,14 +185,14 @@ export function CustomerTable({
                   <div className="flex items-center justify-end gap-1">
                     <button
                       onClick={(e) => { e.stopPropagation(); onRowClick(customer); }}
-                      className="p-1.5 rounded-md hover:bg-gray-100 text-gray-400 hover:text-[var(--crm-primary)] transition-colors"
+                      className="p-1.5 rounded-md hover:bg-muted text-muted-foreground hover:text-[var(--crm-primary)] transition-colors"
                       title="Xem chi tiết"
                     >
                       <Eye className="h-4 w-4" />
                     </button>
                     <button
                       onClick={(e) => { e.stopPropagation(); onStatusClick(customer); }}
-                      className="p-1.5 rounded-md hover:bg-gray-100 text-gray-400 hover:text-gray-700 transition-colors"
+                      className="p-1.5 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
                       title="Chỉnh sửa"
                     >
                       <Pencil className="h-4 w-4" />
@@ -212,12 +224,12 @@ function SortableHeader({
   return (
     <th
       scope="col"
-      className={`px-4 py-3 font-medium cursor-pointer hover:bg-gray-100/60 transition-colors group/th ${className}`}
+      className={`px-4 py-3 font-medium cursor-pointer hover:bg-muted transition-colors group/th ${className}`}
       onClick={() => onSort(column)}
     >
       <div className="flex items-center gap-1">
         {label}
-        <ArrowUpDown className="h-3 w-3 text-gray-300 group-hover/th:text-gray-500 transition-colors" />
+        <ArrowUpDown className="h-3 w-3 text-muted-foreground opacity-50 group-hover/th:opacity-100 transition-opacity" />
       </div>
     </th>
   );

@@ -108,14 +108,14 @@ export function ActivityItem({ activity, compact }: ActivityItemProps) {
       </div>
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
-          <p className="text-[13px] font-medium text-gray-900">{getTitle(activity)}</p>
+          <p className="text-[13px] font-medium text-foreground">{getTitle(activity)}</p>
           {badge && (
-            <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium text-slate-600">
+            <span className="rounded bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
               {badge}
             </span>
           )}
           {activity.type === "email" && activity.direction && (
-            <span className="inline-flex items-center gap-0.5 text-[10px] text-gray-400">
+            <span className="inline-flex items-center gap-0.5 text-[10px] text-muted-foreground">
               {activity.direction === "inbound" ? (
                 <ArrowDownLeft className="h-3 w-3" />
               ) : (
@@ -126,9 +126,9 @@ export function ActivityItem({ activity, compact }: ActivityItemProps) {
           )}
         </div>
         {body && (
-          <p className="mt-0.5 text-[12px] text-gray-600 line-clamp-3">{body}</p>
+          <p className="mt-0.5 text-[12px] text-muted-foreground line-clamp-3">{body}</p>
         )}
-        <p className="mt-1 text-[11px] text-gray-400">
+        <p className="mt-1 text-[11px] text-muted-foreground opacity-70">
           {activity.createdByName || "—"} · {timeLabel}
         </p>
       </div>
@@ -137,7 +137,7 @@ export function ActivityItem({ activity, compact }: ActivityItemProps) {
           type="button"
           onClick={handleDelete}
           disabled={deleteActivity.isPending}
-          className="shrink-0 self-start rounded p-1.5 text-gray-300 opacity-0 transition-opacity hover:bg-red-50 hover:text-red-600 group-hover:opacity-100 disabled:opacity-50"
+          className="shrink-0 self-start rounded p-1.5 text-muted-foreground opacity-0 transition-opacity hover:bg-red-50 hover:text-red-600 group-hover:opacity-100 disabled:opacity-50"
           aria-label="Xóa hoạt động"
         >
           <Trash2 className="h-4 w-4" />

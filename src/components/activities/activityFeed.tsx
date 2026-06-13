@@ -65,8 +65,8 @@ export function ActivityFeed({ customerId, dealId, compact }: ActivityFeedProps)
   if (!activities.length) {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center">
-        <p className="text-[13px] text-gray-500">Chưa có hoạt động nào</p>
-        <p className="mt-1 text-[12px] text-gray-400">Ghi nhận cuộc gọi, email, meeting hoặc note</p>
+        <p className="text-[13px] text-muted-foreground">Chưa có hoạt động nào</p>
+        <p className="mt-1 text-[12px] text-muted-foreground opacity-70">Ghi nhận cuộc gọi, email, meeting hoặc note</p>
       </div>
     );
   }
@@ -75,7 +75,7 @@ export function ActivityFeed({ customerId, dealId, compact }: ActivityFeedProps)
     <div className="space-y-4">
       {groups.map((group) => (
         <div key={group.label}>
-          <p className="sticky top-0 z-10 bg-white py-1 text-[11px] font-semibold uppercase tracking-wide text-gray-400">
+          <p className="sticky top-0 z-10 bg-background py-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
             {group.label}
           </p>
           <div className="divide-y divide-[var(--crm-border)]">

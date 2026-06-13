@@ -16,6 +16,8 @@ import {
   UserX,
 } from "lucide-react";
 
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
 import type { User } from "@/models";
 import { getRoleLabel } from "@/helper/authHelper";
 
@@ -41,7 +43,7 @@ export function UserTable({
       accessorKey: "employeeCode",
       header: "Mã NV",
       cell: ({ row }) => (
-        <div className="font-mono text-[12px] text-gray-500">
+        <div className="font-mono text-[12px] text-muted-foreground">
           {row.getValue("employeeCode")}
         </div>
       ),
@@ -49,16 +51,36 @@ export function UserTable({
     {
       accessorKey: "displayName",
       header: "Họ và tên",
-      cell: ({ row }) => (
-        <div>
-          <div className="font-medium text-gray-900 group-hover:text-[var(--crm-primary)] transition-colors">
-            {row.getValue("displayName")}
+      cell: ({ row }) => {
+        const user = row.original;
+        const initials = user.displayName
+          ? user.displayName
+              .split(" ")
+              .map((n) => n[0])
+              .slice(0, 2)
+              .join("")
+              .toUpperCase()
+          : "U";
+
+        return (
+          <div className="flex items-center gap-3">
+            <Avatar className="h-8 w-8">
+              <AvatarImage src={user.avatarUrl} alt={user.displayName} />
+              <AvatarFallback className="bg-[var(--crm-primary-light)] text-[var(--crm-primary)] text-xs font-semibold">
+                {initials}
+              </AvatarFallback>
+            </Avatar>
+            <div>
+              <div className="font-medium text-foreground group-hover:text-[var(--crm-primary)] transition-colors">
+                {row.getValue("displayName")}
+              </div>
+              <div className="text-[11px] text-muted-foreground mt-0.5">
+                {user.email}
+              </div>
+            </div>
           </div>
-          <div className="text-[11px] text-gray-400 mt-0.5">
-            {row.original.email}
-          </div>
-        </div>
-      ),
+        );
+      },
     },
     {
       accessorKey: "role",
@@ -80,7 +102,7 @@ export function UserTable({
       accessorKey: "departmentName",
       header: "Phòng ban",
       cell: ({ row }) => (
-        <div className="text-[13px] text-gray-600">
+        <div className="text-[13px] text-foreground">
           {row.getValue("departmentName") || "—"}
         </div>
       ),
@@ -92,9 +114,9 @@ export function UserTable({
         const status = row.original.status;
         const config =
           status === "Pending"
-            ? { badgeClass: "bg-amber-50 text-amber-700", dotClass: "bg-amber-500", label: "Chờ đăng nhập" }
+            ? { badgeClass: "bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400", dotClass: "bg-amber-500", label: "Chờ đăng nhập" }
             : status === "Inactive"
-              ? { badgeClass: "badge-inactive", dotClass: "bg-gray-400", label: "Tạm ngưng" }
+              ? { badgeClass: "badge-inactive", dotClass: "bg-gray-400 dark:bg-gray-600", label: "Tạm ngưng" }
               : { badgeClass: "badge-active", dotClass: "bg-[var(--crm-success)]", label: "Hoạt động" };
 
         return (
@@ -119,7 +141,7 @@ export function UserTable({
           <div className="table-row-actions flex items-center justify-end gap-1">
             <button
               onClick={(e) => { e.stopPropagation(); onEdit(user); }}
-              className="p-1.5 rounded-md hover:bg-gray-100 text-gray-400 hover:text-[var(--crm-primary)] transition-colors"
+              className="p-1.5 rounded-md hover:bg-muted text-muted-foreground hover:text-[var(--crm-primary)] transition-colors"
               title="Chỉnh sửa"
             >
               <Pencil className="h-4 w-4" />
@@ -127,15 +149,15 @@ export function UserTable({
             {/* ── Reset Password ── */}
             <button
               onClick={(e) => { e.stopPropagation(); onResetPassword(user); }}
-              className="p-1.5 rounded-md hover:bg-gray-100 text-gray-400 hover:text-amber-500 transition-colors"
+              className="p-1.5 rounded-md hover:bg-muted text-muted-foreground hover:text-amber-500 transition-colors"
               title="Đặt lại mật khẩu"
             >
               <KeyRound className="h-4 w-4" />
             </button>
             <button
               onClick={(e) => { e.stopPropagation(); onToggleStatus(user); }}
-              className={`p-1.5 rounded-md hover:bg-gray-100 transition-colors ${
-                isActive ? "text-gray-400 hover:text-[var(--crm-danger)]" : "text-gray-400 hover:text-[var(--crm-success)]"
+              className={`p-1.5 rounded-md hover:bg-muted transition-colors ${
+                isActive ? "text-muted-foreground hover:text-[var(--crm-danger)]" : "text-muted-foreground hover:text-[var(--crm-success)]"
               }`}
               title={isActive ? "Vô hiệu hoá" : "Kích hoạt"}
             >
@@ -161,21 +183,21 @@ export function UserTable({
     <div className="space-y-4">
       {/* ── Search Input ─────────────────────────────── */}
       <div className="relative w-full sm:w-[320px]">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <input
           type="text"
           placeholder="Tìm kiếm người dùng..."
           value={globalFilter}
           onChange={(e) => setGlobalFilter(e.target.value)}
-          className="h-9 w-full rounded-lg border border-[var(--crm-border)] bg-white pl-9 pr-3 text-[13px] text-gray-700 placeholder:text-gray-400 outline-none focus:border-[var(--crm-primary)] focus:ring-1 focus:ring-[var(--crm-primary)]/20 transition-colors"
+          className="h-9 w-full rounded-lg border border-border bg-background pl-9 pr-3 text-[13px] text-foreground placeholder:text-muted-foreground outline-none focus:border-[var(--crm-primary)] focus:ring-1 focus:ring-[var(--crm-primary)]/20 transition-colors"
         />
       </div>
 
       {/* ── Table ────────────────────────────────────── */}
-      <div className="bg-white border border-[var(--crm-border)] rounded-xl overflow-hidden">
+      <div className="bg-card border border-border rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-[13px] text-left text-gray-600">
-            <thead className="text-[11px] text-gray-500 uppercase bg-gray-50/80 border-b border-[var(--crm-border)]">
+          <table className="w-full text-[13px] text-left text-foreground">
+            <thead className="text-[11px] text-muted-foreground uppercase bg-muted border-b border-border">
               {table.getHeaderGroups().map((headerGroup) => (
                 <tr key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
@@ -193,7 +215,7 @@ export function UserTable({
                 table.getRowModel().rows.map((row) => (
                   <tr
                     key={row.id}
-                    className="group border-b border-gray-100 hover:bg-gray-50/60 transition-colors"
+                    className="group border-b border-border hover:bg-muted transition-colors"
                   >
                     {row.getVisibleCells().map((cell) => (
                       <td key={cell.id} className="px-4 py-3 whitespace-nowrap">
@@ -204,7 +226,7 @@ export function UserTable({
                 ))
               ) : (
                 <tr>
-                  <td colSpan={columns.length} className="px-4 py-16 text-center text-[13px] text-gray-500">
+                  <td colSpan={columns.length} className="px-4 py-16 text-center text-[13px] text-muted-foreground">
                     {globalFilter ? "Không tìm thấy kết quả phù hợp." : "Chưa có dữ liệu."}
                   </td>
                 </tr>
@@ -217,22 +239,22 @@ export function UserTable({
       {/* ── Pagination ───────────────────────────────── */}
       {table.getPageCount() > 1 && (
         <div className="flex items-center justify-between">
-          <p className="text-[13px] text-gray-500">
-            Hiển thị <span className="font-medium text-gray-900">{((table.getState().pagination.pageIndex) * 20) + 1}–{Math.min((table.getState().pagination.pageIndex + 1) * 20, data.length)}</span>
-            {" "}của <span className="font-medium text-gray-900">{data.length}</span> người dùng
+          <p className="text-[13px] text-muted-foreground">
+            Hiển thị <span className="font-medium text-foreground">{((table.getState().pagination.pageIndex) * 20) + 1}–{Math.min((table.getState().pagination.pageIndex + 1) * 20, data.length)}</span>
+            {" "}của <span className="font-medium text-foreground">{data.length}</span> người dùng
           </p>
           <div className="flex gap-2">
             <button
               disabled={!table.getCanPreviousPage()}
               onClick={() => table.previousPage()}
-              className="h-8 px-3 text-[13px] font-medium text-gray-700 bg-white border border-[var(--crm-border)] rounded-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="h-8 px-3 text-[13px] font-medium text-foreground bg-card border border-border rounded-lg hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               Trang trước
             </button>
             <button
               disabled={!table.getCanNextPage()}
               onClick={() => table.nextPage()}
-              className="h-8 px-3 text-[13px] font-medium text-gray-700 bg-white border border-[var(--crm-border)] rounded-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="h-8 px-3 text-[13px] font-medium text-foreground bg-card border border-border rounded-lg hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               Trang sau
             </button>

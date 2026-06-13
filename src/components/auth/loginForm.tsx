@@ -12,10 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/helper/toastHelper";
 import { useAuth } from "@/hooks/useAuth";
-import {
-  clearApiHeaders,
-  extractErrorMessage,
-} from "@/lib/api/client";
+import { clearApiHeaders, extractErrorMessage } from "@/lib/api/client";
 import { AuthService } from "@/services";
 
 const loginSchema = z.object({
@@ -27,7 +24,7 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 export function LoginForm() {
   const router = useRouter();
-  const { toast } = useToast();
+  const { toast, dismiss } = useToast(); // 👈 thêm dismiss
   const { login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -42,23 +39,27 @@ export function LoginForm() {
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
 
+    // 👇 hiện toast ngay khi bắt đầu gọi API
+    const { id: wakingToastId } = toast({
+      title: "⏳ Server đang được kích hoạt",
+      description: "Vui lòng chờ một chút nhé...",
+      duration: Infinity,
+    });
+
     try {
       const loginResponse = await AuthService.login({
         email: data.email,
         password: data.password,
       });
 
-      const { accessToken, user, firebaseToken  } = loginResponse;
+      const { accessToken, user, firebaseToken } = loginResponse;
 
-      if (!accessToken) {
-        throw new Error("Token not received from server");
-      }
+      if (!accessToken) throw new Error("Token not received from server");
+      if (!user || !user.displayName) throw new Error("User data incomplete");
 
-      if (!user || !user.displayName) {
-        throw new Error("User data incomplete");
-      }
+      await login(user, accessToken, firebaseToken);
 
-      await login(user, accessToken , firebaseToken);
+      dismiss(wakingToastId); // 👈 tắt toast server waking
 
       toast({
         title: "Đăng nhập thành công",
@@ -67,19 +68,17 @@ export function LoginForm() {
 
       router.push("/dashboard");
     } catch (error) {
+      dismiss(wakingToastId); // 👈 tắt toast server waking khi lỗi
 
       clearApiHeaders();
-
       document.cookie = "accessToken=; path=/; max-age=0";
       localStorage.removeItem("accessToken");
       localStorage.removeItem("user");
 
-      const errorMessage = extractErrorMessage(error);
-
       toast({
         variant: "destructive",
         title: "Lỗi đăng nhập",
-        description: errorMessage,
+        description: extractErrorMessage(error),
       });
     } finally {
       setIsLoading(false);
@@ -93,7 +92,7 @@ export function LoginForm() {
         <Input
           id="email"
           type="email"
-          placeholder="admin@company.com"
+          placeholder="test@company.com"  
           {...register("email")}
           disabled={isLoading}
         />
@@ -107,7 +106,7 @@ export function LoginForm() {
         <Input
           id="password"
           type="password"
-          placeholder="********"
+          placeholder="Test@123456" 
           {...register("password")}
           disabled={isLoading}
         />

@@ -152,20 +152,20 @@ export function QuotationFormDialog({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
-      <div className="flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl">
+      <div className="flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-card shadow-2xl border border-border">
 
         {/* ── Header ── */}
-        <div className="flex shrink-0 items-center justify-between border-b border-slate-100 px-6 py-4">
+        <div className="flex shrink-0 items-center justify-between border-b border-border px-6 py-4">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50">
-              <FileText className="h-4 w-4 text-blue-600" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 dark:bg-blue-950/30">
+              <FileText className="h-4 w-4 text-blue-600 dark:text-blue-400" />
             </div>
             <div>
-              <h2 className="text-[15px] font-semibold text-slate-800">
+              <h2 className="text-[15px] font-semibold text-foreground">
                 {quotation ? "Chỉnh sửa báo giá" : "Tạo báo giá"}
               </h2>
               {quotation && (
-                <p className="text-[11px] text-slate-400">
+                <p className="text-[11px] text-muted-foreground">
                   {quotation.code} · Phiên bản {quotation.version}
                 </p>
               )}
@@ -173,7 +173,7 @@ export function QuotationFormDialog({
           </div>
           <button
             onClick={() => onOpenChange(false)}
-            className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+            className="rounded-lg p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"
           >
             <X className="h-4 w-4" />
           </button>
@@ -204,7 +204,7 @@ export function QuotationFormDialog({
               </div>
             </div>
 
-            <div className="h-px bg-slate-100" />
+            <div className="h-px bg-border" />
 
             {/* Currency + Valid Until */}
             <div className="grid grid-cols-2 gap-4">
@@ -212,7 +212,7 @@ export function QuotationFormDialog({
                 <Label required>Tiền tệ</Label>
                 <select
                   {...register("currency")}
-                  className="mt-1.5 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:border-blue-400 focus:outline-none"
+                  className="mt-1.5 w-full rounded-lg border border-border bg-background text-foreground px-3 py-2 text-sm focus:border-blue-400 focus:outline-none"
                 >
                   {CURRENCIES.map((c) => (
                     <option key={c.value} value={c.value}>{c.label}</option>
@@ -225,7 +225,7 @@ export function QuotationFormDialog({
                 <input
                   type="date"
                   {...register("validUntil")}
-                  className="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:border-blue-400 focus:outline-none"
+                  className="mt-1.5 w-full rounded-lg border border-border bg-background text-foreground px-3 py-2 text-sm focus:border-blue-400 focus:outline-none"
                 />
               </div>
             </div>
@@ -237,11 +237,11 @@ export function QuotationFormDialog({
                 {...register("notes")}
                 rows={2}
                 placeholder="Điều khoản, ghi chú đặc biệt..."
-                className="mt-1.5 w-full resize-none rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 placeholder:text-slate-300 focus:border-blue-400 focus:outline-none"
+                className="mt-1.5 w-full resize-none rounded-lg border border-border bg-background text-foreground placeholder:text-muted-foreground px-3 py-2 text-sm focus:border-blue-400 focus:outline-none"
               />
             </div>
 
-            <div className="h-px bg-slate-100" />
+            <div className="h-px bg-border" />
 
             {/* Items */}
             <div>
@@ -267,8 +267,8 @@ export function QuotationFormDialog({
               )}
 
               {fields.length === 0 ? (
-                <div className="mt-3 flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 py-8 text-center">
-                  <p className="text-sm text-slate-400">Chưa có item nào.</p>
+                <div className="mt-3 flex flex-col items-center justify-center rounded-xl border border-dashed border-border py-8 text-center">
+                  <p className="text-sm text-muted-foreground">Chưa có item nào.</p>
                   <button
                     type="button"
                     onClick={() =>
@@ -288,18 +288,18 @@ export function QuotationFormDialog({
                     return (
                       <div
                         key={field.id}
-                        className="rounded-xl border border-slate-100 bg-slate-50 p-4"
+                        className="rounded-xl border border-border bg-muted p-4"
                       >
                         {/* Item header */}
                         <div className="mb-3 flex items-center justify-between">
-                          <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-slate-200 text-[10px] font-semibold text-slate-600">
+                          <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-muted-foreground/20 text-[10px] font-semibold text-foreground">
                             {index + 1}
                           </span>
                           {fields.length > 1 && (
                             <button
                               type="button"
                               onClick={() => remove(index)}
-                              className="rounded-md p-1 text-slate-300 hover:bg-red-50 hover:text-red-500"
+                              className="rounded-md p-1 text-muted-foreground hover:bg-red-50 hover:text-red-500"
                               aria-label="Xóa item"
                             >
                               <Trash2 className="h-3.5 w-3.5" />
@@ -314,7 +314,7 @@ export function QuotationFormDialog({
                             <input
                               {...register(`items.${index}.category`)}
                               placeholder="Gói Chấm công cơ bản..."
-                              className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:border-blue-400 focus:outline-none"
+                              className="mt-1 w-full rounded-lg border border-border bg-background text-foreground placeholder:text-muted-foreground px-3 py-2 text-sm focus:border-blue-400 focus:outline-none"
                             />
                           </div>
                           <div>
@@ -322,7 +322,7 @@ export function QuotationFormDialog({
                             <input
                               {...register(`items.${index}.description`)}
                               placeholder="Chi tiết dịch vụ..."
-                              className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:border-blue-400 focus:outline-none"
+                              className="mt-1 w-full rounded-lg border border-border bg-background text-foreground placeholder:text-muted-foreground px-3 py-2 text-sm focus:border-blue-400 focus:outline-none"
                             />
                             {errors.items?.[index]?.description && (
                               <FieldError msg={errors.items[index]?.description?.message} />
@@ -339,7 +339,7 @@ export function QuotationFormDialog({
                               step="1"
                               min="1"
                               {...register(`items.${index}.quantity`, { valueAsNumber: true })}
-                              className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:border-blue-400 focus:outline-none"
+                              className="mt-1 w-full rounded-lg border border-border bg-background text-foreground px-3 py-2 text-sm focus:border-blue-400 focus:outline-none"
                             />
                             {errors.items?.[index]?.quantity && (
                               <FieldError msg={errors.items[index]?.quantity?.message} />
@@ -352,7 +352,7 @@ export function QuotationFormDialog({
                               step="1000"
                               min="0"
                               {...register(`items.${index}.unitPrice`, { valueAsNumber: true })}
-                              className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:border-blue-400 focus:outline-none"
+                              className="mt-1 w-full rounded-lg border border-border bg-background text-foreground px-3 py-2 text-sm focus:border-blue-400 focus:outline-none"
                             />
                             {errors.items?.[index]?.unitPrice && (
                               <FieldError msg={errors.items[index]?.unitPrice?.message} />
@@ -360,7 +360,7 @@ export function QuotationFormDialog({
                           </div>
                           <div>
                             <Label>Thành tiền</Label>
-                            <div className="mt-1 rounded-lg border border-slate-100 bg-white px-3 py-2 text-sm font-medium text-slate-600">
+                            <div className="mt-1 rounded-lg border border-border bg-card px-3 py-2 text-sm font-medium text-foreground">
                               {fmt(lineTotal)}
                             </div>
                           </div>
@@ -374,16 +374,16 @@ export function QuotationFormDialog({
           </div>
 
           {/* ── Footer (sticky) ── */}
-          <div className="shrink-0 border-t border-slate-100 bg-white px-6 py-4">
-            <div className="mb-4 flex items-center justify-between rounded-xl bg-slate-50 px-4 py-3">
-              <span className="text-sm text-slate-500">Tổng giá trị</span>
-              <span className="text-base font-semibold text-slate-800">{fmt(computedTotal)}</span>
+          <div className="shrink-0 border-t border-border bg-card px-6 py-4">
+            <div className="mb-4 flex items-center justify-between rounded-xl bg-muted px-4 py-3">
+              <span className="text-sm text-muted-foreground">Tổng giá trị</span>
+              <span className="text-base font-semibold text-foreground">{fmt(computedTotal)}</span>
             </div>
             <div className="flex justify-end gap-2">
               <button
                 type="button"
                 onClick={() => onOpenChange(false)}
-                className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50"
+                className="rounded-lg border border-border bg-card text-foreground hover:bg-muted px-4 py-2 text-sm font-medium"
               >
                 Hủy
               </button>
@@ -406,7 +406,7 @@ export function QuotationFormDialog({
 // ─── Small helpers ────────────────────────────────────────
 function Label({ children, required }: { children: React.ReactNode; required?: boolean }) {
   return (
-    <label className="block text-xs font-medium text-slate-500">
+    <label className="block text-xs font-medium text-muted-foreground">
       {children}
       {required && <span className="ml-0.5 text-red-400">*</span>}
     </label>

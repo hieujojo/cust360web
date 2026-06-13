@@ -19,25 +19,25 @@ export function GoogleSyncSettings() {
   }
 
   return (
-    <div className="space-y-4 rounded-xl border bg-white p-5">
+    <div className="space-y-4 rounded-xl border bg-card p-5">
       <div>
-        <h2 className="text-[15px] font-semibold text-gray-900">Gmail & Google Calendar</h2>
-        <p className="mt-1 text-[13px] text-gray-500">
+        <h2 className="text-[15px] font-semibold text-card-foreground">Gmail & Google Calendar</h2>
+        <p className="mt-1 text-[13px] text-muted-foreground">
           Tự động đồng bộ email và lịch họp liên quan đến contact khách hàng vào timeline.
         </p>
       </div>
 
       {status?.connected ? (
         <div className="space-y-3">
-          <p className="text-[13px] text-gray-700">
+          <p className="text-[13px] text-foreground">
             Đã kết nối: <span className="font-medium">{status.email}</span>
           </p>
-          <div className="flex flex-wrap gap-2 text-[12px] text-gray-500">
-            <span className="inline-flex items-center gap-1 rounded bg-slate-100 px-2 py-1">
+          <div className="flex flex-wrap gap-2 text-[12px] text-muted-foreground">
+            <span className="inline-flex items-center gap-1 rounded bg-muted px-2 py-1">
               <Mail className="h-3.5 w-3.5" />
               Gmail {status.gmailSyncEnabled ? "bật" : "tắt"}
             </span>
-            <span className="inline-flex items-center gap-1 rounded bg-slate-100 px-2 py-1">
+            <span className="inline-flex items-center gap-1 rounded bg-muted px-2 py-1">
               <Calendar className="h-3.5 w-3.5" />
               Calendar {status.calendarSyncEnabled ? "bật" : "tắt"}
             </span>
@@ -52,7 +52,7 @@ export function GoogleSyncSettings() {
               })
             }
             disabled={disconnect.isPending}
-            className="rounded-lg border border-red-200 px-4 py-2 text-[13px] font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
+            className="rounded-lg border border-red-200 px-4 py-2 text-[13px] font-medium text-red-600 hover:bg-red-500/10 disabled:opacity-50"
           >
             {disconnect.isPending ? "Đang xử lý..." : "Ngắt kết nối"}
           </button>

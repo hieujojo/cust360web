@@ -33,42 +33,42 @@ import { UserRole, type CreateUserRequest, type UpdateUserRequest, type User } f
 
 const createUserSchema = z
   .object({
-    email: z.string().email("Email khong hop le"),
-    displayName: z.string().min(2, "Ten hien thi phai co it nhat 2 ky tu"),
+    email: z.string().email("Email không hợp lệ"),
+    displayName: z.string().min(2, "Tên hiển thị phải có ít nhất 2 ký tự"),
     role: z.number().min(1).max(4),
     departmentId: z.string().optional(),
     teamId: z.string().optional(),
-    password: z.string().min(8, "Mat khau phai co it nhat 8 ky tu"),
+    password: z.string().min(8, "Mật khẩu phải có ít nhất 8 ký tự"),
     phone: z
       .string()
-      .regex(/^[0-9]{10,11}$/, "So dien thoai khong hop le (10-11 so)")
+      .regex(/^[0-9]{10,11}$/, "Số điện thoại không hợp lệ (10-11 số)")
       .optional()
       .or(z.literal("")),
   })
   .refine(
     (data) => !(data.role === 3 && !data.departmentId),
     {
-      message: "User (Role 3) phai duoc gan vao mot phong ban",
+      message: "User (Role 3) phải được gán vào một phòng ban",
       path: ["departmentId"],
     }
   );
 
 const updateUserSchema = z
   .object({
-    displayName:  z.string().min(2, "Ten hien thi phai co it nhat 2 ky tu"),
+    displayName:  z.string().min(2, "Tên hiển thị phải có ít nhất 2 ký tự"),
     role:         z.number().min(1).max(4),
     departmentId: z.string().optional(),
     teamId:       z.string().optional(),
     phone: z
       .string()
-      .regex(/^[0-9]{10,11}$/, "So dien thoai khong hop le (10-11 so)")
+      .regex(/^[0-9]{10,11}$/, "Số điện thoại không hợp lệ (10-11 số)")
       .optional()
       .or(z.literal("")),
   })
   .refine(
     (data) => !(data.role === 3 && !data.departmentId),
     {
-      message: "User (Role 3) phai duoc gan vao mot phong ban",
+      message: "User (Role 3) phải được gán vào một phòng ban",
       path: ["departmentId"],
     }
   );
@@ -131,7 +131,7 @@ export function CreateUserDialog({ open, onOpenChange }: DialogProps) {
         phone: data.phone || undefined,
       } as CreateUserRequest);
 
-      toast({ title: "Thanh cong", description: "Tai khoan da duoc tao thanh cong." });
+      toast({ title: "Thành công", description: "Tài khoản đã được tạo thành công." });
 
       if (result?.id) {
         queryClient.invalidateQueries({ queryKey: ["users", result.id] });
@@ -149,8 +149,8 @@ export function CreateUserDialog({ open, onOpenChange }: DialogProps) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>Tao tai khoan moi</DialogTitle>
-          <DialogDescription>Nhap thong tin de tao tai khoan nguoi dung moi.</DialogDescription>
+          <DialogTitle>Tạo tài khoản mới</DialogTitle>
+          <DialogDescription>Nhập thông tin để tạo tài khoản người dùng mới.</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -161,13 +161,13 @@ export function CreateUserDialog({ open, onOpenChange }: DialogProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="displayName">Ho va ten *</Label>
-            <Input id="displayName" placeholder="Nguyen Van A" {...register("displayName")} />
+            <Label htmlFor="displayName">Họ và tên *</Label>
+            <Input id="displayName" placeholder="Nguyễn Văn A" {...register("displayName")} />
             {errors.displayName && <p className="text-sm text-destructive">{errors.displayName.message}</p>}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="role">Vai tro *</Label>
+            <Label htmlFor="role">Vai trò *</Label>
             <Controller
               name="role"
               control={control}
@@ -181,7 +181,7 @@ export function CreateUserDialog({ open, onOpenChange }: DialogProps) {
                     setSelectedDepartmentId("");
                   }}
                 >
-                  <SelectTrigger id="role"><SelectValue placeholder="Chon vai tro" /></SelectTrigger>
+                  <SelectTrigger id="role"><SelectValue placeholder="Chọn vai trò" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="2">Admin</SelectItem>
                     <SelectItem value="3">User</SelectItem>
@@ -194,13 +194,13 @@ export function CreateUserDialog({ open, onOpenChange }: DialogProps) {
           {currentRole === 3 && (
             <>
               <div className="space-y-2">
-                <Label htmlFor="departmentId">Phong ban *</Label>
+                <Label htmlFor="departmentId">Phòng ban *</Label>
                 <Controller
                   name="departmentId"
                   control={control}
                   render={({ field }) => (
                     <Select value={field.value || ""} onValueChange={handleDepartmentChange}>
-                      <SelectTrigger id="departmentId"><SelectValue placeholder="Chon phong ban" /></SelectTrigger>
+                      <SelectTrigger id="departmentId"><SelectValue placeholder="Chọn phòng ban" /></SelectTrigger>
                       <SelectContent>
                         {departments.map((dept) => (
                           <SelectItem key={dept.id} value={dept.id}>{dept.name}</SelectItem>
@@ -214,13 +214,13 @@ export function CreateUserDialog({ open, onOpenChange }: DialogProps) {
 
               {currentDepartmentId && (
                 <div className="space-y-2">
-                  <Label htmlFor="teamId">Team (tuy chon)</Label>
+                  <Label htmlFor="teamId">Team (tùy chọn)</Label>
                   <Controller
                     name="teamId"
                     control={control}
                     render={({ field }) => (
                       <Select value={field.value || ""} onValueChange={field.onChange}>
-                        <SelectTrigger id="teamId"><SelectValue placeholder="Chon team" /></SelectTrigger>
+                        <SelectTrigger id="teamId"><SelectValue placeholder="Chọn team" /></SelectTrigger>
                         <SelectContent>
                           {teams.length > 0 ? (
                             teams.map((team) => (
@@ -239,22 +239,22 @@ export function CreateUserDialog({ open, onOpenChange }: DialogProps) {
           )}
 
           <div className="space-y-2">
-            <Label htmlFor="password">Mat khau tam thoi *</Label>
+            <Label htmlFor="password">Mật khẩu tạm thời *</Label>
             <Input id="password" type="password" placeholder="********" {...register("password")} />
             {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="phone">So dien thoai</Label>
+            <Label htmlFor="phone">Số điện thoại</Label>
             <Input id="phone" type="tel" placeholder="0901234567" {...register("phone")} />
             {errors.phone && <p className="text-sm text-destructive">{errors.phone.message}</p>}
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Huy</Button>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Hủy</Button>
             <Button type="submit" disabled={createUser.isPending}>
               {createUser.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Tao tai khoan
+              Tạo tài khoản
             </Button>
           </DialogFooter>
         </form>
@@ -326,7 +326,7 @@ export function EditUserDialog({ open, onOpenChange, user }: UserDialogProps) {
         } as UpdateUserRequest,
       });
 
-      toast({ title: "Thanh cong", description: "Thong tin nguoi dung da duoc cap nhat." });
+      toast({ title: "Thành công", description: "Thông tin người dùng đã được cập nhật." });
       queryClient.invalidateQueries({ queryKey: ["users", user.id] });
       reset();
       setSelectedDepartmentId("");

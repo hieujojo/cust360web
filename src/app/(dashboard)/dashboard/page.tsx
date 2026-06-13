@@ -77,7 +77,7 @@ export default function DashboardPage() {
       )}
 
       {/* Stat cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4" data-tour="dashboard-stats">
         <StatCard
           title="Khách hàng"
           value={customerCount}
@@ -134,7 +134,7 @@ export default function DashboardPage() {
       )}
 
       {/* Thông tin tài khoản */}
-      <Card>
+      <Card data-tour="dashboard-account-info">
         <CardHeader>
           <CardTitle>Thông tin tài khoản</CardTitle>
           <CardDescription>Chi tiết tài khoản của bạn</CardDescription>

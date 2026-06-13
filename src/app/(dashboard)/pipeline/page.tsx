@@ -96,13 +96,14 @@ export default function PipelinePage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold">Sales Pipeline</h1>
-          <p className="text-sm text-gray-500">
+          <h1 className="text-xl font-semibold text-foreground">Sales Pipeline</h1>
+          <p className="text-sm text-muted-foreground">
             Kanban realtime và danh sách deal.
           </p>
         </div>
         <button
           onClick={() => setCreateOpen(true)}
+          data-tour="pipeline-create-btn"
           className="inline-flex items-center gap-1 rounded-lg bg-[var(--crm-primary)] px-4 py-2 text-sm font-medium text-white"
         >
           <Plus className="h-4 w-4" />
@@ -110,17 +111,17 @@ export default function PipelinePage() {
         </button>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2" data-tour="pipeline-filters">
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search title/notes"
-          className="h-9 rounded-lg border px-3 text-sm"
+          className="h-9 rounded-lg border border-border bg-background text-foreground px-3 text-sm placeholder:text-muted-foreground"
         />
         <select
           value={stage}
           onChange={(e) => setStage(e.target.value)}
-          className="h-9 rounded-lg border px-3 text-sm"
+          className="h-9 rounded-lg border border-border bg-background text-foreground px-3 text-sm"
         >
           <option value="">All stages</option>
           {stages.map((s) => (
@@ -132,7 +133,7 @@ export default function PipelinePage() {
         <select
           value={owner}
           onChange={(e) => setOwner(e.target.value)}
-          className="h-9 rounded-lg border px-3 text-sm"
+          className="h-9 rounded-lg border border-border bg-background text-foreground px-3 text-sm"
         >
           <option value="">All owners</option>
           {ownerOptions.map((o: { id: string; name: string }) => (
@@ -141,16 +142,16 @@ export default function PipelinePage() {
             </option>
           ))}
         </select>
-        <div className="ml-auto flex rounded-lg border">
+        <div className="ml-auto flex rounded-lg border border-border overflow-hidden">
           <button
             onClick={() => setView("kanban")}
-            className={`px-3 py-1.5 text-sm ${view === "kanban" ? "bg-[var(--crm-primary)] text-white" : ""}`}
+            className={`px-3 py-1.5 text-sm transition-colors ${view === "kanban" ? "bg-[var(--crm-primary)] text-white" : "bg-background text-foreground hover:bg-muted"}`}
           >
             Kanban
           </button>
           <button
             onClick={() => setView("list")}
-            className={`px-3 py-1.5 text-sm ${view === "list" ? "bg-[var(--crm-primary)] text-white" : ""}`}
+            className={`px-3 py-1.5 text-sm transition-colors border-l border-border ${view === "list" ? "bg-[var(--crm-primary)] text-white" : "bg-background text-foreground hover:bg-muted"}`}
           >
             Deal List
           </button>
@@ -158,7 +159,7 @@ export default function PipelinePage() {
       </div>
 
       {isLoading ? (
-        <div className="py-10 text-center text-gray-500">Đang tải...</div>
+        <div className="py-10 text-center text-muted-foreground">Đang tải...</div>
       ) : view === "kanban" ? (
         <KanbanBoard
           deals={kanbanDeals}

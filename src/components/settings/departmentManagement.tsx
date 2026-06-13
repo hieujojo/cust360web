@@ -108,11 +108,11 @@ export function DepartmentManagement() {
   }
 
   return (
-    <div className="space-y-4 rounded-xl border bg-white p-5">
+    <div className="space-y-4 rounded-xl border bg-card p-5">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-[15px] font-medium text-gray-900">Phòng ban</h2>
-          <p className="text-[13px] text-gray-500 mt-0.5">
+          <h2 className="text-[15px] font-medium text-card-foreground">Phòng ban</h2>
+          <p className="text-[13px] text-muted-foreground mt-0.5">
             Quản lý phòng ban và gán trưởng phòng.
           </p>
         </div>
@@ -123,11 +123,11 @@ export function DepartmentManagement() {
       </div>
 
       {departments.length === 0 ? (
-        <p className="py-8 text-center text-[13px] text-gray-400">Chưa có phòng ban nào.</p>
+        <p className="py-8 text-center text-[13px] text-muted-foreground">Chưa có phòng ban nào.</p>
       ) : (
-        <div className="overflow-hidden rounded-lg border">
+        <div className="overflow-hidden rounded-lg border border-border">
           <table className="w-full text-[13px]">
-            <thead className="bg-slate-50 text-left text-gray-500">
+            <thead className="bg-muted text-left text-muted-foreground">
               <tr>
                 <th className="px-4 py-2.5 font-medium">Tên</th>
                 <th className="px-4 py-2.5 font-medium">Trưởng phòng</th>
@@ -135,28 +135,28 @@ export function DepartmentManagement() {
                 <th className="px-4 py-2.5 font-medium w-24" />
               </tr>
             </thead>
-            <tbody className="divide-y">
+            <tbody className="divide-y divide-border">
               {departments.map((dept) => (
-                <tr key={dept.id} className="hover:bg-slate-50/50">
+                <tr key={dept.id} className="hover:bg-muted/50 transition-colors">
                   <td className="px-4 py-3">
-                    <div className="font-medium text-gray-900">{dept.name}</div>
+                    <div className="font-medium text-foreground">{dept.name}</div>
                     {dept.description && (
-                      <div className="text-[12px] text-gray-400 mt-0.5">{dept.description}</div>
+                      <div className="text-[12px] text-muted-foreground mt-0.5">{dept.description}</div>
                     )}
                   </td>
-                  <td className="px-4 py-3 text-gray-600">{dept.managerName ?? "—"}</td>
-                  <td className="px-4 py-3 text-gray-600">{dept.userCount ?? 0}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{dept.managerName ?? "—"}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{dept.userCount ?? 0}</td>
                   <td className="px-4 py-3">
                     <div className="flex justify-end gap-1">
                       <button
                         onClick={() => openEdit(dept)}
-                        className="rounded p-1.5 text-gray-400 hover:bg-slate-100 hover:text-gray-700"
+                        className="rounded p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"
                       >
                         <Pencil className="h-4 w-4" />
                       </button>
                       <button
                         onClick={() => handleDelete(dept)}
-                        className="rounded p-1.5 text-red-400 hover:bg-red-50 hover:text-red-600"
+                        className="rounded p-1.5 text-red-400 hover:bg-red-500/10 hover:text-red-500"
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
@@ -189,7 +189,7 @@ export function DepartmentManagement() {
                 <select
                   value={managerId}
                   onChange={(e) => setManagerId(e.target.value)}
-                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm"
+                  className="flex h-9 w-full rounded-md border border-input bg-background text-foreground px-3 text-sm"
                 >
                   <option value="">— Chưa gán —</option>
                   {users.map((u) => (

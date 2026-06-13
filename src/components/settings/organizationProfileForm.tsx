@@ -95,21 +95,21 @@ export function OrganizationProfileForm() {
   }
 
   return (
-    <div className="space-y-6 rounded-xl border bg-white p-5">
+    <div className="space-y-6 rounded-xl border bg-card p-5">
       <div>
-        <h2 className="text-[15px] font-medium text-gray-900">Hồ sơ tổ chức</h2>
-        <p className="text-[13px] text-gray-500 mt-0.5">
+        <h2 className="text-[15px] font-medium text-card-foreground">Hồ sơ tổ chức</h2>
+        <p className="text-[13px] text-muted-foreground mt-0.5">
           Thông tin hiển thị trên toàn bộ hệ thống và báo giá PDF.
         </p>
       </div>
 
       <div className="flex items-start gap-5">
-        <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-xl border bg-slate-50">
+        <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-xl border bg-muted">
           {profile?.logoUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={profile.logoUrl} alt="Logo" className="h-full w-full object-contain" />
           ) : (
-            <span className="text-2xl font-semibold text-gray-400">
+            <span className="text-2xl font-semibold text-muted-foreground">
               {name.charAt(0).toUpperCase() || "?"}
             </span>
           )}
@@ -136,7 +136,7 @@ export function OrganizationProfileForm() {
             )}
             Tải logo lên
           </Button>
-          <p className="mt-1.5 text-[12px] text-gray-400">PNG, JPG, WEBP hoặc SVG. Tối đa 2MB.</p>
+          <p className="mt-1.5 text-[12px] text-muted-foreground">PNG, JPG, WEBP hoặc SVG. Tối đa 2MB.</p>
         </div>
       </div>
 
@@ -163,7 +163,7 @@ export function OrganizationProfileForm() {
               setTimezone(e.target.value);
               setIsDirty(true);
             }}
-            className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm"
+            className="flex h-9 w-full rounded-md border border-input bg-background text-foreground px-3 text-sm"
           >
             {TIMEZONES.map((tz) => (
               <option key={tz.value} value={tz.value}>
@@ -182,7 +182,7 @@ export function OrganizationProfileForm() {
               setCurrency(e.target.value);
               setIsDirty(true);
             }}
-            className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm"
+            className="flex h-9 w-full rounded-md border border-input bg-background text-foreground px-3 text-sm"
           >
             {CURRENCIES.map((c) => (
               <option key={c.value} value={c.value}>
@@ -201,7 +201,7 @@ export function OrganizationProfileForm() {
               setLanguage(e.target.value);
               setIsDirty(true);
             }}
-            className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm"
+            className="flex h-9 w-full rounded-md border border-input bg-background text-foreground px-3 text-sm"
           >
             {LANGUAGES.map((l) => (
               <option key={l.value} value={l.value}>

@@ -125,8 +125,8 @@ export function TeamManagement() {
 
   if (departments.length === 0) {
     return (
-      <div className="space-y-4 rounded-xl border bg-white p-5">
-        <p className="text-[13px] text-gray-400">
+      <div className="space-y-4 rounded-xl border bg-card p-5">
+        <p className="text-[13px] text-muted-foreground">
           Cần tạo ít nhất một phòng ban trước khi có thể quản lý Team.
         </p>
       </div>
@@ -134,11 +134,11 @@ export function TeamManagement() {
   }
 
   return (
-    <div className="space-y-4 rounded-xl border bg-white p-5">
+    <div className="space-y-4 rounded-xl border bg-card p-5">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-[15px] font-medium text-gray-900">Team</h2>
-          <p className="text-[13px] text-gray-500 mt-0.5">
+          <h2 className="text-[15px] font-medium text-card-foreground">Team</h2>
+          <p className="text-[13px] text-muted-foreground mt-0.5">
             Quản lý nhóm và gán trưởng nhóm.
           </p>
         </div>
@@ -149,7 +149,7 @@ export function TeamManagement() {
               setSelectedDeptId(e.target.value);
               setDialogOpen(false); // reset khi đổi phòng ban
             }}
-            className="flex h-9 rounded-md border border-input bg-transparent px-3 text-sm"
+            className="flex h-9 rounded-md border border-input bg-background text-foreground px-3 text-sm"
           >
             {departments.map((d) => (
               <option key={d.id} value={d.id}>
@@ -166,16 +166,16 @@ export function TeamManagement() {
 
       {loadingTeams ? (
         <div className="flex justify-center py-8">
-          <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
+          <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
         </div>
       ) : teams.length === 0 ? (
-        <p className="py-8 text-center text-[13px] text-gray-400">
+        <p className="py-8 text-center text-[13px] text-muted-foreground">
           Chưa có team nào trong phòng ban này.
         </p>
       ) : (
-        <div className="overflow-hidden rounded-lg border">
+        <div className="overflow-hidden rounded-lg border border-border">
           <table className="w-full text-[13px]">
-            <thead className="bg-slate-50 text-left text-gray-500">
+            <thead className="bg-muted text-left text-muted-foreground">
               <tr>
                 <th className="px-4 py-2.5 font-medium">Tên Team</th>
                 <th className="px-4 py-2.5 font-medium">Trưởng nhóm</th>
@@ -183,30 +183,30 @@ export function TeamManagement() {
                 <th className="px-4 py-2.5 font-medium w-24" />
               </tr>
             </thead>
-            <tbody className="divide-y">
+            <tbody className="divide-y divide-border">
               {teams.map((team) => (
-                <tr key={team.id} className="hover:bg-slate-50/50">
+                <tr key={team.id} className="hover:bg-muted/50 transition-colors">
                   <td className="px-4 py-3">
-                    <div className="font-medium text-gray-900">{team.name}</div>
+                    <div className="font-medium text-foreground">{team.name}</div>
                     {team.description && (
-                      <div className="text-[12px] text-gray-400 mt-0.5">
+                      <div className="text-[12px] text-muted-foreground mt-0.5">
                         {team.description}
                       </div>
                     )}
                   </td>
-                  <td className="px-4 py-3 text-gray-600">{team.leadName ?? "—"}</td>
-                  <td className="px-4 py-3 text-gray-600">{team.memberCount ?? 0}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{team.leadName ?? "—"}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{team.memberCount ?? 0}</td>
                   <td className="px-4 py-3">
                     <div className="flex justify-end gap-1">
                       <button
                         onClick={() => openEdit(team)}
-                        className="rounded p-1.5 text-gray-400 hover:bg-slate-100 hover:text-gray-700"
+                        className="rounded p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"
                       >
                         <Pencil className="h-4 w-4" />
                       </button>
                       <button
                         onClick={() => handleDelete(team)}
-                        className="rounded p-1.5 text-red-400 hover:bg-red-50 hover:text-red-600"
+                        className="rounded p-1.5 text-red-400 hover:bg-red-500/10 hover:text-red-500"
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
@@ -246,7 +246,7 @@ export function TeamManagement() {
                 <select
                   value={leadId}
                   onChange={(e) => setLeadId(e.target.value)}
-                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm"
+                  className="flex h-9 w-full rounded-md border border-input bg-background text-foreground px-3 text-sm"
                 >
                   <option value="">— Chưa gán —</option>
                   {users
@@ -257,7 +257,7 @@ export function TeamManagement() {
                     </option>
                   ))}
                 </select>
-                <p className="text-[12px] text-gray-400">
+                <p className="text-[12px] text-muted-foreground">
                   Chỉ những nhân viên đã được gán vào team này mới có thể được chọn làm trưởng nhóm.
                 </p>
               </div>

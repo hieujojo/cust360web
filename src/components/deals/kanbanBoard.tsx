@@ -118,15 +118,15 @@ function StageColumn({ stage, items }: { stage: PipelineStage; items: Deal[] }) 
         "rounded-xl border p-3 transition-colors duration-150",
         // FIX 5: visual feedback khi kéo qua cột
         isOver
-          ? "border-blue-400 bg-blue-50 ring-2 ring-blue-300"
-          : "bg-white",
+          ? "border-primary/60 bg-primary/10 ring-2 ring-primary/30"
+          : "bg-card",
       ].join(" ")}
     >
       <div className="mb-3 flex items-center justify-between">
         <h3 className="font-medium" style={{ color: stage.color }}>
           {stage.name}
         </h3>
-        <span className="text-xs text-gray-500">{items.length}</span>
+        <span className="text-xs text-muted-foreground">{items.length}</span>
       </div>
 
       <SortableContext items={items.map((x) => x.id)} strategy={rectSortingStrategy}>
@@ -178,7 +178,7 @@ function DealCard({
       ref={setNodeRef}
       style={isOverlay ? undefined : style}
       className={[
-        "rounded-lg border bg-slate-50 p-3 text-sm",
+        "rounded-lg border bg-card p-3 text-sm",
         isOverlay ? "rotate-1 shadow-lg cursor-grabbing opacity-95" : "cursor-grab active:cursor-grabbing",
       ].join(" ")}
       // FIX 2: attributes (aria) tetap di wrapper, tapi listeners TIDAK di sini
@@ -188,7 +188,7 @@ function DealCard({
       <div className="flex items-start justify-between gap-2">
         <Link
           href={`/deals/${deal.id}`}
-          className="font-medium text-gray-900 hover:text-[var(--crm-primary)] leading-snug"
+          className="font-medium text-card-foreground hover:text-[var(--crm-primary)] leading-snug"
           // Hentikan propagasi agar drag listener di handle tidak ikut terpanggil
           onClick={(e) => e.stopPropagation()}
         >
@@ -198,7 +198,7 @@ function DealCard({
         {/* Handle kéo — chỉ vùng này trigger drag */}
         <span
           {...listeners}
-          className="text-gray-300 hover:text-gray-500 cursor-grab active:cursor-grabbing select-none flex-shrink-0 mt-0.5"
+          className="text-muted-foreground/50 hover:text-muted-foreground cursor-grab active:cursor-grabbing select-none flex-shrink-0 mt-0.5"
           aria-label="Kéo để di chuyển deal"
           title="Kéo để di chuyển"
         >
@@ -206,26 +206,26 @@ function DealCard({
         </span>
       </div>
 
-      <p className="mt-1 text-xs text-gray-500">
+      <p className="mt-1 text-xs text-muted-foreground">
         {deal.customerName || "Chưa có khách hàng"}
       </p>
 
       <div className="mt-2 flex items-center justify-between">
-        <span className="font-semibold">
+        <span className="font-semibold text-foreground">
           {new Intl.NumberFormat("vi-VN", {
             style: "currency",
             currency: deal.currency ?? "VND",
           }).format(deal.value ?? 0)}
         </span>
-        <span className="text-xs text-gray-500">
+        <span className="text-xs text-muted-foreground">
           {deal.ownerName || "Chưa phân công"}
         </span>
       </div>
 
       <div className="mt-2 flex items-center justify-between text-xs">
-        <span className="text-gray-500">{daysLabel}</span>
+        <span className="text-muted-foreground">{daysLabel}</span>
         {isStuck && (
-          <span className="rounded-full bg-red-100 px-2 py-0.5 text-red-600 font-medium">
+          <span className="rounded-full bg-red-500/15 px-2 py-0.5 text-red-500 font-medium">
             Stuck
           </span>
         )}

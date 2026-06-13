@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { Plus, Building2, TrendingUp, TrendingDown, Users2 } from "lucide-react";
+import { useState, useCallback } from "react";
+import { Plus, Building2, TrendingUp, TrendingDown } from "lucide-react";
+import * as XLSX from "xlsx";
 import { useAuth } from "@/hooks/useAuth";
 import { useUsers } from "@/hooks/useUsers";
 import { useCustomers, useCustomerSearch, useCustomer360 } from "@/hooks/useCustomers";
@@ -9,6 +10,7 @@ import { canDeleteCustomer, canChangeCustomerOwner, canRestoreCustomer } from "@
 import type { Customer, CustomerStatus } from "@/models/customerModel";
 
 import { CustomerTable } from "@/components/customers/customerTable";
+import { CustomerGridView } from "@/components/customers/customerGridView";
 import { CustomerFilters } from "@/components/customers/customerFilters";
 import { Customer360Panel } from "@/components/customers/customer360Panel";
 import { CustomerFormDialog } from "@/components/customers/customerFormDialog";
@@ -46,6 +48,9 @@ export default function CustomersPage() {
   // Slide-over panel
   const [panelOpen, setPanelOpen] = useState(false);
   const [panelCustomer, setPanelCustomer] = useState<Customer | null>(null);
+
+  // View mode (list / grid)
+  const [viewMode, setViewMode] = useState<"list" | "grid">("list");
 
   // Queries
   const { data: usersData } = useUsers();
@@ -125,6 +130,47 @@ export default function CustomersPage() {
     setPanelOpen(true);
   };
 
+  // Export to Excel
+  const handleExport = useCallback(() => {
+    const rows = displayData as Customer[];
+    if (!rows.length) return;
+
+    // Prepare data for Excel
+    const excelData = rows.map((c) => ({
+      "Mã KH": c.customerCode ?? "",
+      "Tên": c.name ?? "",
+      "Trạng thái": c.status ?? "",
+      "Nguồn": c.source ?? "",
+      "Phụ trách": c.ownerName ?? "",
+      "Phòng ban": c.departmentName ?? "",
+      "Email": c.email ?? "",
+      "Điện thoại": c.phone ?? "",
+      "Cập nhật": c.updatedAt ? new Date(c.updatedAt).toLocaleDateString("vi-VN") : "",
+    }));
+
+    // Create workbook and worksheet
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.json_to_sheet(excelData);
+
+    // Set column widths
+    ws['!cols'] = [
+      { wch: 12 }, // Mã KH
+      { wch: 25 }, // Tên
+      { wch: 15 }, // Trạng thái
+      { wch: 15 }, // Nguồn
+      { wch: 20 }, // Phụ trách
+      { wch: 20 }, // Phòng ban
+      { wch: 25 }, // Email
+      { wch: 15 }, // Điện thoại
+      { wch: 12 }, // Cập nhật
+    ];
+
+    XLSX.utils.book_append_sheet(wb, ws, "Khách hàng");
+
+    // Generate Excel file
+    XLSX.writeFile(wb, `customers_${new Date().toISOString().slice(0, 10)}.xlsx`);
+  }, [displayData]);
+
   /* ── Stat counts — lấy từ totalCount của từng query theo status ── */
   const totalCount   = totalData?.pagination?.totalCount   ?? 0;
   const leadCount    = leadData?.pagination?.totalCount    ?? 0;
@@ -145,7 +191,7 @@ export default function CustomersPage() {
         <p className="text-[15px] font-medium text-[var(--crm-danger)]">Có lỗi xảy ra khi tải danh sách khách hàng.</p>
         <button
           onClick={() => window.location.reload()}
-          className="mt-4 px-4 py-2 text-[13px] font-medium text-gray-700 bg-white border border-[var(--crm-border)] rounded-lg hover:bg-gray-50 transition-colors"
+          className="mt-4 px-4 py-2 text-[13px] font-medium text-foreground bg-card border border-[var(--border)] rounded-lg hover:bg-accent transition-colors"
         >
           Tải lại trang
         </button>
@@ -158,13 +204,14 @@ export default function CustomersPage() {
       {/* ── Header ─────────────────────────────────────── */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-[18px] font-medium text-gray-900">Quản lý khách hàng</h1>
-          <p className="text-[13px] text-gray-500 mt-0.5">
+          <h1 className="text-[18px] font-medium text-foreground">Quản lý khách hàng</h1>
+          <p className="text-[13px] text-muted-foreground mt-0.5">
             Theo dõi và quản lý dữ liệu khách hàng 360°
           </p>
         </div>
         <button
           onClick={() => setCreateDialogOpen(true)}
+          data-tour="customers-create-btn"
           className="h-9 px-4 text-[13px] font-medium text-white bg-[var(--crm-primary)] rounded-lg hover:bg-[#14528F] transition-colors flex items-center gap-1.5 shadow-sm"
         >
           <Plus className="h-4 w-4" />
@@ -173,7 +220,7 @@ export default function CustomersPage() {
       </div>
 
       {/* ── Stat Cards ─────────────────────────────────── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4" data-tour="customers-stats">
         <StatCard
           label="Tổng khách hàng"
           value={totalCount}
@@ -200,21 +247,31 @@ export default function CustomersPage() {
         />
       </div>
 
-      {/* ── Filter Bar ─────────────────────────────────── */}
-      <CustomerFilters
-        onSearch={(term) => setSearchTerm(term)}
-        onStatusChange={(status) => { setStatusFilter(status as CustomerStatus | ""); setPage(1); }}
-        onOwnerChange={(owner) => { setOwnerFilter(owner); setPage(1); }}
-        onDepartmentChange={(dept) => { setDepartmentFilter(dept); setPage(1); }}
-        users={usersList}
-        showOwnerFilter={canChangeOwner}
-      />
+      {/* ── Filter Bar ───────────────────── */}
+      <div data-tour="customers-filters">
+        <CustomerFilters
+          onSearch={(term) => setSearchTerm(term)}
+          onStatusChange={(status) => { setStatusFilter(status as CustomerStatus | ""); setPage(1); }}
+          onOwnerChange={(owner) => { setOwnerFilter(owner); setPage(1); }}
+          onDepartmentChange={(dept) => { setDepartmentFilter(dept); setPage(1); }}
+          users={usersList}
+          showOwnerFilter={canChangeOwner}
+          onExport={handleExport}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
+        />
+      </div>
 
-      {/* ── Table ──────────────────────────────────────── */}
+      {/* ── Table/Grid ──────────────────────────────────────── */}
       {isLoading ? (
-        <div className="flex items-center justify-center py-16 bg-white rounded-xl border border-[var(--crm-border)]">
+        <div className="flex items-center justify-center py-16 bg-card rounded-xl border border-[var(--border)]">
           <div className="h-7 w-7 animate-spin rounded-full border-[3px] border-[var(--crm-primary)] border-t-transparent" />
         </div>
+      ) : viewMode === "grid" ? (
+        <CustomerGridView
+          data={displayData || []}
+          onRowClick={handleRowClick}
+        />
       ) : (
         <CustomerTable
           data={displayData || []}
@@ -233,24 +290,24 @@ export default function CustomersPage() {
       {/* ── Pagination ─────────────────────────────────── */}
       {!searchTerm && totalPages > 1 && (
         <div className="flex items-center justify-between">
-          <p className="text-[13px] text-gray-500">
+          <p className="text-[13px] text-muted-foreground">
             Hiển thị{" "}
-            <span className="font-medium text-gray-900">{((page - 1) * pageSize) + 1}–{Math.min(page * pageSize, total)}</span>
+            <span className="font-medium text-foreground">{((page - 1) * pageSize) + 1}–{Math.min(page * pageSize, total)}</span>
             {" "}của{" "}
-            <span className="font-medium text-gray-900">{total}</span> khách hàng
+            <span className="font-medium text-foreground">{total}</span> khách hàng
           </p>
           <div className="flex gap-2">
             <button
               disabled={page === 1}
               onClick={() => setPage((p) => p - 1)}
-              className="h-8 px-3 text-[13px] font-medium text-gray-700 bg-white border border-[var(--crm-border)] rounded-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="h-8 px-3 text-[13px] font-medium text-foreground bg-card border border-[var(--border)] rounded-lg hover:bg-accent disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               Trang trước
             </button>
             <button
               disabled={page === totalPages}
               onClick={() => setPage((p) => p + 1)}
-              className="h-8 px-3 text-[13px] font-medium text-gray-700 bg-white border border-[var(--crm-border)] rounded-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="h-8 px-3 text-[13px] font-medium text-foreground bg-card border border-[var(--border)] rounded-lg hover:bg-accent disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               Trang sau
             </button>

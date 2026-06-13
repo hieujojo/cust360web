@@ -62,7 +62,7 @@ export default function UsersPage() {
         <p className="text-[15px] font-medium text-[var(--crm-danger)]">Có lỗi xảy ra khi tải danh sách người dùng.</p>
         <button
           onClick={() => window.location.reload()}
-          className="mt-4 px-4 py-2 text-[13px] font-medium text-gray-700 bg-white border border-[var(--crm-border)] rounded-lg hover:bg-gray-50 transition-colors"
+          className="mt-4 px-4 py-2 text-[13px] font-medium text-foreground bg-card border border-border rounded-lg hover:bg-muted transition-colors"
         >
           Tải lại trang
         </button>
@@ -75,8 +75,8 @@ export default function UsersPage() {
       {/* ── Header ─────────────────────────────────────── */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-[18px] font-medium text-gray-900">Quản lý người dùng</h1>
-          <p className="text-[13px] text-gray-500 mt-0.5">
+          <h1 className="text-[18px] font-medium text-foreground">Quản lý người dùng</h1>
+          <p className="text-[13px] text-muted-foreground mt-0.5">
             Quản lý tài khoản và phân quyền trong hệ thống
           </p>
         </div>
@@ -103,18 +103,18 @@ export default function UsersPage() {
         </div>
         <div className="crm-stat-card">
           <p className="stat-label">Quản trị viên (Admin)</p>
-          <p className="stat-value text-gray-700">{adminCount}</p>
+          <p className="stat-value text-foreground">{adminCount}</p>
         </div>
       </div>
 
       {/* ── Filter Bar ─────────────────────────────────── */}
       {isAdminUser && (
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-[13px] font-medium text-gray-500">Trạng thái:</span>
+          <span className="text-[13px] font-medium text-muted-foreground">Trạng thái:</span>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="h-8 px-2.5 min-w-[140px] text-[13px] text-gray-700 bg-white border border-[var(--crm-border)] rounded-lg outline-none cursor-pointer"
+            className="h-8 px-2.5 min-w-[140px] text-[13px] text-foreground bg-background border border-border rounded-lg outline-none cursor-pointer"
           >
             <option value="">Tất cả</option>
             <option value="active">Hoạt động</option>
@@ -122,13 +122,13 @@ export default function UsersPage() {
             <option value="pending">Chờ đăng nhập</option>
           </select>
 
-          <span className="text-[13px] font-medium text-gray-500 ml-2">Phòng ban:</span>
+          <span className="text-[13px] font-medium text-muted-foreground ml-2">Phòng ban:</span>
           <select
             value={departmentFilter}
             onChange={(e) => {
               setDepartmentFilter(e.target.value);
             }}
-            className="h-8 px-2.5 min-w-[160px] text-[13px] text-gray-700 bg-white border border-[var(--crm-border)] rounded-lg outline-none cursor-pointer hover:border-gray-300 focus:border-[var(--crm-primary)] focus:ring-1 focus:ring-[var(--crm-primary)]/20 transition-colors"
+            className="h-8 px-2.5 min-w-[160px] text-[13px] text-foreground bg-background border border-border rounded-lg outline-none cursor-pointer hover:border-muted-foreground focus:border-[var(--crm-primary)] focus:ring-1 focus:ring-[var(--crm-primary)]/20 transition-colors"
           >
             <option value="">Tất cả phòng ban</option>
             {departments.map((dept) => (
@@ -142,7 +142,7 @@ export default function UsersPage() {
             <select
               value={teamFilter}
               onChange={(e) => setTeamFilter(e.target.value)}
-              className="h-8 px-2.5 min-w-[160px] text-[13px] text-gray-700 bg-white border border-[var(--crm-border)] rounded-lg outline-none cursor-pointer hover:border-gray-300 focus:border-[var(--crm-primary)] focus:ring-1 focus:ring-[var(--crm-primary)]/20 transition-colors"
+              className="h-8 px-2.5 min-w-[160px] text-[13px] text-foreground bg-background border border-border rounded-lg outline-none cursor-pointer hover:border-muted-foreground focus:border-[var(--crm-primary)] focus:ring-1 focus:ring-[var(--crm-primary)]/20 transition-colors"
             >
               <option value="">Tất cả Team</option>
               {teams.map((team) => (
@@ -157,7 +157,7 @@ export default function UsersPage() {
 
       {/* ── Table ──────────────────────────────────────── */}
       {isLoading ? (
-        <div className="flex items-center justify-center py-16 bg-white rounded-xl border border-[var(--crm-border)]">
+        <div className="flex items-center justify-center py-16 bg-card rounded-xl border border-border">
           <div className="h-7 w-7 animate-spin rounded-full border-[3px] border-[var(--crm-primary)] border-t-transparent" />
         </div>
       ) : (

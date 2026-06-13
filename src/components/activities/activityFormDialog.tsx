@@ -126,10 +126,10 @@ export function ActivityFormDialog({
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 p-4">
-      <div className="w-full max-w-md rounded-xl bg-white shadow-xl">
-        <div className="flex items-center justify-between border-b px-5 py-4">
-          <h2 className="text-[15px] font-semibold text-gray-900">Ghi hoạt động</h2>
-          <button type="button" onClick={() => onOpenChange(false)} className="text-gray-400 hover:text-gray-600">
+      <div className="w-full max-w-md rounded-xl bg-card shadow-xl">
+        <div className="flex items-center justify-between border-b border-border px-5 py-4">
+          <h2 className="text-[15px] font-semibold text-foreground">Ghi hoạt động</h2>
+          <button type="button" onClick={() => onOpenChange(false)} className="text-muted-foreground hover:text-foreground">
             <X className="h-5 w-5" />
           </button>
         </div>
@@ -138,7 +138,7 @@ export function ActivityFormDialog({
           <Field label="Loại">
             <select
               {...register("type")}
-              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-[13px]"
+              className="w-full rounded-lg border border-border bg-background text-foreground px-3 py-2 text-[13px]"
             >
               {ACTIVITY_TYPES.map((t) => (
                 <option key={t.value} value={t.value}>
@@ -152,7 +152,7 @@ export function ActivityFormDialog({
             <input
               type="datetime-local"
               {...register("occurredAt")}
-              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-[13px]"
+              className="w-full rounded-lg border border-border bg-background text-foreground px-3 py-2 text-[13px]"
             />
           </Field>
 
@@ -161,7 +161,7 @@ export function ActivityFormDialog({
               <Field label="Kết quả *">
                 <input
                   {...register("outcome")}
-                  className="w-full rounded-lg border border-gray-200 px-3 py-2 text-[13px]"
+                  className="w-full rounded-lg border border-border bg-background text-foreground px-3 py-2 text-[13px]"
                   placeholder="VD: Đã liên hệ, không nghe máy..."
                 />
               </Field>
@@ -170,14 +170,14 @@ export function ActivityFormDialog({
                   type="number"
                   min={0}
                   {...register("durationMinutes", { valueAsNumber: true })}
-                  className="w-full rounded-lg border border-gray-200 px-3 py-2 text-[13px]"
+                  className="w-full rounded-lg border border-border bg-background text-foreground px-3 py-2 text-[13px]"
                 />
               </Field>
               <Field label="Ghi chú">
                 <textarea
                   {...register("note")}
                   rows={3}
-                  className="w-full rounded-lg border border-gray-200 px-3 py-2 text-[13px]"
+                  className="w-full rounded-lg border border-border bg-background text-foreground px-3 py-2 text-[13px]"
                 />
               </Field>
             </>
@@ -188,14 +188,14 @@ export function ActivityFormDialog({
               <Field label="Tiêu đề *">
                 <input
                   {...register("subject")}
-                  className="w-full rounded-lg border border-gray-200 px-3 py-2 text-[13px]"
+                  className="w-full rounded-lg border border-border bg-background text-foreground px-3 py-2 text-[13px]"
                 />
               </Field>
               <Field label="Tóm tắt">
                 <textarea
                   {...register("summary")}
                   rows={3}
-                  className="w-full rounded-lg border border-gray-200 px-3 py-2 text-[13px]"
+                  className="w-full rounded-lg border border-border bg-background text-foreground px-3 py-2 text-[13px]"
                 />
               </Field>
             </>
@@ -206,27 +206,27 @@ export function ActivityFormDialog({
               <Field label="Địa điểm">
                 <input
                   {...register("location")}
-                  className="w-full rounded-lg border border-gray-200 px-3 py-2 text-[13px]"
+                  className="w-full rounded-lg border border-border bg-background text-foreground px-3 py-2 text-[13px]"
                 />
               </Field>
               <Field label="Người tham dự (phân cách bằng dấu phẩy)">
                 <input
                   {...register("attendees")}
-                  className="w-full rounded-lg border border-gray-200 px-3 py-2 text-[13px]"
+                  className="w-full rounded-lg border border-border bg-background text-foreground px-3 py-2 text-[13px]"
                 />
               </Field>
               <Field label="Tóm tắt *">
                 <textarea
                   {...register("summary")}
                   rows={2}
-                  className="w-full rounded-lg border border-gray-200 px-3 py-2 text-[13px]"
+                  className="w-full rounded-lg border border-border bg-background text-foreground px-3 py-2 text-[13px]"
                 />
               </Field>
               <Field label="Bước tiếp theo">
                 <textarea
                   {...register("nextSteps")}
                   rows={2}
-                  className="w-full rounded-lg border border-gray-200 px-3 py-2 text-[13px]"
+                  className="w-full rounded-lg border border-border bg-background text-foreground px-3 py-2 text-[13px]"
                 />
               </Field>
             </>
@@ -237,7 +237,7 @@ export function ActivityFormDialog({
               <textarea
                 {...register("body")}
                 rows={4}
-                className="w-full rounded-lg border border-gray-200 px-3 py-2 text-[13px]"
+                className="w-full rounded-lg border border-border bg-background text-foreground px-3 py-2 text-[13px]"
               />
             </Field>
           )}
@@ -250,7 +250,7 @@ export function ActivityFormDialog({
             <button
               type="button"
               onClick={() => onOpenChange(false)}
-              className="rounded-lg border px-4 py-2 text-[13px] text-gray-600 hover:bg-gray-50"
+              className="rounded-lg border border-border bg-background px-4 py-2 text-[13px] text-foreground hover:bg-muted"
             >
               Hủy
             </button>
@@ -272,7 +272,7 @@ export function ActivityFormDialog({
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <label className="mb-1 block text-[12px] font-medium text-gray-600">{label}</label>
+      <label className="mb-1 block text-[12px] font-medium text-foreground">{label}</label>
       {children}
     </div>
   );

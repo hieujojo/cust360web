@@ -128,10 +128,10 @@ export function DealFormDialog({ open, onOpenChange, deal }: DealFormDialogProps
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
-      <div className="w-full max-w-2xl rounded-xl bg-white shadow-xl">
-        <div className="flex items-center justify-between border-b px-6 py-4">
-          <h2 className="text-lg font-semibold">{deal ? "Edit Deal" : "Tạo Giao Dịch"}</h2>
-          <button onClick={() => onOpenChange(false)} className="rounded-md p-1 hover:bg-slate-100">
+      <div className="w-full max-w-2xl rounded-xl bg-card shadow-xl border border-border">
+        <div className="flex items-center justify-between border-b border-border px-6 py-4">
+          <h2 className="text-lg font-semibold text-foreground">{deal ? "Edit Deal" : "Tạo Giao Dịch"}</h2>
+          <button onClick={() => onOpenChange(false)} className="rounded-md p-1 hover:bg-muted text-muted-foreground">
             <X className="h-4 w-4" />
           </button>
         </div>
@@ -140,8 +140,8 @@ export function DealFormDialog({ open, onOpenChange, deal }: DealFormDialogProps
           <div className="grid grid-cols-2 gap-3">
             <InputField label="Tiêu đề*" error={errors.title?.message} {...register("title")} />
             <div>
-              <label className="mb-1 block text-sm font-medium">Khách hàng*</label>
-              <select {...register("customer")} className="w-full rounded-lg border px-3 py-2 text-sm">
+              <label className="mb-1 block text-sm font-medium text-foreground">Khách hàng*</label>
+              <select {...register("customer")} className="w-full rounded-lg border border-border bg-background text-foreground px-3 py-2 text-sm">
                 <option value="">Chọn customer</option>
                 {(customersData?.items ?? []).map((c) => (
                   <option key={c.id} value={c.id}>
@@ -161,8 +161,8 @@ export function DealFormDialog({ open, onOpenChange, deal }: DealFormDialogProps
           <div className="grid grid-cols-2 gap-3">
             <InputField label="Doanh thu kỳ vọng" type="number" step="0.01" {...register("expectedRevenue", { valueAsNumber: true })} />
             <div>
-              <label className="mb-1 block text-sm font-medium">Người phụ trách</label>
-              <select {...register("owner")} className="w-full rounded-lg border px-3 py-2 text-sm">
+              <label className="mb-1 block text-sm font-medium text-foreground">Người phụ trách</label>
+              <select {...register("owner")} className="w-full rounded-lg border border-border bg-background text-foreground px-3 py-2 text-sm">
                 <option value="">Tôi</option>
                 {(usersData?.items ?? []).map((u) => (
                   <option key={u.id} value={u.id}>{u.displayName}</option>
@@ -174,8 +174,8 @@ export function DealFormDialog({ open, onOpenChange, deal }: DealFormDialogProps
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="mb-1 block text-sm font-medium">Giai đoạn*</label>
-              <select {...register("stage")} className="w-full rounded-lg border px-3 py-2 text-sm">
+              <label className="mb-1 block text-sm font-medium text-foreground">Giai đoạn*</label>
+              <select {...register("stage")} className="w-full rounded-lg border border-border bg-background text-foreground px-3 py-2 text-sm">
                 {(stages ?? []).map((s) => (
                   <option key={s.id} value={s.name}>
                     {s.name}
@@ -184,27 +184,27 @@ export function DealFormDialog({ open, onOpenChange, deal }: DealFormDialogProps
               </select>
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium">Khả năng: {watch("probability")}%</label>
+              <label className="mb-1 block text-sm font-medium text-foreground">Khả năng: {watch("probability")}%</label>
               <input type="range" min={0} max={100} {...register("probability", { valueAsNumber: true })} className="w-full" />
             </div>
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium">Ghi chú</label>
-            <textarea {...register("notes")} className="h-24 w-full rounded-lg border px-3 py-2 text-sm" />
+            <label className="mb-1 block text-sm font-medium text-foreground">Ghi chú</label>
+            <textarea {...register("notes")} className="h-24 w-full rounded-lg border border-border bg-background text-foreground placeholder:text-muted-foreground px-3 py-2 text-sm" />
           </div>
 
           {selectedCustomerId && (
   <div>
-    <label className="mb-1 block text-sm font-medium">Contacts liên quan</label>
+    <label className="mb-1 block text-sm font-medium text-foreground">Contacts liên quan</label>
     {availableContacts.length === 0 ? (
-      <p className="text-xs text-gray-500">Khách hàng này chưa có contact nào.</p>
+      <p className="text-xs text-muted-foreground">Khách hàng này chưa có contact nào.</p>
     ) : (
-      <div className="flex flex-col gap-2 rounded-lg border p-3 max-h-40 overflow-y-auto">
+      <div className="flex flex-col gap-2 rounded-lg border border-border bg-card p-3 max-h-40 overflow-y-auto">
            {availableContacts.map(c => {
                     const selected = watch("contacts") ?? [];
                     return (
-                      <label key={c.id} className="flex items-center gap-2 text-sm cursor-pointer">
+                      <label key={c.id} className="flex items-center gap-2 text-sm cursor-pointer text-foreground">
                         <input
                           type="checkbox"
                           checked={selected.includes(c.id)}
@@ -219,9 +219,9 @@ export function DealFormDialog({ open, onOpenChange, deal }: DealFormDialogProps
                           }}
                         />
                         <span>{c.name}</span>
-                        {c.role && <span className="text-gray-400 text-xs">· {c.role}</span>}
+                        {c.role && <span className="text-muted-foreground text-xs">· {c.role}</span>}
                         {c.isPrimary && (
-                          <span className="text-[10px] text-blue-600 bg-blue-50 px-1 rounded">
+                          <span className="text-[10px] text-blue-600 bg-blue-50 dark:bg-blue-950/30 dark:text-blue-400 px-1 rounded">
                             Primary
                           </span>
                         )}
@@ -233,14 +233,14 @@ export function DealFormDialog({ open, onOpenChange, deal }: DealFormDialogProps
   </div>
 )}
 
-          <div className="flex justify-end gap-2 border-t pt-4">
-            <button type="button" onClick={() => onOpenChange(false)} className="rounded-lg border px-4 py-2 text-sm">
+          <div className="flex justify-end gap-2 border-t border-border pt-4">
+            <button type="button" onClick={() => onOpenChange(false)} className="rounded-lg border border-border bg-card text-foreground hover:bg-muted px-4 py-2 text-sm">
               Hủy
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="inline-flex items-center gap-1 rounded-lg bg-[var(--crm-primary)] px-4 py-2 text-sm font-medium text-white"
+              className="inline-flex items-center gap-1 rounded-lg bg-[var(--crm-primary)] px-4 py-2 text-sm font-medium text-white hover:bg-[#14528F]"
             >
               {isSubmitting && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
               {deal ? "Lưu" : "Tạo deal"}
@@ -259,8 +259,8 @@ function InputField({
 }: InputHTMLAttributes<HTMLInputElement> & { label: string; error?: string }) {
   return (
     <div>
-      <label className="mb-1 block text-sm font-medium">{label}</label>
-      <input {...props} className="w-full rounded-lg border px-3 py-2 text-sm" />
+      <label className="mb-1 block text-sm font-medium text-foreground">{label}</label>
+      <input {...props} className="w-full rounded-lg border border-border bg-background text-foreground placeholder:text-muted-foreground px-3 py-2 text-sm" />
       {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
     </div>
   );

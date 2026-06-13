@@ -37,6 +37,7 @@
   export interface Customer {
     id: string;
     customerCode: string;
+    avatarUrl?: string;
     name: string;
     status: CustomerStatus;
     source: CustomerSource;
@@ -44,6 +45,7 @@
     phone?: string;
     ownerId: string;
     ownerName: string;
+    ownerAvatarUrl?: string;
     departmentId: string;
     departmentName: string;
     contacts: Contact[];
@@ -60,7 +62,9 @@
     name: string;
     status: CustomerStatus;
     source: CustomerSource;
+    avatarUrl?: string;
     ownerName: string;
+    ownerAvatarUrl?: string;
     departmentName: string;
     email?: string;
     phone?: string;
@@ -76,6 +80,7 @@
   export interface CustomerInfoTab {
     id: string;
     customerCode: string;
+    avatarUrl?: string;
     name: string;
     type: string;
     status: CustomerStatus;
@@ -84,6 +89,7 @@
     phone?: string;
     ownerId: string;
     ownerName: string;
+    ownerAvatarUrl?: string;
     departmentId: string;
     departmentName: string;
     customFields?: Record<string, unknown>;

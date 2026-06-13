@@ -34,11 +34,11 @@ function ConfirmDeleteDialog({
   onCancel: () => void;
 }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl">
-        <h2 className="mb-2 text-base font-semibold text-gray-800">Xóa stage?</h2>
-        <p className="mb-1 text-sm text-gray-600">
-          Bạn đang xóa stage <span className="font-medium text-gray-900">"{stageName}"</span>.
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+      <div className="w-full max-w-sm rounded-2xl bg-card border border-border p-6 shadow-xl">
+        <h2 className="mb-2 text-base font-semibold text-card-foreground">Xóa stage?</h2>
+        <p className="mb-1 text-sm text-muted-foreground">
+          Bạn đang xóa stage <span className="font-medium text-foreground">"{stageName}"</span>.
         </p>
         <p className="mb-5 text-sm text-red-500">
           Nếu stage đang có deals, vui lòng chuyển deals sang stage khác trước khi xóa.
@@ -46,7 +46,7 @@ function ConfirmDeleteDialog({
         <div className="flex justify-end gap-2">
           <button
             onClick={onCancel}
-            className="rounded-lg border px-4 py-2 text-sm text-gray-600 hover:bg-gray-50"
+            className="rounded-lg border border-border px-4 py-2 text-sm text-muted-foreground hover:bg-muted"
           >
             Hủy
           </button>
@@ -133,42 +133,42 @@ export default function PipelineSettingsPage() {
       <h1 className="text-xl font-semibold">Pipeline Stages</h1>
 
       {/* ── Add new stage ── */}
-      <div className="flex items-end gap-2 rounded-xl border bg-white p-3">
+      <div className="flex items-end gap-2 rounded-xl border bg-card p-3">
         <div className="flex-1">
-          <label className="mb-1 block text-xs">Tên stage</label>
+          <label className="mb-1 block text-xs text-muted-foreground">Tên stage</label>
           <input
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
-            className="h-9 w-full rounded border px-3 text-sm"
+            className="h-9 w-full rounded border border-border bg-background text-foreground px-3 text-sm"
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs">Màu</label>
+          <label className="mb-1 block text-xs text-muted-foreground">Màu</label>
           <input
             type="color"
             value={newColor}
             onChange={(e) => setNewColor(e.target.value)}
-            className="h-9 rounded border px-2"
+            className="h-9 rounded border border-border px-2"
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs">Xác suất %</label>
+          <label className="mb-1 block text-xs text-muted-foreground">Xác suất %</label>
           <input
             type="number"
             min={0}
             max={100}
             value={newProbability}
             onChange={(e) => setNewProbability(Number(e.target.value))}
-            className="h-9 w-20 rounded border px-3 text-sm"
+            className="h-9 w-20 rounded border border-border bg-background text-foreground px-3 text-sm"
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs">Stuck days</label>
+          <label className="mb-1 block text-xs text-muted-foreground">Stuck days</label>
           <input
             type="number"
             value={newThreshold}
             onChange={(e) => setNewThreshold(Number(e.target.value))}
-            className="h-9 w-24 rounded border px-3 text-sm"
+            className="h-9 w-24 rounded border border-border bg-background text-foreground px-3 text-sm"
           />
         </div>
         <button
@@ -181,7 +181,7 @@ export default function PipelineSettingsPage() {
             });
             setNewName("");
           }}
-          className="inline-flex h-9 items-center gap-1 rounded bg-[var(--crm-primary)] px-3 text-sm text-white"
+          className="inline-flex h-9 items-center gap-1 rounded bg-[var(--crm-primary)] px-3 text-sm text-white hover:opacity-90"
         >
           <Plus className="h-4 w-4" />
           Thêm
@@ -229,19 +229,19 @@ function StageRow({
     defaultProbability: number;
     stuckThreshold: number;
   }) => Promise<unknown>;
-  onDeleteRequest: () => void; // chỉ mở dialog, không xóa trực tiếp
+  onDeleteRequest: () => void;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: stage.id });
   const style = { transform: CSS.Transform.toString(transform), transition };
 
   return (
-    <div ref={setNodeRef} style={style} className="flex items-center gap-2 rounded-xl border bg-white p-3">
-      <button {...attributes} {...listeners} className="rounded p-1 text-gray-400 hover:bg-slate-100">
+    <div ref={setNodeRef} style={style} className="flex items-center gap-2 rounded-xl border border-border bg-card p-3">
+      <button {...attributes} {...listeners} className="rounded p-1 text-muted-foreground hover:bg-muted">
         <GripVertical className="h-4 w-4" />
       </button>
       <input
         defaultValue={stage.name}
-        className="h-9 flex-1 rounded border px-3 text-sm"
+        className="h-9 flex-1 rounded border border-border bg-background text-foreground px-3 text-sm"
         onBlur={(e) =>
           onChange({
             name: e.target.value,
@@ -254,7 +254,7 @@ function StageRow({
       <input
         type="color"
         defaultValue={stage.color}
-        className="h-9 rounded border px-2"
+        className="h-9 rounded border border-border px-2"
         onBlur={(e) =>
           onChange({
             name: stage.name,
@@ -269,7 +269,7 @@ function StageRow({
         min={0}
         max={100}
         defaultValue={stage.defaultProbability}
-        className="h-9 w-16 rounded border px-2 text-sm"
+        className="h-9 w-16 rounded border border-border bg-background text-foreground px-2 text-sm"
         title="Xác suất %"
         onBlur={(e) =>
           onChange({
@@ -283,7 +283,7 @@ function StageRow({
       <input
         type="number"
         defaultValue={stage.stuckThreshold}
-        className="h-9 w-24 rounded border px-3 text-sm"
+        className="h-9 w-24 rounded border border-border bg-background text-foreground px-3 text-sm"
         onBlur={(e) =>
           onChange({
             name: stage.name,
@@ -293,8 +293,7 @@ function StageRow({
           })
         }
       />
-      {/* Nút xóa → chỉ mở confirm dialog */}
-      <button onClick={onDeleteRequest} className="rounded p-2 text-red-500 hover:bg-red-50">
+      <button onClick={onDeleteRequest} className="rounded p-2 text-red-400 hover:bg-red-500/10 hover:text-red-500">
         <Trash2 className="h-4 w-4" />
       </button>
     </div>

@@ -27,15 +27,15 @@ export function NotificationBell() {
       <DropdownMenuTrigger asChild>
         <button
           type="button"
-          className="relative rounded-lg p-1.5 transition-colors hover:bg-gray-100"
+          className="relative rounded-lg p-1.5 transition-colors hover:bg-slate-800"
           aria-label="Thông báo"
         >
-          <Bell className="h-[18px] w-[18px] text-gray-500" />
+          <Bell className="h-[18px] w-[18px] text-slate-300 hover:text-white" />
           {unreadCount > 0 && (
             <span
               className={cn(
                 "absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1",
-                "bg-[var(--crm-danger)] text-[10px] font-semibold leading-none text-white ring-2 ring-white"
+                "bg-[var(--crm-danger)] text-[10px] font-semibold leading-none text-white ring-2 ring-[#0F172A]"
               )}
             >
               {unreadCount > 99 ? "99+" : unreadCount}

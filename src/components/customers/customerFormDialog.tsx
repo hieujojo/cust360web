@@ -169,11 +169,11 @@ export function CustomerFormDialog({ open, onOpenChange }: CustomerFormDialogPro
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col animate-in fade-in zoom-in-95 duration-200">
+      <div className="bg-card rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col animate-in fade-in zoom-in-95 duration-200">
         {/* Header */}
-        <div className="flex items-center justify-between px-8 py-5 border-b border-slate-100 bg-slate-50/50">
+        <div className="flex items-center justify-between px-8 py-5 border-b border-border bg-muted/30">
           <div className="flex items-center gap-6">
-            <h2 className="text-lg font-semibold text-slate-800">Tạo khách hàng</h2>
+            <h2 className="text-lg font-semibold text-foreground">Tạo khách hàng</h2>
             <div className="flex items-center gap-3 text-sm">
               <div className={`flex items-center gap-1.5 ${step >= 1 ? "text-blue-600" : "text-slate-400"}`}>
                 <span className={`flex items-center justify-center w-5 h-5 rounded-full text-[10px] font-bold ${step >= 1 ? "bg-blue-600 text-white" : "bg-slate-200 text-slate-500"}`}>1</span>
@@ -189,7 +189,7 @@ export function CustomerFormDialog({ open, onOpenChange }: CustomerFormDialogPro
           <button
             type="button"
             onClick={handleClose}
-            className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-200 rounded-md transition-colors"
+            className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
           >
             <X className="h-4 w-4" />
           </button>
@@ -201,15 +201,15 @@ export function CustomerFormDialog({ open, onOpenChange }: CustomerFormDialogPro
             <div className="space-y-5 animate-in slide-in-from-right-4 duration-300">
               {/* Tên khách hàng */}
               <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
+            <label className="block text-sm font-medium text-foreground mb-1">
               Tên khách hàng <span className="text-red-500">*</span>
             </label>
             <input
               {...register("name")}
-              className={`w-full px-4 py-2.5 text-sm border rounded-lg outline-none transition-colors placeholder:text-slate-400 ${
+              className={`w-full px-4 py-2.5 text-sm border rounded-lg outline-none transition-colors bg-background text-foreground placeholder:text-muted-foreground ${
                 errors.name
                   ? "border-red-300 focus:border-red-500"
-                  : "border-slate-200 focus:border-blue-500"
+                  : "border-border focus:border-blue-500"
               }`}
               placeholder="Nhập tên cá nhân hoặc công ty"
             />
@@ -221,14 +221,14 @@ export function CustomerFormDialog({ open, onOpenChange }: CustomerFormDialogPro
           {/* Email + SĐT */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Email</label>
+              <label className="block text-sm font-medium text-foreground mb-1">Email</label>
               <input
                 {...register("email")}
                 type="email"
-                className={`w-full px-4 py-2.5 text-sm border rounded-lg outline-none transition-colors placeholder:text-slate-400 ${
+                className={`w-full px-4 py-2.5 text-sm border rounded-lg outline-none transition-colors bg-background text-foreground placeholder:text-muted-foreground ${
                   errors.email
                     ? "border-red-300 focus:border-red-500"
-                    : "border-slate-200 focus:border-blue-500"
+                    : "border-border focus:border-blue-500"
                 }`}
                 placeholder="email@example.com"
               />
@@ -237,12 +237,12 @@ export function CustomerFormDialog({ open, onOpenChange }: CustomerFormDialogPro
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">
+              <label className="block text-sm font-medium text-foreground mb-1">
                 Số điện thoại
               </label>
               <input
                 {...register("phone")}
-                className="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-lg outline-none focus:border-blue-500 placeholder:text-slate-400"
+                className="w-full px-4 py-2.5 text-sm border border-border rounded-lg outline-none focus:border-blue-500 bg-background text-foreground placeholder:text-muted-foreground"
                 placeholder="0912 345 678"
               />
             </div>
@@ -250,7 +250,7 @@ export function CustomerFormDialog({ open, onOpenChange }: CustomerFormDialogPro
 
           {/* Giai đoạn */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
+            <label className="block text-sm font-medium text-foreground mb-2">
               Giai đoạn <span className="text-red-500">*</span>
             </label>
             <div className="grid grid-cols-3 gap-2">
@@ -261,20 +261,20 @@ export function CustomerFormDialog({ open, onOpenChange }: CustomerFormDialogPro
                   onClick={() => setValue("status", opt.value)}
                   className={`flex flex-col items-start p-3.5 rounded-lg border text-left transition-all ${
                     selectedStatus === opt.value
-                      ? "border-blue-500 bg-blue-50"
-                      : "border-slate-200 hover:border-slate-300 hover:bg-slate-50"
+                      ? "border-blue-500 bg-blue-50 dark:bg-blue-950/20"
+                      : "border-border hover:border-muted-foreground/30 hover:bg-muted/50"
                   }`}
                 >
                   <span
                     className={`text-sm font-semibold ${
-                      selectedStatus === opt.value ? "text-blue-700" : "text-slate-700"
+                      selectedStatus === opt.value ? "text-blue-700 dark:text-blue-400" : "text-foreground"
                     }`}
                   >
                     {opt.label}
                   </span>
                   <span
                     className={`text-xs mt-1 leading-tight ${
-                      selectedStatus === opt.value ? "text-blue-500" : "text-slate-400"
+                      selectedStatus === opt.value ? "text-blue-500" : "text-muted-foreground"
                     }`}
                   >
                     {opt.desc}
@@ -288,10 +288,10 @@ export function CustomerFormDialog({ open, onOpenChange }: CustomerFormDialogPro
           <div className="grid grid-cols-2 gap-4">
             {/* Nguồn */}
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Nguồn</label>
+              <label className="block text-sm font-medium text-foreground mb-1">Nguồn</label>
               <select
                 {...register("source")}
-                className="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-lg outline-none focus:border-blue-500 bg-white text-slate-700"
+                className="w-full px-4 py-2.5 text-sm border border-border rounded-lg outline-none focus:border-blue-500 bg-background text-foreground"
               >
                 <option value="Website">Website</option>
                 <option value="Referral">Giới thiệu</option>
@@ -304,7 +304,7 @@ export function CustomerFormDialog({ open, onOpenChange }: CustomerFormDialogPro
 
             {/* Người phụ trách — combobox */}
             <div className="relative" ref={ownerRef}>
-              <label className="block text-sm font-medium text-slate-700 mb-1">
+              <label className="block text-sm font-medium text-foreground mb-1">
                 Người phụ trách
               </label>
               <div>
@@ -312,19 +312,19 @@ export function CustomerFormDialog({ open, onOpenChange }: CustomerFormDialogPro
                 <button
                   type="button"
                   onClick={() => setOwnerDropdownOpen((v) => !v)}
-                  className={`w-full flex items-center justify-between px-4 py-2.5 text-sm border rounded-lg outline-none transition-colors bg-white ${
+                  className={`w-full flex items-center justify-between px-4 py-2.5 text-sm border rounded-lg outline-none transition-colors bg-background text-foreground ${
                     ownerDropdownOpen
                       ? "border-blue-500"
-                      : "border-slate-200 hover:border-slate-300"
+                      : "border-border hover:border-muted-foreground/30"
                   }`}
                 >
                   {selectedOwnerName ? (
-                    <span className="text-slate-800 truncate">{selectedOwnerName}</span>
+                    <span className="text-foreground truncate">{selectedOwnerName}</span>
                   ) : (
-                    <span className="text-slate-400">Chọn nhân viên</span>
+                    <span className="text-muted-foreground">Chọn nhân viên</span>
                   )}
                   <ChevronDown
-                    className={`h-3.5 w-3.5 text-slate-400 shrink-0 ml-1 transition-transform ${
+                    className={`h-3.5 w-3.5 text-muted-foreground shrink-0 ml-1 transition-transform ${
                       ownerDropdownOpen ? "rotate-180" : ""
                     }`}
                   />
@@ -332,15 +332,15 @@ export function CustomerFormDialog({ open, onOpenChange }: CustomerFormDialogPro
 
                 {/* Dropdown */}
                 {ownerDropdownOpen && (
-                  <div className="absolute z-[9999] mt-1 w-full bg-white border border-slate-200 rounded-lg shadow-lg overflow-hidden">
+                  <div className="absolute z-[9999] mt-1 w-full bg-card border border-border rounded-lg shadow-lg overflow-hidden">
                     {/* Search */}
-                    <div className="flex items-center gap-2 px-3 py-2 border-b border-slate-100">
-                      <Search className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+                    <div className="flex items-center gap-2 px-3 py-2 border-b border-border">
+                      <Search className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
                       <input
                         autoFocus
                         value={ownerSearch}
                         onChange={(e) => setOwnerSearch(e.target.value)}
-                        className="flex-1 text-sm outline-none placeholder:text-slate-400 bg-transparent"
+                        className="flex-1 text-sm outline-none placeholder:text-muted-foreground bg-transparent text-foreground"
                         placeholder="Tìm tên hoặc email..."
                       />
                     </div>
@@ -348,12 +348,12 @@ export function CustomerFormDialog({ open, onOpenChange }: CustomerFormDialogPro
                     {/* List */}
                     <ul className="max-h-44 overflow-y-auto py-1">
                       {usersLoading ? (
-                        <li className="flex items-center justify-center py-4 text-slate-400">
+                        <li className="flex items-center justify-center py-4 text-muted-foreground">
                           <Loader2 className="h-4 w-4 animate-spin mr-2" />
                           <span className="text-xs">Đang tải...</span>
                         </li>
                       ) : filteredUsers.length === 0 ? (
-                        <li className="py-4 text-center text-xs text-slate-400">
+                        <li className="py-4 text-center text-xs text-muted-foreground">
                           Không tìm thấy nhân viên
                         </li>
                       ) : (
@@ -362,12 +362,12 @@ export function CustomerFormDialog({ open, onOpenChange }: CustomerFormDialogPro
                             <button
                               type="button"
                               onClick={() => handleSelectOwner({ id: u.id, name: u.displayName })}
-                              className="w-full flex items-center justify-between px-3 py-2 text-sm text-left hover:bg-slate-50 transition-colors"
+                              className="w-full flex items-center justify-between px-3 py-2 text-sm text-left hover:bg-muted transition-colors"
                             >
                               <div className="min-w-0">
-                                <p className="font-medium text-slate-700 truncate">{u.displayName}</p>
+                                <p className="font-medium text-foreground truncate">{u.displayName}</p>
                                 {u.email && (
-                                  <p className="text-xs text-slate-400 truncate">{u.email}</p>
+                                  <p className="text-xs text-muted-foreground truncate">{u.email}</p>
                                 )}
                               </div>
                               {selectedOwnerId === u.id && (
@@ -381,11 +381,11 @@ export function CustomerFormDialog({ open, onOpenChange }: CustomerFormDialogPro
 
                     {/* Clear option */}
                     {selectedOwnerId && (
-                      <div className="border-t border-slate-100 py-1">
+                      <div className="border-t border-border py-1">
                         <button
                           type="button"
                           onClick={handleClearOwner}
-                          className="w-full px-3 py-1.5 text-xs text-slate-400 hover:text-red-500 hover:bg-slate-50 text-left transition-colors"
+                          className="w-full px-3 py-1.5 text-xs text-muted-foreground hover:text-red-500 hover:bg-muted text-left transition-colors"
                         >
                           Xóa lựa chọn
                         </button>
@@ -407,44 +407,44 @@ export function CustomerFormDialog({ open, onOpenChange }: CustomerFormDialogPro
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Họ tên người liên hệ
                 </label>
                 <input
                   value={contactName}
                   onChange={(e) => setContactName(e.target.value)}
-                  className="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-lg outline-none focus:border-blue-500 placeholder:text-slate-400 transition-colors"
+                  className="w-full px-4 py-2.5 text-sm border border-border rounded-lg outline-none focus:border-blue-500 bg-background text-foreground placeholder:text-muted-foreground transition-colors"
                   placeholder="Nhập tên người liên hệ"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Chức vụ</label>
+                <label className="block text-sm font-medium text-foreground mb-1">Chức vụ</label>
                 <input
                   value={contactRole}
                   onChange={(e) => setContactRole(e.target.value)}
-                  className="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-lg outline-none focus:border-blue-500 placeholder:text-slate-400 transition-colors"
+                  className="w-full px-4 py-2.5 text-sm border border-border rounded-lg outline-none focus:border-blue-500 bg-background text-foreground placeholder:text-muted-foreground transition-colors"
                   placeholder="Ví dụ: Giám đốc, Kế toán..."
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Email</label>
+                  <label className="block text-sm font-medium text-foreground mb-1">Email</label>
                   <input
                     value={contactEmail}
                     onChange={(e) => setContactEmail(e.target.value)}
                     type="email"
-                    className="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-lg outline-none focus:border-blue-500 placeholder:text-slate-400 transition-colors"
+                    className="w-full px-4 py-2.5 text-sm border border-border rounded-lg outline-none focus:border-blue-500 bg-background text-foreground placeholder:text-muted-foreground transition-colors"
                     placeholder="email@example.com"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Số điện thoại</label>
+                  <label className="block text-sm font-medium text-foreground mb-1">Số điện thoại</label>
                   <input
                     value={contactPhone}
                     onChange={(e) => setContactPhone(e.target.value)}
-                    className="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-lg outline-none focus:border-blue-500 placeholder:text-slate-400 transition-colors"
+                    className="w-full px-4 py-2.5 text-sm border border-border rounded-lg outline-none focus:border-blue-500 bg-background text-foreground placeholder:text-muted-foreground transition-colors"
                     placeholder="0912 345 678"
                   />
                 </div>
@@ -456,9 +456,9 @@ export function CustomerFormDialog({ open, onOpenChange }: CustomerFormDialogPro
                   id="inlineIsPrimary"
                   checked={contactIsPrimary}
                   onChange={(e) => setContactIsPrimary(e.target.checked)}
-                  className="h-4 w-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500"
+                  className="h-4 w-4 text-blue-600 rounded border-border focus:ring-blue-500"
                 />
-                <label htmlFor="inlineIsPrimary" className="text-sm text-slate-700">
+                <label htmlFor="inlineIsPrimary" className="text-sm text-foreground">
                   Đặt làm người liên hệ chính
                 </label>
               </div>
@@ -467,12 +467,12 @@ export function CustomerFormDialog({ open, onOpenChange }: CustomerFormDialogPro
 
         </form>
         {/* Footer */}
-        <div className="px-8 pb-6 pt-4 flex justify-between gap-3 border-t border-slate-100">
+        <div className="px-8 pb-6 pt-4 flex justify-between gap-3 border-t border-border">
             {step === 2 ? (
               <button
                 type="button"
                 onClick={() => setStep(1)}
-                className="px-5 py-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+                className="px-5 py-2.5 text-sm font-medium text-foreground bg-background border border-border rounded-lg hover:bg-muted transition-colors"
               >
                 Quay lại
               </button>
@@ -484,7 +484,7 @@ export function CustomerFormDialog({ open, onOpenChange }: CustomerFormDialogPro
               <button
                 type="button"
                 onClick={handleClose}
-                className="px-5 py-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+                className="px-5 py-2.5 text-sm font-medium text-foreground bg-background border border-border rounded-lg hover:bg-muted transition-colors"
               >
                 Hủy
               </button>

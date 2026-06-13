@@ -17,15 +17,7 @@ const stageConfig: Record<string, { label: string; bg: string; color: string; do
 
 export function DealListView({ deals }: DealListViewProps) {
   return (
-    <div
-      style={{
-        overflow: "hidden",
-        borderRadius: 12,
-        border: "0.5px solid #e5e7eb",
-        background: "#fff",
-        fontSize: 13.5,
-      }}
-    >
+    <div className="overflow-hidden rounded-xl border border-border bg-card text-[13.5px]">
       <table style={{ width: "100%", borderCollapse: "collapse", tableLayout: "fixed" }}>
         <colgroup>
           <col style={{ width: "50%" }} />
@@ -34,7 +26,7 @@ export function DealListView({ deals }: DealListViewProps) {
         </colgroup>
 
         <thead>
-          <tr style={{ borderBottom: "0.5px solid #f0f0f0", background: "#f9fafb" }}>
+          <tr className="border-b border-border bg-muted">
             {[
               { label: "Tiêu đề", align: "left" as const },
               { label: "Giai đoạn", align: "left" as const },
@@ -42,15 +34,8 @@ export function DealListView({ deals }: DealListViewProps) {
             ].map(({ label, align }, i) => (
               <th
                 key={i}
-                style={{
-                  padding: "10px 14px",
-                  textAlign: align,
-                  fontSize: 11,
-                  fontWeight: 500,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.06em",
-                  color: "#9ca3af",
-                }}
+                className="px-3.5 py-2.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground"
+                style={{ textAlign: align }}
               >
                 {label}
               </th>
@@ -65,39 +50,23 @@ export function DealListView({ deals }: DealListViewProps) {
             return (
               <tr
                 key={deal.id}
-                style={{ borderBottom: "0.5px solid #f0f0f0" }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = "#f9fafb")}
-                onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                className="border-b border-border hover:bg-muted transition-colors"
               >
                 {/* Title + subtitle */}
-                <td style={{ padding: "11px 14px" }}>
+                <td className="px-3.5 py-[11px]">
                   <span
                     title={deal.title}
-                    style={{
-                      display: "block",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                      fontWeight: 500,
-                      color: "#111827",
-                    }}
+                    className="block overflow-hidden text-ellipsis whitespace-nowrap font-medium text-foreground"
                   >
                     {deal.title}
                   </span>
-                  <span
-                    style={{
-                      display: "block",
-                      fontSize: 11.5,
-                      color: "#9ca3af",
-                      marginTop: 2,
-                    }}
-                  >
+                  <span className="block text-[11.5px] text-muted-foreground mt-0.5">
                     {[deal.customerName, deal.ownerName].filter(Boolean).join(" · ")}
                   </span>
                 </td>
 
                 {/* Stage badge */}
-                <td style={{ padding: "11px 14px" }}>
+                <td className="px-3.5 py-[11px]">
                   <span
                     style={{
                       display: "inline-flex",
@@ -125,23 +94,10 @@ export function DealListView({ deals }: DealListViewProps) {
                 </td>
 
                 {/* View detail button */}
-                <td style={{ padding: "11px 14px", textAlign: "right" }}>
+                <td className="px-3.5 py-[11px] text-right">
                   <Link
                     href={`/deals/${deal.id}`}
-                    style={{
-                      display: "inline-flex",
-                      alignItems: "center",
-                      gap: 4,
-                      fontSize: 12,
-                      fontWeight: 500,
-                      color: "#185FA5",
-                      textDecoration: "none",
-                      padding: "5px 10px",
-                      borderRadius: 7,
-                      border: "0.5px solid #B5D4F4",
-                      background: "#E6F1FB",
-                      whiteSpace: "nowrap",
-                    }}
+                    className="inline-flex items-center gap-1 rounded-lg border border-[#B5D4F4] bg-[#E6F1FB] px-2.5 py-1.5 text-[12px] font-medium text-[#185FA5] no-underline whitespace-nowrap hover:bg-[#D0E5F8] transition-colors"
                   >
                     Xem chi tiết
                   </Link>
@@ -152,10 +108,7 @@ export function DealListView({ deals }: DealListViewProps) {
 
           {deals.length === 0 && (
             <tr>
-              <td
-                colSpan={3}
-                style={{ padding: "40px 16px", textAlign: "center", color: "#9ca3af" }}
-              >
+              <td colSpan={3} className="px-4 py-10 text-center text-muted-foreground">
                 Không có deals.
               </td>
             </tr>

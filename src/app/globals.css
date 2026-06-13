@@ -74,6 +74,22 @@
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+
+    /* ─── CRM Brand Palette (dark overrides) ─────────── */
+    --crm-primary: #5B9BD5;
+    --crm-primary-light: #1E3A5F;
+    --crm-success: #6AAF35;
+    --crm-success-light: #1A2E0F;
+    --crm-danger: #E05252;
+    --crm-danger-light: #3B1111;
+    --crm-neutral: #9B9A95;
+    --crm-neutral-light: #2A2926;
+    --crm-surface: #1E2130;
+    --crm-border: #2D3348;
+    --crm-owner-bg: #2D1A4A;
+    --crm-owner-text: #C084FC;
+    --crm-admin-bg: #3B1F06;
+    --crm-admin-text: #FB923C;
   }
 }
 
@@ -95,21 +111,17 @@
 @layer components {
   /* Stat card */
   .crm-stat-card {
-    @apply bg-white rounded-xl border p-5 transition-shadow;
-    border-color: var(--crm-border);
+    @apply bg-card text-card-foreground rounded-xl p-5 transition-shadow;
+    border: 1px solid hsl(var(--border));
   }
   .crm-stat-card:hover {
     box-shadow: 0 2px 8px rgba(0,0,0,0.04);
   }
   .crm-stat-card .stat-label {
-    @apply text-sm font-medium;
-    color: #6B7280;
+    @apply text-sm font-medium text-muted-foreground;
   }
   .crm-stat-card .stat-value {
-    @apply mt-1;
-    font-size: 22px;
-    font-weight: 500;
-    color: #111827;
+    @apply mt-1 text-[22px] font-medium text-foreground;
   }
   .crm-stat-card .stat-delta {
     @apply text-xs mt-1 flex items-center gap-1;
@@ -145,7 +157,7 @@
     color: var(--crm-admin-text);
   }
   .badge-user {
-    @apply bg-gray-100 text-gray-600;
+    @apply bg-muted text-muted-foreground;
   }
 
   /* Table row hover actions */

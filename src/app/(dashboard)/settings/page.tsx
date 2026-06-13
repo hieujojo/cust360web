@@ -50,21 +50,21 @@ export default function SettingsPage() {
         <Settings className="h-5 w-5" />
         <h1 className="text-xl font-semibold">Cài đặt hệ thống</h1>
       </div>
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid gap-3 sm:grid-cols-2" data-tour="settings-cards">
         {settingsCards.map((card) => {
           const Icon = card.icon;
           return (
             <Link
               key={card.href}
               href={card.href}
-              className="flex gap-3 rounded-xl border bg-white p-4 hover:bg-slate-50 transition-colors"
+              className="flex gap-3 rounded-xl border bg-card p-4 hover:bg-accent hover:text-accent-foreground transition-colors"
             >
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-100">
-                <Icon className="h-4 w-4 text-gray-600" />
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-secondary">
+                <Icon className="h-4 w-4 text-secondary-foreground" />
               </div>
               <div>
-                <p className="font-medium text-gray-900">{card.title}</p>
-                <p className="text-sm text-gray-500 mt-0.5">{card.description}</p>
+                <p className="font-medium text-card-foreground">{card.title}</p>
+                <p className="text-sm text-muted-foreground mt-0.5">{card.description}</p>
               </div>
             </Link>
           );

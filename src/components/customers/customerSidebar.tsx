@@ -45,17 +45,17 @@ export function CustomerSidebar({
   return (
     <div className="w-full lg:w-80 flex-shrink-0 space-y-4">
       {/* Basic Info Card */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden relative">
+      <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden relative">
         {isDeleted && (
           <div className="absolute top-0 inset-x-0 h-1 bg-red-500" />
         )}
-        <div className="p-6 flex flex-col items-center text-center border-b border-slate-100">
-          <div className="h-16 w-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-4">
+        <div className="p-6 flex flex-col items-center text-center border-b border-border">
+          <div className="h-16 w-16 bg-[var(--crm-primary-light)] text-[var(--crm-primary)] rounded-2xl flex items-center justify-center mb-4">
             <Building2 className="h-8 w-8" />
           </div>
-          <h2 className="text-xl font-bold text-slate-900 mb-1">{info.name}</h2>
+          <h2 className="text-xl font-bold text-foreground mb-1">{info.name}</h2>
           <div className="flex items-center gap-2 mb-3">
-            <span className="font-mono bg-slate-100 px-2 py-0.5 rounded text-xs text-slate-600">
+            <span className="font-mono bg-muted px-2 py-0.5 rounded text-xs text-muted-foreground">
               {info.customerCode}
             </span>
           </div>
@@ -67,59 +67,59 @@ export function CustomerSidebar({
         {/* Contact Info */}
         <div className="p-4 space-y-4 text-sm">
           <div className="flex items-start gap-3">
-            <Mail className="h-4 w-4 text-slate-400 mt-0.5" />
+            <Mail className="h-4 w-4 text-muted-foreground mt-0.5" />
             <div className="flex-1 overflow-hidden">
-              <p className="text-slate-500 mb-0.5 text-xs uppercase font-semibold">Email</p>
-              <p className="text-slate-900 truncate" title={info.email || ""}>{info.email || "—"}</p>
+              <p className="text-muted-foreground mb-0.5 text-xs uppercase font-semibold">Email</p>
+              <p className="text-foreground truncate" title={info.email || ""}>{info.email || "—"}</p>
             </div>
           </div>
           <div className="flex items-start gap-3">
-            <Phone className="h-4 w-4 text-slate-400 mt-0.5" />
+            <Phone className="h-4 w-4 text-muted-foreground mt-0.5" />
             <div className="flex-1">
-              <p className="text-slate-500 mb-0.5 text-xs uppercase font-semibold">Số điện thoại</p>
-              <p className="text-slate-900">{info.phone || "—"}</p>
+              <p className="text-muted-foreground mb-0.5 text-xs uppercase font-semibold">Số điện thoại</p>
+              <p className="text-foreground">{info.phone || "—"}</p>
             </div>
           </div>
           <div className="flex items-start gap-3">
-            <User className="h-4 w-4 text-slate-400 mt-0.5" />
+            <User className="h-4 w-4 text-muted-foreground mt-0.5" />
             <div className="flex-1">
-              <p className="text-slate-500 mb-0.5 text-xs uppercase font-semibold">Người phụ trách</p>
-              <p className="text-slate-900 font-medium">{info.ownerName || "Chưa giao"}</p>
+              <p className="text-muted-foreground mb-0.5 text-xs uppercase font-semibold">Người phụ trách</p>
+              <p className="text-foreground font-medium">{info.ownerName || "Chưa giao"}</p>
             </div>
           </div>
           <div className="flex items-start gap-3">
-            <Briefcase className="h-4 w-4 text-slate-400 mt-0.5" />
+            <Briefcase className="h-4 w-4 text-muted-foreground mt-0.5" />
             <div className="flex-1">
-              <p className="text-slate-500 mb-0.5 text-xs uppercase font-semibold">Phòng ban</p>
-              <p className="text-slate-900">{info.departmentName || "—"}</p>
+              <p className="text-muted-foreground mb-0.5 text-xs uppercase font-semibold">Phòng ban</p>
+              <p className="text-foreground">{info.departmentName || "—"}</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Quick Stats */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 grid grid-cols-2 gap-4">
-        <div className="text-center p-3 bg-slate-50 rounded-lg">
-          <p className="text-xl font-bold text-slate-900">{sidebar.openDealsCount || 0}</p>
-          <p className="text-xs text-slate-500 font-medium uppercase mt-1">Deals mở</p>
+      <div className="bg-card rounded-xl shadow-sm border border-border p-4 grid grid-cols-2 gap-4">
+        <div className="text-center p-3 bg-muted rounded-lg">
+          <p className="text-xl font-bold text-foreground">{sidebar.openDealsCount || 0}</p>
+          <p className="text-xs text-muted-foreground font-medium uppercase mt-1">Deals mở</p>
         </div>
-        <div className="text-center p-3 bg-slate-50 rounded-lg">
-          <p className="text-xl font-bold text-slate-900">{sidebar.activeTicketsCount || 0}</p>
-          <p className="text-xs text-slate-500 font-medium uppercase mt-1">Tickets mở</p>
+        <div className="text-center p-3 bg-muted rounded-lg">
+          <p className="text-xl font-bold text-foreground">{sidebar.activeTicketsCount || 0}</p>
+          <p className="text-xs text-muted-foreground font-medium uppercase mt-1">Tickets mở</p>
         </div>
       </div>
 
       {/* Actions */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 space-y-2">
-        <h3 className="text-sm font-semibold text-slate-900 mb-3 uppercase">Thao tác nhanh</h3>
+      <div className="bg-card rounded-xl shadow-sm border border-border p-4 space-y-2">
+        <h3 className="text-sm font-semibold text-foreground mb-3 uppercase">Thao tác nhanh</h3>
         
         {!isDeleted && (
           <button
             onClick={onStatusClick}
-            className="w-full flex items-center justify-between px-3 py-2 text-sm font-medium text-slate-700 bg-slate-50 border border-slate-200 rounded-lg hover:bg-slate-100 transition-colors"
+            className="w-full flex items-center justify-between px-3 py-2 text-sm font-medium text-foreground bg-muted border border-border rounded-lg hover:bg-muted/80 transition-colors"
           >
             <div className="flex items-center gap-2">
-              <ArrowRightLeft className="h-4 w-4 text-slate-500" />
+              <ArrowRightLeft className="h-4 w-4 text-muted-foreground" />
               Đổi trạng thái
             </div>
           </button>
@@ -128,10 +128,10 @@ export function CustomerSidebar({
         {!isDeleted && canChangeOwner && (
           <button
             onClick={onOwnerClick}
-            className="w-full flex items-center justify-between px-3 py-2 text-sm font-medium text-slate-700 bg-slate-50 border border-slate-200 rounded-lg hover:bg-slate-100 transition-colors"
+            className="w-full flex items-center justify-between px-3 py-2 text-sm font-medium text-foreground bg-muted border border-border rounded-lg hover:bg-muted/80 transition-colors"
           >
             <div className="flex items-center gap-2">
-              <UserCircle2 className="h-4 w-4 text-slate-500" />
+              <UserCircle2 className="h-4 w-4 text-muted-foreground" />
               Đổi người phụ trách
             </div>
           </button>
@@ -140,7 +140,7 @@ export function CustomerSidebar({
         {isDeleted && canRestore && (
           <button
             onClick={onRestoreClick}
-            className="w-full flex items-center justify-between px-3 py-2 text-sm font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg hover:bg-emerald-100 transition-colors"
+            className="w-full flex items-center justify-between px-3 py-2 text-sm font-medium text-emerald-600 bg-emerald-500/10 border border-emerald-500/20 rounded-lg hover:bg-emerald-500/20 transition-colors"
           >
             <div className="flex items-center gap-2">
               <RefreshCcw className="h-4 w-4" />
@@ -152,7 +152,7 @@ export function CustomerSidebar({
         {!isDeleted && canDelete && (
           <button
             onClick={onDeleteClick}
-            className="w-full flex items-center justify-between px-3 py-2 text-sm font-medium text-red-700 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-colors mt-4"
+            className="w-full flex items-center justify-between px-3 py-2 text-sm font-medium text-red-500 bg-red-500/10 border border-red-500/20 rounded-lg hover:bg-red-500/20 transition-colors mt-4"
           >
             <div className="flex items-center gap-2">
               <Trash2 className="h-4 w-4" />
