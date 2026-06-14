@@ -6,6 +6,7 @@ import type {
   CustomersListResponse,
   CustomersListParams,
   Customer360Response,
+  CustomerStatsResponse,
   CreateCustomerRequest,
   UpdateCustomerRequest,
   ChangeCustomerStatusRequest,
@@ -35,6 +36,13 @@ export class CustomerService {
     const response = await apiClient.get<CustomerSearchResponse>(
       CUSTOMER_ENDPOINTS.SEARCH,
       { params: { query } }
+    );
+    return response.data;
+  }
+
+  async getStats(): Promise<CustomerStatsResponse> {
+    const response = await apiClient.get<CustomerStatsResponse>(
+      CUSTOMER_ENDPOINTS.STATS
     );
     return response.data;
   }

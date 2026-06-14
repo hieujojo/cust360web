@@ -131,6 +131,14 @@
   // LIST & SEARCH
   // ============================================================================
 
+  /** Maps to C# CustomerStatsResponse */
+  export interface CustomerStatsResponse {
+    total: number;
+    lead: number;
+    active: number;
+    churned: number;
+  }
+
   /** Maps to C# CustomerListResponse */
   export interface CustomersListResponse {
     items: CustomerSummary[];

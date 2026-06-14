@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { vi } from "date-fns/locale";
 import {
@@ -71,7 +72,7 @@ function EmptyState() {
 
 /* ── Table component ─────────────────────────────────── */
 
-export function CustomerTable({
+export const CustomerTable = memo(function CustomerTable({
   data,
   onSort,
   onRowClick,
@@ -83,7 +84,7 @@ export function CustomerTable({
   canDelete,
   canRestore,
 }: CustomerTableProps) {
-  if (!data?.length) return <EmptyState />;
+  if (data.length === 0) return <EmptyState />;
 
   return (
     <div className="bg-card border border-border rounded-xl overflow-hidden">

@@ -142,12 +142,17 @@ export class UserService {
 
   async uploadMyAvatar(file: File): Promise<User> {
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("file", file, file.name);
 
+    // Remove default Content-Type to let browser set multipart/form-data with boundary
     const response = await apiClient.post<UserDto>(
       USER_ENDPOINTS.UPLOAD_AVATAR,
       formData,
-      { headers: { "Content-Type": "multipart/form-data" } }
+      {
+        headers: {
+          'Content-Type': undefined, // Remove default application/json
+        },
+      }
     );
     return mapUser(response.data);
   }

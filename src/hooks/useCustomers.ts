@@ -34,6 +34,15 @@ export function useCustomers(params: CustomersListParams = {}) {
   });
 }
 
+export function useCustomerStats() {
+  const { user } = useAuth();
+  return useQuery({
+    queryKey: ["customers", "stats"],
+    queryFn: () => customerService.getStats(),
+    enabled: !!user,
+  });
+}
+
 export function useCustomerSearch(query: string) {
   const { user } = useAuth();
   return useQuery({

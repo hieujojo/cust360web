@@ -36,6 +36,9 @@ export default function ProfilePage() {
       setAvatarPreview(null);
       setSelectedFile(null);
     },
+    onError: (error: Error) => {
+      console.error("Avatar upload error:", error);
+    },
   });
 
   const handleAvatarClick = () => {
@@ -114,7 +117,12 @@ export default function ProfilePage() {
                 )}
               </div>
               {saveAvatarMutation.isError && (
-                <p className="text-sm text-destructive">Không lưu được ảnh. Vui lòng thử lại.</p>
+                <p className="text-sm text-destructive">
+                  Không lưu được ảnh. Vui lòng kiểm tra kết nối hoặc liên hệ quản trị viên.
+                  {saveAvatarMutation.error?.message && (
+                    <span className="block mt-1 text-xs">Chi tiết: {saveAvatarMutation.error.message}</span>
+                  )}
+                </p>
               )}
             </div>
           </div>

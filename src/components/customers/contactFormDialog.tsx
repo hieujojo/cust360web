@@ -129,15 +129,15 @@ export function ContactFormDialog({ open, onOpenChange, customerId, contact, onS
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-        <div className="flex items-center justify-between p-4 border-b border-slate-100">
-          <h2 className="text-lg font-semibold text-slate-800">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+      <div className="bg-card rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200 border border-border">
+        <div className="flex items-center justify-between p-4 border-b border-border">
+          <h2 className="text-lg font-semibold text-foreground">
             {isEdit ? "Sửa người liên hệ" : "Thêm người liên hệ"}
           </h2>
           <button
             onClick={() => onOpenChange(false)}
-            className="p-1 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-md transition-colors"
+            className="p-1 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
           >
             <X className="h-5 w-5" />
           </button>
@@ -145,13 +145,13 @@ export function ContactFormDialog({ open, onOpenChange, customerId, contact, onS
 
         <form onSubmit={handleSubmit(onSubmit)} className="p-4 space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
+            <label className="block text-sm font-medium text-foreground mb-1">
               Họ tên <span className="text-red-500">*</span>
             </label>
             <input
               {...register("name")}
-              className={`w-full p-2 text-sm border rounded-lg outline-none transition-colors ${
-                errors.name ? "border-red-300 focus:border-red-500" : "border-slate-200 focus:border-blue-500"
+              className={`w-full p-2 text-sm border rounded-lg outline-none transition-colors bg-background text-foreground placeholder:text-muted-foreground ${
+                errors.name ? "border-red-300 focus:border-red-500" : "border-border focus:border-[var(--crm-primary)]"
               }`}
               placeholder="Nhập tên người liên hệ"
             />
@@ -159,21 +159,21 @@ export function ContactFormDialog({ open, onOpenChange, customerId, contact, onS
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Chức vụ</label>
+            <label className="block text-sm font-medium text-foreground mb-1">Chức vụ</label>
             <input
               {...register("role")}
-              className="w-full p-2 text-sm border border-slate-200 rounded-lg outline-none focus:border-blue-500"
+              className="w-full p-2 text-sm border border-border rounded-lg outline-none focus:border-[var(--crm-primary)] bg-background text-foreground placeholder:text-muted-foreground"
               placeholder="Ví dụ: Giám đốc, Kế toán..."
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Email</label>
+            <label className="block text-sm font-medium text-foreground mb-1">Email</label>
             <input
               {...register("email")}
               type="email"
-              className={`w-full p-2 text-sm border rounded-lg outline-none transition-colors ${
-                errors.email ? "border-red-300 focus:border-red-500" : "border-slate-200 focus:border-blue-500"
+              className={`w-full p-2 text-sm border rounded-lg outline-none transition-colors bg-background text-foreground placeholder:text-muted-foreground ${
+                errors.email ? "border-red-300 focus:border-red-500" : "border-border focus:border-[var(--crm-primary)]"
               }`}
               placeholder="email@example.com"
             />
@@ -181,10 +181,10 @@ export function ContactFormDialog({ open, onOpenChange, customerId, contact, onS
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Số điện thoại</label>
+            <label className="block text-sm font-medium text-foreground mb-1">Số điện thoại</label>
             <input
               {...register("phone")}
-              className="w-full p-2 text-sm border border-slate-200 rounded-lg outline-none focus:border-blue-500"
+              className="w-full p-2 text-sm border border-border rounded-lg outline-none focus:border-[var(--crm-primary)] bg-background text-foreground placeholder:text-muted-foreground"
               placeholder="0912345678"
             />
           </div>
@@ -194,25 +194,25 @@ export function ContactFormDialog({ open, onOpenChange, customerId, contact, onS
               type="checkbox"
               id="isPrimary"
               {...register("isPrimary")}
-              className="h-4 w-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500"
+              className="h-4 w-4 text-[var(--crm-primary)] rounded border-border focus:ring-[var(--crm-primary)]"
             />
-            <label htmlFor="isPrimary" className="text-sm text-slate-700">
+            <label htmlFor="isPrimary" className="text-sm text-foreground">
               Đặt làm người liên hệ chính
             </label>
           </div>
 
-          <div className="pt-4 flex justify-end gap-3 border-t border-slate-100">
+          <div className="pt-4 flex justify-end gap-3 border-t border-border">
             <button
               type="button"
               onClick={() => onOpenChange(false)}
-              className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors"
+              className="px-4 py-2 text-sm font-medium text-foreground bg-card border border-border rounded-lg hover:bg-muted transition-colors"
             >
               Hủy
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center"
+              className="px-4 py-2 text-sm font-medium text-white bg-[var(--crm-primary)] rounded-lg hover:bg-[#14528F] transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center"
             >
               {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {isSubmitting ? "Đang lưu..." : "Lưu"}

@@ -45,6 +45,7 @@ export const AUDIT_LOG_ENDPOINTS = {
 export const CUSTOMER_ENDPOINTS = {
   LIST: "/customers",
   SEARCH: "/customers/search",
+  STATS: "/customers/stats",
   DETAIL_360: (id: string) => `/customers/${id}/360`,
   CREATE: "/customers",
   UPDATE: (id: string) => `/customers/${id}`,

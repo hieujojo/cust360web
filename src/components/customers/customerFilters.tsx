@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo } from "react";
 import { Search, Download, LayoutList, LayoutGrid, X } from "lucide-react";
 import { isAdmin } from "@/helper/authHelper";
 import { useAuth } from "@/hooks/useAuth";
@@ -29,7 +29,7 @@ interface CustomerFiltersProps {
   onViewModeChange?: (mode: "list" | "grid") => void;
 }
 
-export function CustomerFilters({
+export const CustomerFilters = memo(function CustomerFilters({
   onSearch,
   onStatusChange,
   onOwnerChange,
@@ -224,4 +224,4 @@ export function CustomerFilters({
       </div>
     </div>
   );
-}
+});

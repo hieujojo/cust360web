@@ -40,9 +40,21 @@ const STATUS_OPTIONS: {
 export function CustomerFormDialog({ open, onOpenChange }: CustomerFormDialogProps) {
   const { toast } = useToast();
   const createCustomerMutation = useCreateCustomer();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  
   const [step, setStep] = useState<1 | 2>(1);
+  const [isSubmitEnabled, setIsSubmitEnabled] = useState(false);
+  const [contactOpen, setContactOpen] = useState(false);
+
+  useEffect(() => {
+    if (step === 2) {
+      // Ngăn chặn lỗi double-click hoặc đè phím Enter tự động submit ngay khi sang bước 2
+      const timer = setTimeout(() => setIsSubmitEnabled(true), 400);
+      return () => clearTimeout(timer);
+    } else {
+      setIsSubmitEnabled(false);
+    }
+  }, [step]);
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [contactName, setContactName] = useState("");
   const [contactRole, setContactRole] = useState("");
   const [contactEmail, setContactEmail] = useState("");
@@ -133,7 +145,7 @@ export function CustomerFormDialog({ open, onOpenChange }: CustomerFormDialogPro
         phone: contactPhone.trim() || undefined,
         isPrimary: contactIsPrimary,
       }] : undefined;
-
+      
       await createCustomerMutation.mutateAsync({
         name: data.name,
         source: data.source as CustomerSource,
@@ -158,9 +170,14 @@ export function CustomerFormDialog({ open, onOpenChange }: CustomerFormDialogPro
     }
   };
 
-  const handleFormSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (step === 2) {
+    if (step === 1) {
+      const isValid = await trigger(["name", "status", "source", "email", "phone"]);
+      if (isValid) {
+        setStep(2);
+      }
+    } else if (step === 2) {
       void handleSubmit(onSubmit)(e as any);
     }
   };
@@ -494,7 +511,9 @@ export function CustomerFormDialog({ open, onOpenChange }: CustomerFormDialogPro
                   type="button"
                   onClick={async () => {
                     const isValid = await trigger(["name", "status", "source", "email", "phone"]);
-                    if (isValid) setStep(2);
+                    if (isValid) {
+                      setStep(2);
+                    }
                   }}
                   className="px-5 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors flex items-center"
                 >
@@ -504,7 +523,7 @@ export function CustomerFormDialog({ open, onOpenChange }: CustomerFormDialogPro
                 <button
                   type="submit"
                   form="customer-form"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || !isSubmitEnabled}
                   className="px-5 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-1.5"
                 >
                   {isSubmitting && <Loader2 className="h-3.5 w-3.5 animate-spin" />}

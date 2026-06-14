@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { Building2, Mail, Phone, Calendar, User } from "lucide-react";
 import type { Customer } from "@/models/customerModel";
 
@@ -15,7 +16,7 @@ const statusConfig: Record<string, { bg: string; text: string; dot: string }> = 
   Churned: { bg: "bg-red-50 dark:bg-red-950/30", text: "text-red-700 dark:text-red-400", dot: "bg-red-500" },
 };
 
-export function CustomerGridView({ data, onRowClick }: CustomerGridViewProps) {
+export const CustomerGridView = memo(function CustomerGridView({ data, onRowClick }: CustomerGridViewProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
       {data.map((customer) => {
@@ -94,4 +95,4 @@ export function CustomerGridView({ data, onRowClick }: CustomerGridViewProps) {
       )}
     </div>
   );
-}
+});

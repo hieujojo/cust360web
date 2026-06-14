@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { Plus, Building2, TrendingUp, TrendingDown } from "lucide-react";
 import * as XLSX from "xlsx";
 import { useAuth } from "@/hooks/useAuth";
 import { useUsers } from "@/hooks/useUsers";
-import { useCustomers, useCustomerSearch, useCustomer360 } from "@/hooks/useCustomers";
+import { useCustomers, useCustomerSearch, useCustomer360, useCustomerStats } from "@/hooks/useCustomers";
 import { canDeleteCustomer, canChangeCustomerOwner, canRestoreCustomer } from "@/helper/authHelper";
 import type { Customer, CustomerStatus } from "@/models/customerModel";
 
@@ -69,26 +69,27 @@ export default function CustomersPage() {
   });
 
   const { data: customer360Data } = useCustomer360(panelCustomer?.id ?? "");
-  const panelCustomerData = panelCustomer && customer360Data
-    ? {
-        ...panelCustomer,
-        ...customer360Data.info,
-        createdAt: new Date(customer360Data.info.createdAt),
-        updatedAt: new Date(customer360Data.info.updatedAt),
-        contacts: customer360Data.tabs.contacts,
-      } as Customer
-    : panelCustomer;
+  const panelCustomerData = useMemo(() => {
+    if (!panelCustomer || !customer360Data) {
+      return panelCustomer;
+    }
+    return {
+      ...panelCustomer,
+      ...customer360Data.info,
+      createdAt: new Date(customer360Data.info.createdAt),
+      updatedAt: new Date(customer360Data.info.updatedAt),
+      contacts: customer360Data.tabs.contacts,
+    } as Customer;
+  }, [panelCustomer, customer360Data]);
 
-  // Stat counts — mỗi query dùng pageSize=1 để lấy totalCount chính xác
-  const { data: totalData }   = useCustomers({ page: 1, pageSize: 1 });
-  const { data: leadData }    = useCustomers({ page: 1, pageSize: 1, status: "Lead" });
-  const { data: activeData }  = useCustomers({ page: 1, pageSize: 1, status: "Active" });
-  const { data: churnedData } = useCustomers({ page: 1, pageSize: 1, status: "Churned" });
+  // Stat counts — single API call for all statistics
+  const { data: statsData } = useCustomerStats();
 
   const isLoading = searchTerm.length > 1 ? isSearchLoading : isListLoading;
   // Search API trả payload khác list view; cần normalize để CustomerTable không crash (updatedAt/source/...)
-  const displayData = (searchTerm.length > 1
-    ? (searchResults?.results ?? []).map((r: any) => ({
+  const displayData = useMemo(() => {
+    if (searchTerm.length > 1) {
+      return (searchResults?.results ?? []).map((r: any) => ({
         id: r.id,
         customerCode: r.customerCode,
         name: r.name,
@@ -103,32 +104,34 @@ export default function CustomersPage() {
         createdAt: new Date(),
         updatedAt: new Date(),
         contacts: [],
-      }))
-    : (listData?.items ?? [])) as any[];
+      }));
+    }
+    return listData?.items ?? [];
+  }, [searchTerm, searchResults, listData]);
   const total = searchTerm.length > 1 ? searchResults?.totalCount || 0 : listData?.pagination?.totalCount || 0;
   const totalPages = Math.ceil(total / pageSize);
 
-  const handleSort = (column: string) => {
+  const handleSort = useCallback((column: string) => {
     if (sortBy === column) {
       setSortDir(sortDir === "asc" ? "desc" : "asc");
     } else {
       setSortBy(column as any);
       setSortDir("asc");
     }
-  };
+  }, [sortBy, sortDir]);
 
-  const openDialog = (type: "status" | "owner" | "delete" | "restore", customer: Customer) => {
+  const openDialog = useCallback((type: "status" | "owner" | "delete" | "restore", customer: Customer) => {
     setSelectedCustomer(customer);
     if (type === "status") setStatusDialogOpen(true);
     if (type === "owner") setOwnerDialogOpen(true);
     if (type === "delete") setDeleteDialogOpen(true);
     if (type === "restore") setRestoreDialogOpen(true);
-  };
+  }, []);
 
-  const handleRowClick = (customer: Customer) => {
+  const handleRowClick = useCallback((customer: Customer) => {
     setPanelCustomer(customer);
     setPanelOpen(true);
-  };
+  }, []);
 
   // Export to Excel
   const handleExport = useCallback(() => {
@@ -171,11 +174,35 @@ export default function CustomersPage() {
     XLSX.writeFile(wb, `customers_${new Date().toISOString().slice(0, 10)}.xlsx`);
   }, [displayData]);
 
-  /* ── Stat counts — lấy từ totalCount của từng query theo status ── */
-  const totalCount   = totalData?.pagination?.totalCount   ?? 0;
-  const leadCount    = leadData?.pagination?.totalCount    ?? 0;
-  const activeCount  = activeData?.pagination?.totalCount  ?? 0;
-  const churnedCount = churnedData?.pagination?.totalCount ?? 0;
+  // Handlers for CustomerFilters (memoized to prevent unnecessary child re-renders)
+  const handleSearch = useCallback((term: string) => {
+    setSearchTerm(term);
+  }, []);
+
+  const handleStatusChange = useCallback((status: string) => {
+    setStatusFilter(status as CustomerStatus | "");
+    setPage(1);
+  }, []);
+
+  const handleOwnerChange = useCallback((owner: string) => {
+    setOwnerFilter(owner);
+    setPage(1);
+  }, []);
+
+  const handleDepartmentChange = useCallback((dept: string) => {
+    setDepartmentFilter(dept);
+    setPage(1);
+  }, []);
+
+  const handleViewModeChange = useCallback((mode: "list" | "grid") => {
+    setViewMode(mode);
+  }, []);
+
+  /* ── Stat counts — lấy từ consolidated stats API ── */
+  const totalCount   = statsData?.total   ?? 0;
+  const leadCount    = statsData?.lead    ?? 0;
+  const activeCount  = statsData?.active  ?? 0;
+  const churnedCount = statsData?.churned ?? 0;
 
   // Tỉ lệ % so với tổng (tránh chia 0)
   const leadPct    = totalCount > 0 ? Math.round((leadCount    / totalCount) * 100) : 0;
@@ -250,15 +277,15 @@ export default function CustomersPage() {
       {/* ── Filter Bar ───────────────────── */}
       <div data-tour="customers-filters">
         <CustomerFilters
-          onSearch={(term) => setSearchTerm(term)}
-          onStatusChange={(status) => { setStatusFilter(status as CustomerStatus | ""); setPage(1); }}
-          onOwnerChange={(owner) => { setOwnerFilter(owner); setPage(1); }}
-          onDepartmentChange={(dept) => { setDepartmentFilter(dept); setPage(1); }}
+          onSearch={handleSearch}
+          onStatusChange={handleStatusChange}
+          onOwnerChange={handleOwnerChange}
+          onDepartmentChange={handleDepartmentChange}
           users={usersList}
           showOwnerFilter={canChangeOwner}
           onExport={handleExport}
           viewMode={viewMode}
-          onViewModeChange={setViewMode}
+          onViewModeChange={handleViewModeChange}
         />
       </div>
 

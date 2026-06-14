@@ -14,10 +14,10 @@ interface StatusChangeDialogProps {
 }
 
 const statusTransitions: Record<CustomerStatus, CustomerStatus[]> = {
-  Lead: ["Active", "Inactive"],
-  Active: ["Inactive", "Churned"],
-  Inactive: ["Active"],
-  Churned: [],
+  Lead: ["Active", "Inactive", "Churned"],
+  Active: ["Lead", "Inactive", "Churned"],
+  Inactive: ["Lead", "Active", "Churned"],
+  Churned: ["Lead", "Active", "Inactive"],
 };
 
 const statusLabels: Record<CustomerStatus, string> = {
@@ -65,13 +65,13 @@ export function StatusChangeDialog({ open, onOpenChange, customer }: StatusChang
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-sm overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-        <div className="flex items-center justify-between p-4 border-b border-slate-100">
-          <h2 className="text-lg font-semibold text-slate-800">Đổi trạng thái</h2>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+      <div className="bg-card rounded-xl shadow-xl w-full max-w-sm overflow-hidden animate-in fade-in zoom-in-95 duration-200 border border-border">
+        <div className="flex items-center justify-between p-4 border-b border-border">
+          <h2 className="text-lg font-semibold text-foreground">Đổi trạng thái</h2>
           <button
             onClick={() => onOpenChange(false)}
-            className="p-1 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-md transition-colors"
+            className="p-1 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
           >
             <X className="h-5 w-5" />
           </button>
@@ -79,26 +79,26 @@ export function StatusChangeDialog({ open, onOpenChange, customer }: StatusChang
 
         <div className="p-4 space-y-4">
           <div>
-            <p className="text-sm text-slate-500 mb-1">Khách hàng:</p>
-            <p className="font-medium text-slate-900">{customer.name}</p>
+            <p className="text-sm text-muted-foreground mb-1">Khách hàng:</p>
+            <p className="font-medium text-foreground">{customer.name}</p>
           </div>
 
           <div>
-            <p className="text-sm text-slate-500 mb-1">Trạng thái hiện tại:</p>
-            <span className="inline-flex px-2.5 py-1 text-xs font-medium border rounded-full bg-slate-100 text-slate-700">
+            <p className="text-sm text-muted-foreground mb-1">Trạng thái hiện tại:</p>
+            <span className="inline-flex px-2.5 py-1 text-xs font-medium border border-border rounded-full bg-muted text-foreground">
               {statusLabels[customer.status]}
             </span>
           </div>
 
           {validNextStatuses.length > 0 ? (
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">
+              <label className="block text-sm font-medium text-foreground mb-1">
                 Trạng thái mới
               </label>
               <select
                 value={selectedStatus}
                 onChange={(e) => setSelectedStatus(e.target.value as CustomerStatus)}
-                className="w-full p-2 text-sm border border-slate-200 rounded-lg outline-none focus:border-blue-500 bg-white"
+                className="w-full p-2 text-sm border border-border rounded-lg outline-none focus:border-[var(--crm-primary)] bg-background text-foreground"
               >
                 <option value="" disabled>Chọn trạng thái</option>
                 {validNextStatuses.map((s) => (
@@ -109,16 +109,16 @@ export function StatusChangeDialog({ open, onOpenChange, customer }: StatusChang
               </select>
             </div>
           ) : (
-            <p className="text-sm text-amber-600 bg-amber-50 p-3 rounded-lg border border-amber-200 mt-4">
+            <p className="text-sm text-amber-600 dark:text-amber-500 bg-amber-50 dark:bg-amber-950/20 p-3 rounded-lg border border-amber-200 dark:border-amber-800 mt-4">
               Khách hàng ở trạng thái này không thể chuyển sang trạng thái khác.
             </p>
           )}
 
-          <div className="pt-4 flex justify-between items-center border-t border-slate-100 mt-4">
+          <div className="pt-4 flex justify-between items-center border-t border-border mt-4">
             <button
               type="button"
               onClick={() => setContactOpen(true)}
-              className="text-xs font-medium text-blue-600 hover:underline"
+              className="text-xs font-medium text-[var(--crm-primary)] hover:underline"
             >
               + Thêm người liên hệ
             </button>
@@ -126,7 +126,7 @@ export function StatusChangeDialog({ open, onOpenChange, customer }: StatusChang
               <button
                 type="button"
                 onClick={() => onOpenChange(false)}
-                className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors"
+                className="px-4 py-2 text-sm font-medium text-foreground bg-card border border-border rounded-lg hover:bg-muted transition-colors"
               >
                 Hủy
               </button>
@@ -134,7 +134,7 @@ export function StatusChangeDialog({ open, onOpenChange, customer }: StatusChang
                 type="button"
                 onClick={handleSubmit}
                 disabled={!selectedStatus || isSubmitting}
-                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center"
+                className="px-4 py-2 text-sm font-medium text-white bg-[var(--crm-primary)] rounded-lg hover:bg-[#14528F] transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center"
               >
                 {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {isSubmitting ? "Đang lưu..." : "Cập nhật"}
