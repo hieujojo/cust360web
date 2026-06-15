@@ -48,9 +48,9 @@ const mainNavItems: NavigationItem[] = [
 
 const systemNavItems: NavigationItem[] = [
   { label: "Báo cáo", href: "/reports", icon: BarChart3, tourId: "tour-reports" },
-  { label: "Góp ý", href: "/feedback", icon: MessageSquare },
-  { label: "Quản lý người dùng", href: "/users", icon: Users, adminOnly: true },
-  { label: "Hướng dẫn sử dụng", href: "/crm-guide", icon: BookOpen  },
+  { label: "Góp ý", href: "/feedback", icon: MessageSquare, tourId: "tour-feedback" },
+  { label: "Quản lý người dùng", href: "/users", icon: Users, adminOnly: true, tourId: "tour-users" },
+  { label: "Hướng dẫn sử dụng", href: "/crm-guide", icon: BookOpen, tourId: "tour-guide" },
   { label: "Cài đặt", href: "/settings", icon: Settings, adminOnly: true, tourId: "tour-settings" },
 ];
 
@@ -297,12 +297,14 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
           {/* Spacer */}
           <div className="flex-1" />
+          <div data-tour="dashboard-theme-toggle" className="flex items-center gap-1">
 
           <ThemeToggle />
           <NotificationBell />
 
           {/* User dropdown */}
           <UserDropdown user={user} />
+          </div>
         </header>
 
         {/* ── Page content ── */}

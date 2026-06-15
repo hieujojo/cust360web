@@ -319,6 +319,7 @@ export default function CRMGuide() {
         }}
       >
         <div
+          data-tour="guide-tabs"
           style={{
             maxWidth: "1000px",
             margin: "0 auto",
@@ -384,6 +385,7 @@ export default function CRMGuide() {
                 Hướng dẫn cho người dùng sử dụng  
               </h2>
               <button
+                data-tour="guide-tour-btn"
                 onClick={startOnboardingTour}
                 className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg text-sm transition-colors shadow-sm flex items-center gap-2"
               >

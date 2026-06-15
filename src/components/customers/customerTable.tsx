@@ -56,6 +56,34 @@ const sourceLabel: Record<CustomerSource, string> = {
   Other:      "Khác",
 };
 
+
+/* ── Sortable header cell ────────────────────────────── */
+
+function SortableHeader({
+  label,
+  column,
+  onSort,
+  className = "",
+}: {
+  label: string;
+  column: string;
+  onSort: (column: string) => void;
+  className?: string;
+}) {
+  return (
+    <th
+      scope="col"
+      className={`px-4 py-3 font-medium cursor-pointer hover:bg-muted transition-colors group/th ${className}`}
+      onClick={() => onSort(column)}
+    >
+      <div className="flex items-center gap-1">
+        {label}
+        <ArrowUpDown className="h-3 w-3 text-muted-foreground opacity-50 group-hover/th:opacity-100 transition-opacity" />
+      </div>
+    </th>
+  );
+}
+
 /* ── Empty state ─────────────────────────────────────── */
 
 function EmptyState() {
@@ -102,7 +130,7 @@ export const CustomerTable = memo(function CustomerTable({
             </tr>
           </thead>
           <tbody>
-            {data.map((customer) => (
+            {data.map((customer, index) => (
               <tr
                 key={customer.id}
                 onClick={() => onRowClick(customer)}
@@ -183,7 +211,7 @@ export const CustomerTable = memo(function CustomerTable({
 
                 {/* Actions */}
                 <td className="px-4 py-3 text-right">
-                  <div className="flex items-center justify-end gap-1">
+                  <div data-tour={index === 0 ? "customers-row-actions" : undefined} className="flex items-center justify-end gap-1">
                     <button
                       onClick={(e) => { e.stopPropagation(); onRowClick(customer); }}
                       className="p-1.5 rounded-md hover:bg-muted text-muted-foreground hover:text-[var(--crm-primary)] transition-colors"
@@ -207,31 +235,4 @@ export const CustomerTable = memo(function CustomerTable({
       </div>
     </div>
   );
-}
-
-/* ── Sortable header cell ────────────────────────────── */
-
-function SortableHeader({
-  label,
-  column,
-  onSort,
-  className = "",
-}: {
-  label: string;
-  column: string;
-  onSort: (column: string) => void;
-  className?: string;
-}) {
-  return (
-    <th
-      scope="col"
-      className={`px-4 py-3 font-medium cursor-pointer hover:bg-muted transition-colors group/th ${className}`}
-      onClick={() => onSort(column)}
-    >
-      <div className="flex items-center gap-1">
-        {label}
-        <ArrowUpDown className="h-3 w-3 text-muted-foreground opacity-50 group-hover/th:opacity-100 transition-opacity" />
-      </div>
-    </th>
-  );
-}
+})

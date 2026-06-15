@@ -13,12 +13,14 @@ interface Customer360PanelProps {
   customer: Customer | null;
   open: boolean;
   onClose: () => void;
+  activeTab?: TabKey;
+  onTabChange?: (tab: TabKey) => void;
 }
 
 const tabs = [
-  { key: "info",     label: "INFO",     icon: FileText },
+  { key: "info", label: "INFO", icon: FileText },
   { key: "contacts", label: "CONTACTS", icon: User },
-  { key: "deals",    label: "DEALS",    icon: DollarSign },
+  { key: "deals", label: "DEALS", icon: DollarSign },
   { key: "timeline", label: "TIMELINE", icon: MessageSquare },
 ] as const;
 
@@ -27,15 +29,19 @@ type TabKey = (typeof tabs)[number]["key"];
 /* ── Status badge ─────────────────────────────────────── */
 
 const statusConfig: Record<CustomerStatus, { label: string; class: string; dotClass: string }> = {
-  Lead:     { label: "Tiềm năng", class: "badge-lead", dotClass: "bg-[var(--crm-primary)]" },
-  Active:   { label: "Hoạt động", class: "badge-active", dotClass: "bg-[var(--crm-success)]" },
+  Lead: { label: "Tiềm năng", class: "badge-lead", dotClass: "bg-[var(--crm-primary)]" },
+  Active: { label: "Hoạt động", class: "badge-active", dotClass: "bg-[var(--crm-success)]" },
   Inactive: { label: "Tạm ngưng", class: "badge-inactive", dotClass: "bg-gray-400" },
-  Churned:  { label: "Rời bỏ",   class: "badge-churned", dotClass: "bg-[var(--crm-danger)]" },
+  Churned: { label: "Rời bỏ", class: "badge-churned", dotClass: "bg-[var(--crm-danger)]" },
 };
 
-export function Customer360Panel({ customer, open, onClose }: Customer360PanelProps) {
-  const [activeTab, setActiveTab] = useState<TabKey>("info");
-
+export function Customer360Panel({ customer, open, onClose, activeTab: externalTab, onTabChange, }: Customer360PanelProps) {
+  const [internalTab, setInternalTab] = useState<TabKey>("info");
+  const activeTab = externalTab ?? internalTab;
+  const setActiveTab = (tab: TabKey) => {
+    setInternalTab(tab);
+    onTabChange?.(tab);
+  };
   if (!customer) return null;
 
   return (
@@ -77,39 +83,50 @@ export function Customer360Panel({ customer, open, onClose }: Customer360PanelPr
           </div>
         </div>
 
-        {/* Tabs */}
-        <div className="flex border-b border-border px-6">
-          {tabs.map((tab) => {
-            const Icon = tab.icon;
-            const isActive = activeTab === tab.key;
-            return (
-              <button
-                key={tab.key}
-                onClick={() => setActiveTab(tab.key)}
-                className={`
-                  flex items-center gap-1.5 px-3 py-2.5 text-[12px] font-medium
-                  border-b-2 transition-colors
-                  ${isActive
-                    ? "border-[var(--crm-primary)] text-[var(--crm-primary)]"
-                    : "border-transparent text-muted-foreground hover:text-foreground"
-                  }
-                `}
-              >
-                <Icon className="h-3.5 w-3.5" />
-                {tab.label}
-              </button>
-            );
-          })}
-        </div>
+        {/* Tabs + Tab content wrapper — spotlight bao cả thanh tab lẫn nội dung */}
+        <div
+          className="flex flex-col flex-1 min-h-0"
+          data-tour={
+            activeTab === "info" ? "customers-detail-info" :
+              activeTab === "contacts" ? "customers-detail-contacts" :
+                activeTab === "deals" ? "customers-detail-deals" :
+                  activeTab === "timeline" ? "customers-detail-timeline" :
+                    undefined
+          }
+        >
+          {/* Tabs */}
+          <div className="flex border-b border-border px-6">
+            {tabs.map((tab) => {
+              const Icon = tab.icon;
+              const isActive = activeTab === tab.key;
+              return (
+                <button
+                  key={tab.key}
+                  onClick={() => setActiveTab(tab.key)}
+                  data-tour={`customers-detail-tab-${tab.key}`}
+                  className={`
+                    flex items-center gap-1.5 px-3 py-2.5 text-[12px] font-medium
+                    border-b-2 transition-colors
+                    ${isActive
+                      ? "border-[var(--crm-primary)] text-[var(--crm-primary)]"
+                      : "border-transparent text-muted-foreground hover:text-foreground"
+                    }
+                  `}
+                >
+                  <Icon className="h-3.5 w-3.5" />
+                  {tab.label}
+                </button>
+              );
+            })}
+          </div>
 
-        {/* Tab content */}
-        <div className="flex-1 overflow-y-auto p-6">
-          {activeTab === "info"     && <InfoTab customer={customer} />}
-          {activeTab === "contacts" && <ContactsTab contacts={customer.contacts} />}
-          {activeTab === "deals"    && <DealsTab customerId={customer.id} />}
-          {activeTab === "timeline" && customer && (
-            <TimelineTab customerId={customer.id} compact />
-          )}
+          {/* Tab content */}
+          <div className="flex-1 overflow-y-auto p-6">
+            {activeTab === "info" && <InfoTab customer={customer} />}
+            {activeTab === "contacts" && <ContactsTab contacts={customer.contacts} />}
+            {activeTab === "deals" && <DealsTab customerId={customer.id} />}
+            {activeTab === "timeline" && customer && <TimelineTab customerId={customer.id} compact />}
+          </div>
         </div>
       </div>
     </>
@@ -120,11 +137,11 @@ export function Customer360Panel({ customer, open, onClose }: Customer360PanelPr
 
 function InfoTab({ customer }: { customer: Customer }) {
   const fields = [
-    { icon: Mail,      label: "Email",           value: customer.email || "—" },
-    { icon: Phone,     label: "Điện thoại",      value: customer.phone || "—" },
-    { icon: User,      label: "Phụ trách",       value: customer.ownerName || "Chưa giao" },
-    { icon: FileText,  label: "Nguồn",           value: customer.source },
-    { icon: Calendar,  label: "Ngày tạo",        value: formatDistanceToNow(new Date(customer.createdAt), { addSuffix: true, locale: vi }) },
+    { icon: Mail, label: "Email", value: customer.email || "—" },
+    { icon: Phone, label: "Điện thoại", value: customer.phone || "—" },
+    { icon: User, label: "Phụ trách", value: customer.ownerName || "Chưa giao" },
+    { icon: FileText, label: "Nguồn", value: customer.source },
+    { icon: Calendar, label: "Ngày tạo", value: formatDistanceToNow(new Date(customer.createdAt), { addSuffix: true, locale: vi }) },
   ];
 
   return (

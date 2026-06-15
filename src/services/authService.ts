@@ -110,7 +110,7 @@
       try {
         localStorage.setItem(STORAGE_KEYS.EMAIL_LOCAL, email);
       } catch (error) {
-        console.log('Save email error:', error);
+        // 
       }
     }
 

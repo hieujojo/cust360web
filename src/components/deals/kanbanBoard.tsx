@@ -131,8 +131,8 @@ function StageColumn({ stage, items }: { stage: PipelineStage; items: Deal[] }) 
 
       <SortableContext items={items.map((x) => x.id)} strategy={rectSortingStrategy}>
         <div className="min-h-20 space-y-2">
-          {items.map((deal) => (
-            <DealCard key={deal.id} deal={deal} stage={stage} />
+          {items.map((deal , index) => (
+            <DealCard key={deal.id} deal={deal} stage={stage} tourRef={index === 0 ? "pipeline-deal-card" : undefined} />
           ))}
         </div>
       </SortableContext>
@@ -148,10 +148,12 @@ function DealCard({
   deal,
   stage,
   isOverlay = false,
+  tourRef,
 }: {
   deal: Deal;
   stage: PipelineStage;
   isOverlay?: boolean;
+  tourRef?: string;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: deal.id });
@@ -177,6 +179,7 @@ function DealCard({
     <div
       ref={setNodeRef}
       style={isOverlay ? undefined : style}
+      data-tour={tourRef}
       className={[
         "rounded-lg border bg-card p-3 text-sm",
         isOverlay ? "rotate-1 shadow-lg cursor-grabbing opacity-95" : "cursor-grab active:cursor-grabbing",

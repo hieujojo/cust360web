@@ -83,7 +83,7 @@ export function UserDropdown({ user }: UserDropdownProps) {
           onClick={logout}
         >
           <LogOut className="h-4 w-4" />
-          <span>Dang xuat</span>
+          <span>Đăng xuất</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -29,6 +29,7 @@ export default function FeedbackPage() {
           </p>
         </div>
         <button
+          data-tour="feedback-create"
           onClick={() => setCreateDialogOpen(true)}
           className="h-9 px-4 text-[13px] font-medium text-white bg-[var(--crm-primary)] rounded-lg hover:bg-[#14528F] transition-colors flex items-center gap-1.5 shadow-sm"
         >
@@ -38,7 +39,7 @@ export default function FeedbackPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-2 border-b border-border">
+      <div data-tour="feedback-tabs" className="flex items-center gap-2 border-b border-border">
         <button
           onClick={() => setActiveTab("customer")}
           className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${

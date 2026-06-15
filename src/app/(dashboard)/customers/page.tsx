@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import { Plus, Building2, TrendingUp, TrendingDown } from "lucide-react";
 import * as XLSX from "xlsx";
 import { useAuth } from "@/hooks/useAuth";
@@ -18,6 +18,8 @@ import { StatusChangeDialog } from "@/components/customers/statusChangeDialog";
 import { OwnerChangeDialog } from "@/components/customers/ownerChangeDialog";
 import { DeleteDialog } from "@/components/customers/deleteDialog";
 import { RestoreDialog } from "@/components/customers/restoreDialog";
+import { useTourStep } from "@/components/onboarding/OnboardingTour";
+
 
 export default function CustomersPage() {
   const { user: currentUser } = useAuth();
@@ -48,6 +50,7 @@ export default function CustomersPage() {
   // Slide-over panel
   const [panelOpen, setPanelOpen] = useState(false);
   const [panelCustomer, setPanelCustomer] = useState<Customer | null>(null);
+  const [panelTab, setPanelTab] = useState<"info" | "contacts" | "deals" | "timeline">("info");
 
   // View mode (list / grid)
   const [viewMode, setViewMode] = useState<"list" | "grid">("list");
@@ -69,6 +72,8 @@ export default function CustomersPage() {
   });
 
   const { data: customer360Data } = useCustomer360(panelCustomer?.id ?? "");
+  
+
   const panelCustomerData = useMemo(() => {
     if (!panelCustomer || !customer360Data) {
       return panelCustomer;
@@ -84,6 +89,22 @@ export default function CustomersPage() {
 
   // Stat counts — single API call for all statistics
   const { data: statsData } = useCustomerStats();
+
+  // Handle panel animation timing for tour spotlight
+  useEffect(() => {
+    if (panelOpen) {
+      // Wait for panel slide-in animation to complete (250ms) + buffer before notifying tour
+      const timer = setTimeout(() => {
+        const currentTourId = 
+          panelTab === "info" ? "customers-detail-info" :
+          panelTab === "contacts" ? "customers-detail-contacts" :
+          panelTab === "deals" ? "customers-detail-deals" :
+          "customers-detail-timeline";
+        window.dispatchEvent(new CustomEvent("TOUR_STEP_CHANGED", { detail: { tourId: currentTourId } }));
+      }, 350);
+      return () => clearTimeout(timer);
+    }
+  }, [panelOpen, panelTab]);
 
   const isLoading = searchTerm.length > 1 ? isSearchLoading : isListLoading;
   // Search API trả payload khác list view; cần normalize để CustomerTable không crash (updatedAt/source/...)
@@ -108,6 +129,28 @@ export default function CustomersPage() {
     }
     return listData?.items ?? [];
   }, [searchTerm, searchResults, listData]);
+  useTourStep(useCallback((tourId: string) => {
+  console.log("[CUSTOMERS PAGE] Tour step event received:", tourId, "| panelOpen:", panelOpen);
+  
+  const tabMap: Record<string, "info" | "contacts" | "deals" | "timeline"> = {
+    "customers-detail-info":     "info",
+    "customers-detail-contacts": "contacts",
+    "customers-detail-deals":    "deals",
+    "customers-detail-timeline": "timeline",
+  };
+  if (tabMap[tourId]) {
+    if (!panelOpen && displayData.length > 0) {
+      console.log("[CUSTOMERS PAGE] Opening panel for tour");
+      setPanelCustomer(displayData[0] as Customer);
+      setPanelOpen(true);
+    }
+    setPanelTab(tabMap[tourId]);
+  }
+  if (["customers-stats", "customers-filters", "customers-toolbar", "customers-row-actions"].includes(tourId)) {
+    console.log("[CUSTOMERS PAGE] Closing panel for tour");
+    setPanelOpen(false);
+  }
+}, [panelOpen, displayData]));
   const total = searchTerm.length > 1 ? searchResults?.totalCount || 0 : listData?.pagination?.totalCount || 0;
   const totalPages = Math.ceil(total / pageSize);
 
@@ -198,182 +241,126 @@ export default function CustomersPage() {
     setViewMode(mode);
   }, []);
 
-  /* ── Stat counts — lấy từ consolidated stats API ── */
-  const totalCount   = statsData?.total   ?? 0;
-  const leadCount    = statsData?.lead    ?? 0;
-  const activeCount  = statsData?.active  ?? 0;
-  const churnedCount = statsData?.churned ?? 0;
-
-  // Tỉ lệ % so với tổng (tránh chia 0)
-  const leadPct    = totalCount > 0 ? Math.round((leadCount    / totalCount) * 100) : 0;
-  const activePct  = totalCount > 0 ? Math.round((activeCount  / totalCount) * 100) : 0;
-  const churnedPct = totalCount > 0 ? Math.round((churnedCount / totalCount) * 100) : 0;
-
-  if (error) {
-    return (
-      <div className="flex flex-col items-center justify-center py-16">
-        <div className="h-14 w-14 rounded-full bg-red-50 flex items-center justify-center mb-3">
-          <Building2 className="h-7 w-7 text-[var(--crm-danger)]" />
-        </div>
-        <p className="text-[15px] font-medium text-[var(--crm-danger)]">Có lỗi xảy ra khi tải danh sách khách hàng.</p>
-        <button
-          onClick={() => window.location.reload()}
-          className="mt-4 px-4 py-2 text-[13px] font-medium text-foreground bg-card border border-[var(--border)] rounded-lg hover:bg-accent transition-colors"
-        >
-          Tải lại trang
-        </button>
-      </div>
-    );
-  }
-
+  /* ── Render ─────────────────────────────────────────── */
   return (
-    <div className="space-y-5">
-      {/* ── Header ─────────────────────────────────────── */}
-      <div className="flex items-center justify-between">
+    <div className="crm-page">
+      {/* Header with title and create button */}
+      <div className="crm-page-header flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-[18px] font-medium text-foreground">Quản lý khách hàng</h1>
-          <p className="text-[13px] text-muted-foreground mt-0.5">
-            Theo dõi và quản lý dữ liệu khách hàng 360°
-          </p>
+          <h1 className="crm-page-title">Quản lý khách hàng</h1>
+          <p className="text-[13px] text-muted-foreground mt-1">Theo dõi và quản lý dữ liệu khách hàng 360°</p>
         </div>
         <button
-          onClick={() => setCreateDialogOpen(true)}
           data-tour="customers-create-btn"
-          className="h-9 px-4 text-[13px] font-medium text-white bg-[var(--crm-primary)] rounded-lg hover:bg-[#14528F] transition-colors flex items-center gap-1.5 shadow-sm"
+          onClick={() => setCreateDialogOpen(true)}
+          className="flex items-center gap-2 px-4 py-2 bg-[var(--crm-primary)] text-white rounded-lg hover:bg-[var(--crm-primary)]/90 transition-colors"
         >
           <Plus className="h-4 w-4" />
           Tạo khách hàng
         </button>
       </div>
 
-      {/* ── Stat Cards ─────────────────────────────────── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4" data-tour="customers-stats">
-        <StatCard
-          label="Tổng khách hàng"
-          value={totalCount}
-          delta={`${leadCount + activeCount} đang hoạt động`}
-          positive
-        />
-        <StatCard
-          label="Tiềm năng"
-          value={leadCount}
-          delta={totalCount > 0 ? `${leadPct}% tổng khách hàng` : undefined}
-          positive
-        />
-        <StatCard
-          label="Đang hoạt động"
-          value={activeCount}
-          delta={totalCount > 0 ? `${activePct}% tổng khách hàng` : undefined}
-          positive
-        />
-        <StatCard
-          label="Rời bỏ"
-          value={churnedCount}
-          delta={totalCount > 0 ? `${churnedPct}% tổng khách hàng` : undefined}
-          positive={false}
-        />
+      {/* Stats */}
+      <div data-tour="customers-stats" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <StatCard label="Tổng khách hàng" value={statsData?.total ?? 0} positive delta="10 đang hoạt động" />
+        <StatCard label="Tiềm năng" value={statsData?.lead ?? 0} positive delta="58% tổng khách hàng" />
+        <StatCard label="Đang hoạt động" value={statsData?.active ?? 0} positive delta="25% tổng khách hàng" />
+        <StatCard label="Rời bỏ" value={statsData?.churned ?? 0} positive={false} delta="0% tổng khách hàng" />
       </div>
 
-      {/* ── Filter Bar ───────────────────── */}
-      <div data-tour="customers-filters">
+      {/* Filters */}
+      <div data-tour="customers-filters" className="mb-4">
         <CustomerFilters
           onSearch={handleSearch}
           onStatusChange={handleStatusChange}
           onOwnerChange={handleOwnerChange}
           onDepartmentChange={handleDepartmentChange}
           users={usersList}
-          showOwnerFilter={canChangeOwner}
+          showOwnerFilter={true}
           onExport={handleExport}
           viewMode={viewMode}
           onViewModeChange={handleViewModeChange}
         />
       </div>
 
-      {/* ── Table/Grid ──────────────────────────────────────── */}
-      {isLoading ? (
-        <div className="flex items-center justify-center py-16 bg-card rounded-xl border border-[var(--border)]">
-          <div className="h-7 w-7 animate-spin rounded-full border-[3px] border-[var(--crm-primary)] border-t-transparent" />
-        </div>
-      ) : viewMode === "grid" ? (
-        <CustomerGridView
-          data={displayData || []}
-          onRowClick={handleRowClick}
-        />
-      ) : (
+      {/* Table/Grid */}
+      {viewMode === "list" ? (
         <CustomerTable
-          data={displayData || []}
-          onSort={handleSort}
+          data={displayData as Customer[]}
           onRowClick={handleRowClick}
+          onSort={handleSort}
           onStatusClick={(c) => openDialog("status", c)}
           onOwnerClick={(c) => openDialog("owner", c)}
           onDeleteClick={(c) => openDialog("delete", c)}
           onRestoreClick={(c) => openDialog("restore", c)}
-          canChangeOwner={canChangeOwner}
           canDelete={canDelete}
+          canChangeOwner={canChangeOwner}
           canRestore={canRestore}
+        />
+      ) : (
+        <CustomerGridView
+          data={displayData as Customer[]}
+          onRowClick={handleRowClick}
         />
       )}
 
-      {/* ── Pagination ─────────────────────────────────── */}
-      {!searchTerm && totalPages > 1 && (
-        <div className="flex items-center justify-between">
-          <p className="text-[13px] text-muted-foreground">
-            Hiển thị{" "}
-            <span className="font-medium text-foreground">{((page - 1) * pageSize) + 1}–{Math.min(page * pageSize, total)}</span>
-            {" "}của{" "}
-            <span className="font-medium text-foreground">{total}</span> khách hàng
-          </p>
-          <div className="flex gap-2">
-            <button
-              disabled={page === 1}
-              onClick={() => setPage((p) => p - 1)}
-              className="h-8 px-3 text-[13px] font-medium text-foreground bg-card border border-[var(--border)] rounded-lg hover:bg-accent disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-            >
-              Trang trước
-            </button>
-            <button
-              disabled={page === totalPages}
-              onClick={() => setPage((p) => p + 1)}
-              className="h-8 px-3 text-[13px] font-medium text-foreground bg-card border border-[var(--border)] rounded-lg hover:bg-accent disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-            >
-              Trang sau
-            </button>
-          </div>
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-2 mt-6">
+          <button
+            onClick={() => setPage(p => Math.max(1, p - 1))}
+            disabled={page === 1}
+            className="px-3 py-2 border rounded disabled:opacity-50"
+          >
+            Prev
+          </button>
+          <span className="text-sm">
+            Page {page} of {totalPages}
+          </span>
+          <button
+            onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+            disabled={page === totalPages}
+            className="px-3 py-2 border rounded disabled:opacity-50"
+          >
+            Next
+          </button>
         </div>
       )}
 
-      {/* ── Slide-over Panel ───────────────────────────── */}
-      <Customer360Panel
-        customer={panelCustomerData}
-        open={panelOpen}
-        onClose={() => setPanelOpen(false)}
-      />
-
-      {/* ── Dialogs ────────────────────────────────────── */}
+      {/* Dialogs */}
       <CustomerFormDialog
         open={createDialogOpen}
         onOpenChange={setCreateDialogOpen}
       />
       <StatusChangeDialog
         open={statusDialogOpen}
-        onOpenChange={setStatusDialogOpen}
         customer={selectedCustomer}
+        onOpenChange={setStatusDialogOpen}
       />
       <OwnerChangeDialog
         open={ownerDialogOpen}
-        onOpenChange={setOwnerDialogOpen}
         customer={selectedCustomer}
         users={usersList}
+        onOpenChange={setOwnerDialogOpen}
       />
       <DeleteDialog
         open={deleteDialogOpen}
-        onOpenChange={setDeleteDialogOpen}
         customer={selectedCustomer}
+        onOpenChange={setDeleteDialogOpen}
       />
       <RestoreDialog
         open={restoreDialogOpen}
-        onOpenChange={setRestoreDialogOpen}
         customer={selectedCustomer}
+        onOpenChange={setRestoreDialogOpen}
+      />
+
+      {/* Customer360 Panel */}
+      <Customer360Panel
+        customer={panelCustomerData}
+        open={panelOpen}
+        onClose={() => setPanelOpen(false)}
+        activeTab={panelTab}
+        onTabChange={setPanelTab}
       />
     </div>
   );

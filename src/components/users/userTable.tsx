@@ -55,11 +55,11 @@ export function UserTable({
         const user = row.original;
         const initials = user.displayName
           ? user.displayName
-              .split(" ")
-              .map((n) => n[0])
-              .slice(0, 2)
-              .join("")
-              .toUpperCase()
+            .split(" ")
+            .map((n) => n[0])
+            .slice(0, 2)
+            .join("")
+            .toUpperCase()
           : "U";
 
         return (
@@ -156,9 +156,8 @@ export function UserTable({
             </button>
             <button
               onClick={(e) => { e.stopPropagation(); onToggleStatus(user); }}
-              className={`p-1.5 rounded-md hover:bg-muted transition-colors ${
-                isActive ? "text-muted-foreground hover:text-[var(--crm-danger)]" : "text-muted-foreground hover:text-[var(--crm-success)]"
-              }`}
+              className={`p-1.5 rounded-md hover:bg-muted transition-colors ${isActive ? "text-muted-foreground hover:text-[var(--crm-danger)]" : "text-muted-foreground hover:text-[var(--crm-success)]"
+                }`}
               title={isActive ? "Vô hiệu hoá" : "Kích hoạt"}
             >
               {isActive ? <UserX className="h-4 w-4" /> : <UserCheck className="h-4 w-4" />}

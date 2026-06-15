@@ -82,6 +82,7 @@ export default function UsersPage() {
         </div>
         {canManage && (
           <button
+            data-tour="users-create"
             onClick={() => setCreateDialogOpen(true)}
             className="h-9 px-4 text-[13px] font-medium text-white bg-[var(--crm-primary)] rounded-lg hover:bg-[#14528F] transition-colors flex items-center gap-1.5 shadow-sm"
           >
@@ -109,7 +110,7 @@ export default function UsersPage() {
 
       {/* ── Filter Bar ─────────────────────────────────── */}
       {isAdminUser && (
-        <div className="flex flex-wrap items-center gap-2">
+        <div data-tour="users-filter" className="flex flex-wrap items-center gap-2">
           <span className="text-[13px] font-medium text-muted-foreground">Trạng thái:</span>
           <select
             value={statusFilter}

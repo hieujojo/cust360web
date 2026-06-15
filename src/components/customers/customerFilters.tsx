@@ -78,7 +78,7 @@ export const CustomerFilters = memo(function CustomerFilters({
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-wrap items-center gap-2">
+        <div data-tour="customers-filters" className="flex flex-wrap items-center gap-2">
           <div className="relative w-full sm:w-[220px]">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
@@ -177,7 +177,7 @@ export const CustomerFilters = memo(function CustomerFilters({
           )}
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 justify-end">
+        <div data-tour="customers-toolbar" className="flex flex-wrap items-center gap-2 justify-end">
           {hasFilters && (
             <button
               onClick={handleClear}
