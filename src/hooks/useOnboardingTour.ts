@@ -67,6 +67,8 @@ export function useOnboardingTour() {
   const [isMobile, setIsMobile] = useState(false);
   const [waitingForNav, setWaitingForNav] = useState(false);
   const prevPathRef = useRef(pathname);
+  const navStartRef = useRef<number>(0); // mốc thời gian bắt đầu router.push, dùng để đo log
+  const pendingPrevSubIndexRef = useRef<number | null>(null); // sub-step đích khi quay lại step trước
 
   /* ── Init: check mobile, check đã xem onboarding chưa, lắng nghe START_TOUR_EVENT ── */
   useEffect(() => {
@@ -93,15 +95,38 @@ export function useOnboardingTour() {
     };
   }, []);
 
-  /* ── Khi router.push hoàn tất (pathname đổi) → vào sub-step đầu tiên ── */
+  /* ── Khi router.push hoàn tất (pathname đổi) → vào sub-step đúng
+     - handleNext  → pendingPrevSubIndexRef = null  → setSubIndex(0)
+     - handlePrev  → pendingPrevSubIndexRef = N     → setSubIndex(N)
+  ── */
   useEffect(() => {
     if (!waitingForNav) return;
     if (pathname !== prevPathRef.current) {
+      console.log(
+        `[tour] pathname đổi sau ${Date.now() - navStartRef.current}ms (${prevPathRef.current} -> ${pathname})`
+      );
       prevPathRef.current = pathname;
       setWaitingForNav(false);
-      setSubIndex(0);
+      setSubIndex(pendingPrevSubIndexRef.current ?? 0);
+      pendingPrevSubIndexRef.current = null;
     }
   }, [pathname, waitingForNav]);
+
+  /* ── Safety net: nếu sau 8s pathname vẫn chưa đổi (trang đích fetch quá lâu / kẹt),
+     tự thoát khỏi "waiting" để không treo UI vô thời hạn ── */
+  useEffect(() => {
+    if (!waitingForNav) return;
+    const t = setTimeout(() => {
+      console.warn(
+        `[tour] navigation timeout sau ${Date.now() - navStartRef.current}ms, fallback thoát waiting`
+      );
+      prevPathRef.current = pathname;
+      setWaitingForNav(false);
+      setSubIndex(pendingPrevSubIndexRef.current ?? 0);
+      pendingPrevSubIndexRef.current = null;
+    }, 8000);
+    return () => clearTimeout(t);
+  }, [waitingForNav, pathname]);
 
   /* ── Tìm element theo data-tour và cập nhật targetRect ── */
   const updateRect = useCallback(() => {
@@ -210,7 +235,18 @@ export function useOnboardingTour() {
   /* Navigate đến page khi bấm "Bấm vào" ở sidebar step */
   const handleNavigateAndContinue = () => {
     const step = TOUR_STEPS[stepIndex];
+
+    // Nếu đã ở đúng trang rồi thì khỏi push, vào sub-step luôn (tránh treo oan 8s)
+    if (pathname === step.href) {
+      console.log(`[tour] đã ở sẵn ${step.href}, bỏ qua navigation`);
+      setSubIndex(0);
+      return;
+    }
+
+    console.log(`[tour] router.push -> ${step.href}`);
     prevPathRef.current = pathname;
+    navStartRef.current = Date.now();
+    pendingPrevSubIndexRef.current = null; // Next luôn vào sub-step 0
     setWaitingForNav(true);
     router.push(step.href);
   };
@@ -252,11 +288,19 @@ export function useOnboardingTour() {
       const prevStepIndex = stepIndex - 1;
       const prevStep = TOUR_STEPS[stepIndex - 1];
       setStepIndex(prevStepIndex);
-      setSubIndex(prevStep.subSteps.length - 1);
+
+      const lastSubIndex = prevStep.subSteps.length - 1;
+
       if (pathname !== prevStep.href) {
+        console.log(`[tour] router.push (prev) -> ${prevStep.href}`);
         prevPathRef.current = pathname;
+        navStartRef.current = Date.now();
+        pendingPrevSubIndexRef.current = lastSubIndex; // Vào sub-step cuối của step trước
         setWaitingForNav(true);
         router.push(prevStep.href);
+      } else {
+        // Đã ở đúng trang, vào sub-step cuối luôn
+        setSubIndex(lastSubIndex);
       }
     }
   };
