@@ -53,14 +53,39 @@ function mapNotification(doc: QueryDocumentSnapshot): NotificationItem {
   };
 }
 
-export function useNotifications(organizationId?: string, userId?: string) {
+export function useNotifications(
+  organizationId?: string,
+  userId?: string,
+  isOpen = false   // ← thêm param
+) {
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
+  // Subscription 1: chỉ đếm unread — nhẹ, luôn chạy
   useEffect(() => {
-    if (!organizationId || !userId) {
-      setNotifications([]);
-      setLoading(false);
+    if (!organizationId || !userId) return;
+
+    const itemsRef = collection(db, "notifications", organizationId, "items");
+    const q = query(
+      itemsRef,
+      where("userId", "==", userId),
+      where("isRead", "==", false),  // chỉ lấy unread
+      where("isDeleted", "==", false),
+      limit(1)  // chỉ cần biết có hay không, hoặc dùng count()
+    );
+
+    const unsub = onSnapshot(q, { includeMetadataChanges: false }, (snap) => {
+      setUnreadCount(snap.size);
+    });
+
+    return () => unsub();
+  }, [organizationId, userId]);
+
+  // Subscription 2: full list — chỉ chạy khi dropdown mở
+  useEffect(() => {
+    if (!organizationId || !userId || !isOpen) {
+      if (!isOpen) setLoading(false);
       return;
     }
 
@@ -73,30 +98,15 @@ export function useNotifications(organizationId?: string, userId?: string) {
     );
 
     setLoading(true);
+    const unsub = onSnapshot(q, { includeMetadataChanges: false }, (snap) => {
+      setNotifications(
+        snap.docs.map(mapNotification).filter((n) => !n.isDeleted)
+      );
+      setLoading(false);
+    });
 
-    const unsubscribe = onSnapshot(
-      q,
-      (snapshot) => {
-        const items = snapshot.docs
-          .map(mapNotification)
-          .filter((n) => !n.isDeleted);
-        setNotifications(items);
-        setLoading(false);
-      },
-      (error) => {
-        console.error("[useNotifications] Firestore subscription failed:", error);
-        setNotifications([]);
-        setLoading(false);
-      }
-    );
-
-    return () => unsubscribe();
-  }, [organizationId, userId]);
-
-  const unreadCount = useMemo(
-    () => notifications.filter((n) => !n.isRead).length,
-    [notifications]
-  );
+    return () => unsub();
+  }, [organizationId, userId, isOpen]);
 
   return { notifications, unreadCount, loading };
 }

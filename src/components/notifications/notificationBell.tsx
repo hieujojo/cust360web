@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { memo, useState } from "react";
 import { Bell } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -12,12 +12,13 @@ import { useAuth } from "@/hooks/useAuth";
 import { useNotifications } from "@/hooks/useNotifications";
 import { NotificationList } from "./notificationList";
 
-export function NotificationBell() {
+export const NotificationBell = memo(function NotificationBell() {
   const { user } = useAuth();
   const [open, setOpen] = useState(false);
   const { notifications, unreadCount, loading } = useNotifications(
     user?.organizationId,
-    user?.id
+    user?.id,
+    open
   );
 
   if (!user) return null;
@@ -60,3 +61,4 @@ export function NotificationBell() {
     </DropdownMenu>
   );
 }
+)
